@@ -1,0 +1,18 @@
+
+Attaching package: ‘igraph’
+
+The following objects are masked from ‘package:stats’:
+
+    decompose, spectrum
+
+The following object is masked from ‘package:base’:
+
+    union
+
+Loading required package: foreach
+Loading required package: iterators
+[1] "5d_2cls_n200_cont20%"
+Time difference of 2.148061 mins
+[1] "The mean success rate is 0.9583 , and, the mean false positive rate is 0.03015625"
+Time difference of 2.313109 mins
+[1] "The mean success rate is 0.947975 , and, the mean false positive rate is 0.03170625"

@@ -1,0 +1,16 @@
+
+Attaching package: ‘igraph’
+
+The following objects are masked from ‘package:stats’:
+
+    decompose, spectrum
+
+The following object is masked from ‘package:base’:
+
+    union
+
+Loading required package: foreach
+Loading required package: iterators
+[1] "OOS: the mean TPR is 0.8552 , and, the mean TNR 0.981415789473684"
+[1] "IOS: the mean TPR is 0.9999 , and, the mean TNR 0.952094736842105"
+Time difference of 43.92345 mins

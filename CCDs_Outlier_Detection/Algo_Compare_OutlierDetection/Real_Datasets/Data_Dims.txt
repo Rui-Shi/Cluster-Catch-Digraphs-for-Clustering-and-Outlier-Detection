@@ -1,0 +1,33 @@
+              n     d     # outliers        contain discrete?
+hepatitis    74     19       7 (9.5%)        Yes       
+
+lymphography 148    18      6 (4.1%)         Yes
+
+glass        214    9       9 (4.2%)         No
+
+WBC          223    9       10 (4.5%)        Yes
+
+vertebral    240    6       30 (12.5%)       No   
+
+ecoli        336    7       9 (2.6%)         No
+
+stamps       340    9       31 (9.1%)        No
+
+WDBC         367    30      10 (2.72%)       No
+
+pima         555    8       55 (9.9%)        No
+
+shuffle      1013   9       13 (1.28%)       No
+
+vowels       1456   12      50 (3.4%)        No
+
+PenDigits    3200   16      20 (0.6%)        No
+
+waveform     3443   21      100 (2.9%)       No
+
+thyroid      3772   6       93 (2.5%)        No
+
+wilt         4735   5       257 (5.4%)       No   
+
+pageblocks   4795   10      510 (10.6%)      Yes 
+ 

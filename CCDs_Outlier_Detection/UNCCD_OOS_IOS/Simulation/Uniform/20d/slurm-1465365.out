@@ -1,0 +1,25 @@
+
+Attaching package: ‘igraph’
+
+The following objects are masked from ‘package:stats’:
+
+    decompose, spectrum
+
+The following object is masked from ‘package:base’:
+
+    union
+
+Loading required package: foreach
+Loading required package: iterators
+[1] "OOS: the mean TPR is 0.9212 , and, the mean TNR 0.998671578947368"
+[1] "IOS: the mean TPR is 1 , and, the mean TNR 0.988870526315789"
+Time difference of 13.14988 days
+Error in gzfile(file, "wb") : cannot open the connection
+Calls: save.image -> save -> gzfile
+In addition: Warning message:
+In gzfile(file, "wb") :
+  cannot open compressed file '/mmfs1/home/rzs0112/code_working_folder/UnCCD_OOS_IOS/Simulation/Uniform/20d/20d_2cls_n1000_cont5%.RDataTmp', probable reason 'No such file or directory'
+Execution halted
+Warning message:
+In file.remove(outfile) :
+  cannot remove file '/mmfs1/home/rzs0112/code_working_folder/UnCCD_OOS_IOS/Simulation/Uniform/20d/20d_2cls_n1000_cont5%.RDataTmp', reason 'No such file or directory'

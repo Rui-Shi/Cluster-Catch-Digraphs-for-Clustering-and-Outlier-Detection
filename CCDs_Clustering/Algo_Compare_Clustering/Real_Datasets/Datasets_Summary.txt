@@ -1,0 +1,20 @@
+data sets     # of observations       # of features        # of clusters
+hepatitis         80                    19                    2
+lymphography     147                    18                    8
+iris             150 (147)               4                    3 *
+seeds            210                     7                    3 *
+glass            214                     9                    6
+user_knowledge   258                     6                    4
+wholesale        440                     8                    3 *
+R15              600                     2                    15 *
+breast_cancer    683 (449)               9                    2 *
+transfusion      748                     4                    2
+aggregation      788                     2                    7 *
+asymmetric       1000                    2                    5 *
+phishing         1353                    9                    3
+wine_red         1359                    11                   6
+yeast            1453                    8                    10
+D31              3100                    2                    31 *
+wine_white       4898                    11                   7
+
+  

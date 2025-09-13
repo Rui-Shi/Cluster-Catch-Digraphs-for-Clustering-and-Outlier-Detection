@@ -1,0 +1,83 @@
+
+Attaching package: ‘igraph’
+
+The following objects are masked from ‘package:stats’:
+
+    decompose, spectrum
+
+The following object is masked from ‘package:base’:
+
+    union
+
+Loading required package: spatstat.data
+Loading required package: spatstat.geom
+spatstat.geom 3.2-8
+
+Attaching package: ‘spatstat.geom’
+
+The following objects are masked from ‘package:igraph’:
+
+    diameter, edges, is.connected, vertices
+
+The following object is masked from ‘package:cluster’:
+
+    volume
+
+The following object is masked from ‘package:MASS’:
+
+    area
+
+Loading required package: spatstat.random
+spatstat.random 3.2-2
+Loading required package: spatstat.explore
+Loading required package: nlme
+spatstat.explore 3.2-5
+Loading required package: spatstat.model
+Loading required package: rpart
+spatstat.model 3.2-8
+Loading required package: spatstat.linnet
+spatstat.linnet 3.1-3
+
+spatstat 3.0-7 
+For an introduction to spatstat, type ‘beginner’ 
+
+Loading required package: plotly
+Loading required package: ggplot2
+
+Attaching package: ‘plotly’
+
+The following object is masked from ‘package:ggplot2’:
+
+    last_plot
+
+The following object is masked from ‘package:igraph’:
+
+    groups
+
+The following object is masked from ‘package:MASS’:
+
+    select
+
+The following object is masked from ‘package:stats’:
+
+    filter
+
+The following object is masked from ‘package:graphics’:
+
+    layout
+
+
+Attaching package: ‘hypercube’
+
+The following object is masked from ‘package:base’:
+
+    summary
+
+Package 'mclust' version 6.1.1
+Type 'citation("mclust")' for citing this R package in publications.
+Loading required package: foreach
+Loading required package: iterators
+[1] "UN-CCDs: The mean ARI is 0.97109720355713 , The mean average silhouette index is 0.630094669972015 , and, the percentatage of times identifying the correct number of clusters is 99.8 %"
+[1] "UN-CCDs: The mean ARI is 0.959459416929158 , The mean average silhouette index is 0.612312493679124 , and, the percentatage of times identifying the correct number of clusters is 97.8 %"
+[1] "UN-CCDs: The mean ARI is 0.888065589882622 , The mean average silhouette index is 0.555044765368697 , and, the percentatage of times identifying the correct number of clusters is 81.6 %"
+Time difference of 17.46464 secs

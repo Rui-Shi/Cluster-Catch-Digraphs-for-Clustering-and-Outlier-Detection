@@ -1,0 +1,21 @@
+
+Attaching package: ‘igraph’
+
+The following objects are masked from ‘package:stats’:
+
+    decompose, spectrum
+
+The following object is masked from ‘package:base’:
+
+    union
+
+Loading required package: foreach
+Loading required package: iterators
+[1] "4cls_n500_cont51020%"
+Time difference of 11.42248 hours
+[1] "The mean success rate is 1 , and, the mean false positive rate is 0.365482105263158"
+Time difference of 11.42611 hours
+[1] "The mean success rate is 1 , and, the mean false positive rate is 0.369208421052632"
+Time difference of 11.42552 hours
+[1] "The mean success rate is 1 , and, the mean false positive rate is 0.363235555555556"
+slurmstepd: error: *** JOB 671316 ON node044 CANCELLED AT 2023-06-19T01:32:46 ***

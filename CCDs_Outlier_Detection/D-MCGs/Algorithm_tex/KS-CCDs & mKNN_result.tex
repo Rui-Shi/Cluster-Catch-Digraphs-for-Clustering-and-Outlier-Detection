@@ -1,0 +1,53 @@
+\documentclass[a4paper]{article}
+\usepackage[a4paper,left=31.7mm,right=31.7mm,top=25.4mm,bottom=25.4mm]{geometry}
+\usepackage[ruled]{algorithm2e}
+\usepackage{amsthm}
+\SetKwComment{Comment}{/* }{ */}
+\renewcommand{\KwData}{\textbf{Input: }}
+\renewcommand{\KwResult}{\textbf{Output: }}
+
+\title{Algorithm 1: Connected Components of KS-CCDs}
+\date{}
+\begin{document}
+\maketitle
+\begin{algorithm}
+
+\KwData{$\delta_0$, $\Delta$, $N$ and a dataset $\mathbf{X}$}\;
+\KwResult{Connected Components of $\mathbf{X}$}\;
+\vspace{10pt}
+\textit{Initialization:}\\
+\nl$\mathbf{H_0}$: Assume $\mathbf{X}$ is generated from an underlying uni-modal distribution $F$     with support $S$ and there are no outliers.\\
+\nl$i \gets 1$\;
+\nl$M \gets$ the size of $\mathbf{X}$\;
+\nl$\delta_{seq} \gets$ NULL \Comment*[r]{Store $\delta$ for each simulated dataset}
+
+\nl\While{$i < N$}{
+\nl	$\delta \gets \delta_0$\;
+\nl	Simulate a dataset $\mathbf{X_0}$ of size $M$ from the distribution $F$ within  $S$\;
+\nl	$D_{\mathbf{X_0}}=(\mathcal{V}_{\mathbf{X_0}},\mathcal{A}_{\mathbf{X_0}}) \gets$ the KS-CCD of $\mathbf{X_0}$ (with density $\delta$)\;
+\nl	$G_{\mathbf{X_0}}=(\mathcal{V}_{\mathbf{X_0}},\mathcal{E}_{\mathbf{X_0}})\gets$ the intersection graph of $D$\;
+\nl	\While{$G_{\mathbf{X_0}}$ is connected}{
+\nl		$\delta \gets \delta-\Delta$\;
+\nl		Repeat line 8 and 9 to update $D_{\mathbf{X_0}}$ and $G_{\mathbf{X_0}}$\; 
+	}
+\nl $\delta_{seq} \gets \delta_{seq}\cup \delta$\;
+}
+\nl The $\alpha$ quantile of $\delta_{seq}$ is denoted $\delta_{\alpha}$\;
+\nl $D_{\mathbf{X}}=(\mathcal{V}_{\mathbf{X}},\mathcal{A}_{\mathbf{X}}) \gets$ the KS-CCD of $\mathbf{X}$ (with density $\delta_{\alpha}$)\;
+\nl	$G_{\mathbf{X}}=(\mathcal{V}_{\mathbf{X}},\mathcal{E}_{\mathbf{X}})\gets$ the intersection graph of $D_{\mathbf{X}}$\;
+\vspace{10pt}
+\nl\eIf{$G_{\mathbf{X}}$ is connected}{
+\nl	Do not reject $\mathbf{H_0}$ and return ${\mathbf{X}}$ as a single component\;
+    }{
+\nl Reject $H_0$ at $1-\alpha$ level and return the connected components of $G_{\mathbf{X_0}}$\;
+}
+\caption{Given a dataset $\mathbf{X}$, this algorithm tests if there are multiple components or not. If it turns out that more than one components are detected, further investigation is need to decide whether these components are clusters or outliers\;
+Here, $\delta_0$ is an initial value (big enough) for the density parameter $\delta$ in KS statistics, $\Delta$ is a small value that $\delta$ changes each time. $N$ represents the number of datasets to simulate.}
+\end{algorithm}
+\noindent
+\textbf{Note:} \begin{itemize}
+	\item[1)] In line 8, $\mathcal{V}_{\mathbf{X_0}}:=\mathbf{X_0}$.
+	\item[2)] In line 9, for any $u,v \in \mathbf{X_0}$, the edge $uv \in \mathcal{E}_{\mathbf{X_0}}$ if and only if $B_u$ and $B_v$ cover $v$ and $u$ respectively.
+\end{itemize}
+
+\end{document}

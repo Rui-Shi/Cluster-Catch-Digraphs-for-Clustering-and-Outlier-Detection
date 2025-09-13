@@ -1,0 +1,17 @@
+
+Attaching package: ‘igraph’
+
+The following objects are masked from ‘package:stats’:
+
+    decompose, spectrum
+
+The following object is masked from ‘package:base’:
+
+    union
+
+Loading required package: foreach
+Loading required package: iterators
+[1] "2d_2cls_n500_cont51020%"
+Time difference of 4.25157 days
+[1] "The mean success rate is 0.96828 , and, the mean false positive rate is 0.00239368421052632"
+slurmstepd: error: *** JOB 675332 ON node854 CANCELLED AT 2023-06-27T08:41:12 DUE TO TIME LIMIT ***

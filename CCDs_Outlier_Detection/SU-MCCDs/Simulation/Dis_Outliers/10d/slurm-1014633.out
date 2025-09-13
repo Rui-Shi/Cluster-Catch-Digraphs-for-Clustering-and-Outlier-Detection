@@ -1,0 +1,19 @@
+
+Attaching package: ‘igraph’
+
+The following objects are masked from ‘package:stats’:
+
+    decompose, spectrum
+
+The following object is masked from ‘package:base’:
+
+    union
+
+Loading required package: foreach
+Loading required package: iterators
+[1] "The mean success rate is 1 , and, the mean True positive rate is 0.928957894736842"
+[1] "The mean success rate is 1 , and, the mean True positive rate is 0.928957894736842"
+[1] "The mean success rate is 1 , and, the mean True positive rate is 0.928957894736842"
+[1] "The mean success rate is 1 , and, the mean True positive rate is 0.933936842105263"
+[1] "The mean success rate is 1 , and, the mean True positive rate is 0.934121052631579"
+Time difference of 18.53712 mins

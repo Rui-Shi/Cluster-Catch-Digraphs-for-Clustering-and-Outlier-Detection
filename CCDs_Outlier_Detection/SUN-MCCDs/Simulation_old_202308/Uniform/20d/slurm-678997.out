@@ -1,0 +1,26 @@
+
+Attaching package: ‘igraph’
+
+The following objects are masked from ‘package:stats’:
+
+    decompose, spectrum
+
+The following object is masked from ‘package:base’:
+
+    union
+
+Loading required package: foreach
+Loading required package: iterators
+[1] "20d_4cls_n500_cont51020%"
+Time difference of 11.39331 hours
+[1] "The mean success rate is 1 , and, the mean false positive rate is 0.000593684210526316"
+Time difference of 11.40097 hours
+[1] "The mean success rate is 1 , and, the mean false positive rate is 0.000663157894736842"
+Time difference of 11.38313 hours
+[1] "The mean success rate is 1 , and, the mean false positive rate is 0.000684444444444444"
+Time difference of 11.40899 hours
+[1] "The mean success rate is 1 , and, the mean false positive rate is 0.000744444444444444"
+Time difference of 11.37881 hours
+[1] "The mean success rate is 1 , and, the mean false positive rate is 0.0008325"
+Time difference of 11.39029 hours
+[1] "The mean success rate is 1 , and, the mean false positive rate is 0.0007925"

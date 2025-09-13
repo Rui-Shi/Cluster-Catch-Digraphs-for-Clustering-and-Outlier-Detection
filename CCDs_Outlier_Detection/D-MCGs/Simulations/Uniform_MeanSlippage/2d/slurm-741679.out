@@ -1,0 +1,41 @@
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+
+Attaching package: ‘MASS’
+
+The following object is masked from ‘package:dplyr’:
+
+    select
+
+Loading required package: foreach
+Loading required package: iterators
+
+Attaching package: ‘igraph’
+
+The following objects are masked from ‘package:dplyr’:
+
+    as_data_frame, groups, union
+
+The following objects are masked from ‘package:stats’:
+
+    decompose, spectrum
+
+The following object is masked from ‘package:base’:
+
+    union
+
+Error in KS_MCG(x) : 
+  task 1 failed - "package or namespace load failed for ‘reticulate’ in dyn.load(file, DLLpath = DLLpath, ...):
+ unable to load shared object '/mmfs1/tools/r-4.2.3/lib64/R/library/png/libs/png.so':
+  libpng12.so.0: cannot open shared object file: No such file or directory"
+Calls: %dopar% -> <Anonymous>
+Execution halted
