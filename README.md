@@ -27,13 +27,6 @@ The repository implements a family of methods for clustering, outlier detection,
 
 We introduce the details of the structure of this repository.
 
-### CCDs_Clustering
-
-* **KS_CCDs**: The simulations study for `KS-CCDs` on clustering.
-* **RK_CCDs**: The simulations study for `RK-CCDs` on clustering.
-* **UN_CCDs**: The simulations study for `UN-CCDs` on clustering.
-* **Algo_Compare_Clustering**: The simulation study for existing clustering method, including `DBSCAN`, `K-means++`, `Louvain clustering`, `Minimal Spanning Tree`, and `Spectral clustering`.
-
 ### CCDs_Outlier_Detection
 
 * **D-MCGs**: The simulation study for `D-MCGs` on outlier detection with single cluster.
@@ -41,6 +34,14 @@ We introduce the details of the structure of this repository.
 * **SU-MCCDs**: The simulation study for `SU-MCCDs` on outlier detection.
 * **SUN-MCCDs**: The simulation study for `SUN-MCCDs` on outlier detection.
 * **UN-MCCDs**: The simulation study for `UN-MCCDs` on outlier detection.
+* **Algo_Compare_OutlierDetection**: The simulation study for existing clustering method, including `DBSCAN`, `Isolation Forest`, `Local Outlier Factor (LOF)`, `Minimal Spanning Tree (MST)`, and `Outlier Detection with Indegree Numbers (ODIN)`.
+
+### CCDs_Clustering
+
+* **KS_CCDs**: The simulations study for `KS-CCDs` on clustering.
+* **RK_CCDs**: The simulations study for `RK-CCDs` on clustering.
+* **UN_CCDs**: The simulations study for `UN-CCDs` on clustering.
+* **Algo_Compare_Clustering**: The simulation study for existing clustering method, including `DBSCAN`, `K-means++`, `Louvain clustering`, `Minimal Spanning Tree (MST)`, and `Spectral clustering`.
 
 ### CCDs_Outlyingness_Score
 * **RKCCD_OOS_IOS**: The simulation study for `OOS` and `IOS` based on `RK-CCDs` on outlier detection.
