@@ -6,8 +6,12 @@ following work on Cluster Catch Digraphs:
 - Shi, R., Ceyhan, E., Billor, N. **Outlyingness Scores with Cluster Catch
   Digraphs for Identifying High-Dimensional and Collective Outliers.**
   *Pattern Recognition* (in revision, 2026).
-- Shi, R. **Novel Outlier Detection and Clustering Methods Based on
-  Cluster Catch Digraphs.** PhD dissertation, Auburn University.
+- Shi, R., Ceyhan, E., Billor, N. **Outlier Detection with Cluster Catch
+  Digraphs.** arXiv:2409.11596, 2024.
+  <https://arxiv.org/abs/2409.11596>
+- Shi, R., Ceyhan, E. **Cluster Catch Digraphs with the Kolmogorov–Smirnov
+  Test.** arXiv:2501.06268, 2025.
+  <https://arxiv.org/abs/2501.06268>
 
 The repository is structured so that any external researcher can locate
 and re-run the exact scripts and data used in the manuscript. Every
@@ -239,5 +243,5 @@ is:
 
 ## Citation
 
-If you use this code, please cite both the manuscript and the
-dissertation listed at the top of this file.
+If you use this code, please cite the manuscript and the relevant arXiv
+preprints listed at the top of this file.
