@@ -94,8 +94,12 @@ a fresh clone after `install.packages("here")`.
 | Uniform clusters | `simulations/outlyingness_scores/Uniform_cutoffs/` |
 | Gaussian clusters | `simulations/outlyingness_scores/Gaussian_cutoffs/` |
 
-Each folder contains threshold-calibration scripts for FCCD, FNNCCD,
-NNCCD, RKCCD, and UNCCD variants.
+The two scripts used by the OOS/IOS manuscript are
+`RKCCD_OOS_IOS_cutoff.R` (RKCCD-based OOS/IOS thresholds) and
+`NNCCD_OOS_IOS_cutoff.R` (UNCCD-based OOS/IOS thresholds — `NNCCD` is
+the legacy name for UNCCD on disk). `FCCD_IOS_cutoff.R` and
+`FNNCCD_IOS_cutoff.R` are calibrations for earlier shape-adaptive CCD
+variants and are kept for reference.
 
 ---
 
@@ -185,12 +189,19 @@ From any working directory, after cloning the repo:
 
 ```bash
 cd Cluster-Catch-Digraphs-for-Clustering-and-Outlier-Detection
-Rscript simulations/outlyingness_scores/RKCCD_OOS_IOS/Simulation/Gaussian/3d/3d_n500_eps05.R
+Rscript "simulations/outlyingness_scores/RKCCD_OOS_IOS/Simulation/Gaussian/3d/3d_2cls_n500_cont5%.R"
 ```
 
-`here::here(...)` resolves paths against the repository root (anchored
-by the `.git` directory), so this is independent of the current working
-directory at invocation time.
+(The filename contains `%`, so quote it.) `here::here(...)` resolves
+paths against the repository root (anchored by the `.git` directory),
+so this is independent of the current working directory at invocation
+time.
+
+**Heads-up**: every per-experiment script `load()`s a precomputed
+quantile table (`*.RData`) that is not committed to the repo (the
+files are large). Regenerate the table you need first by running the
+matching driver under `R/NN-test_quantile/` or `R/RK-test_quantile/`
+— see "Reading the precomputed quantile tables" below.
 
 ### Running an entire experiment family
 
@@ -218,16 +229,19 @@ simulation scripts will resolve.
 
 ## Notes on bundled vs missing artifacts
 
-The MCCD simulation trees originally `source()`d files named `M-FCCDs.R`,
-`M-FNNCCDs.R`, and `M-CCDs.R`. These are earlier names for the
-outlier-detection method wrappers and have been re-pointed at their
-present-day equivalents:
+The MCCD simulation trees originally `source()`d files named `M-CCDs.R`,
+`M-FCCDs.R`, `M-FNNCCDs.R`, and `M-NNCCDs.R`. These are earlier names for
+the outlier-detection method wrappers and have been re-pointed at their
+present-day equivalents. Similarly, `R/ccds/NN_CCD.R` was the legacy
+filename for the UN-CCD function library:
 
 | Old name | Present-day file |
 |---|---|
 | `M-CCDs.R` | `methods/outlier_detection/RU-MCCDs.R` |
 | `M-FCCDs.R` | `methods/outlier_detection/SU-MCCDs.R` |
+| `M-NNCCDs.R` | `methods/outlier_detection/UN-MCCD.R` |
 | `M-FNNCCDs.R` | `methods/outlier_detection/SUN-MCCD.R` |
+| `ccds/NN_CCD.R` | `R/ccds/UN_CCD.R` |
 
 The only `source()` references that remain unmappable are NNCCD
 threshold scripts referenced from deprecated `_old` simulation folders:

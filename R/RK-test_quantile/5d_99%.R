@@ -3,7 +3,7 @@ source(here::here("R/ccds/RK_CCD_New.R"))
 source(here::here("R/ccds/mKNN_CCD_functions.R"))
 source(here::here("R/general_functions/count.R"))
 source(here::here("R/general_functions/Uni-Gau_cls.R"))
-setwd(here::here("R/general_functions/RK-test_quantile"))
+setwd(here::here("R/RK-test_quantile"))
 
 library(parallel)
 library(doParallel)

@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 tt1 = Sys.time()
-source(here::here("R/ccds/NN_CCD.R"))
+source(here::here("R/ccds/UN_CCD.R"))
 source(here::here("R/ccds/mKNN_CCD_functions.R"))
 source(here::here("R/general_functions/count.R"))
 source(here::here("R/general_functions/Uni-Gau_cls.R"))
