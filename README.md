@@ -14,8 +14,9 @@ following work on Cluster Catch Digraphs:
   <https://arxiv.org/abs/2501.06268>
 
 The repository is structured so that any external researcher can locate
-and re-run the exact scripts and data used in the manuscript. Every
-`source()`, `load()`, and `setwd()` call has been rewritten to use
+and re-run the exact scripts and data used in the three works listed
+above. Every `source()`, `load()`, `setwd()`, and `save.image()` call
+has been rewritten to use
 [`here::here()`](https://here.r-lib.org/), so the scripts run as-is from
 a fresh clone after `install.packages("here")`.
 
@@ -34,19 +35,21 @@ a fresh clone after `install.packages("here")`.
 │   └── RK-test_quantile/           cluster-tree RK test quantile R scripts
 │
 ├── methods/                        method definitions / driver wrappers
-│   ├── clustering/                 RK-, UN-, KS-CCDs clustering wrappers
+│   ├── clustering/                 RK-, UN-, KS-CCDs clustering wrappers (arXiv:2501.06268)
 │   ├── outlier_detection/          RU-, SU-, UN-, SUN-MCCDs (arXiv:2409.11596)
-│   └── outlyingness_scores/        OOS / IOS scoring wrappers (the manuscript's contribution)
+│   └── outlyingness_scores/        OOS / IOS scoring wrappers (Pattern Recognition manuscript)
 │
 ├── simulations/                    Monte-Carlo experiments grouped by task
 │   ├── clustering/                 RK_CCDs, UN_CCDs, KS_CCDs + baselines
 │   ├── outlier_detection/          RU-, SU-, UN-, SUN-MCCDs, D-MCGs + baselines
-│   └── outlyingness_scores/        OOS/IOS simulations + cutoff-calibration runs
+│   └── outlyingness_scores/        OOS / IOS simulations + cutoff-calibration runs
 │
 ├── data/                           benchmark real-world datasets
-│   ├── clustering/                 16 datasets used for clustering benchmarks
-│   └── outlier_detection/          17 datasets used for outlier-detection benchmarks
+│   ├── clustering/                 datasets used for clustering benchmarks
+│   └── outlier_detection/          datasets used for outlier-detection benchmarks
 │
+├── rewrite_paths.py                one-shot path rewriter used during reorganization
+│                                   (kept for reviewer audit; not used at runtime)
 └── README.md                       this file
 ```
 
