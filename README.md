@@ -9,8 +9,8 @@ following work on Cluster Catch Digraphs:
 - Shi, R., Ceyhan, E., Billor, N. **Outlier Detection with Cluster Catch
   Digraphs.** arXiv:2409.11596, 2024.
   <https://arxiv.org/abs/2409.11596>
-- Shi, R., Ceyhan, E. **Cluster Catch Digraphs with the Kolmogorov–Smirnov
-  Test.** arXiv:2501.06268, 2025.
+- Shi, R., Ceyhan, E. **Clustering with Uniformity- and Neighbor-Based
+  Random Geometric Graphs.** arXiv:2501.06268, 2025.
   <https://arxiv.org/abs/2501.06268>
 
 The repository is structured so that any external researcher can locate
