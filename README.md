@@ -100,29 +100,36 @@ NNCCD, RKCCD, and UNCCD variants.
 
 ### Outlier-detection real datasets — `data/outlier_detection/`
 
-The 10 datasets cited in the OOS/IOS manuscript are listed first; the
-remaining datasets in this folder were collected during the dissertation
-work and are kept for reproducibility of related experiments.
+The 10 datasets used in the OOS/IOS manuscript are listed first; the
+remaining datasets are archived alongside them and used in extended
+benchmarks for the MCCD-family methods (arXiv:2409.11596).
 
-| Dataset | File(s) | Used by |
-|---|---|---|
-| Hepatitis | `Hepatitis_withoutdupl_10_v01.arff` | OOS/IOS, MCCD family |
-| Lymphography | `Lymphography_withoutdupl_norm_idf.arff` | OOS/IOS, MCCD family |
-| Glass | `glass.mat`, `glass_desc.pdf` | OOS/IOS, MCCD family |
-| WBC (Wisconsin Breast Cancer) | `WBC_withoutdupl_norm_v02.arff` | OOS/IOS, MCCD family |
-| Vertebral | `vertebral.mat`, `Vertebral_desc.pdf` | OOS/IOS, MCCD family |
-| Stamps | `Stamps_withoutdupl_norm_09.arff` | OOS/IOS, MCCD family |
-| WDBC (Diagnostic Breast Cancer) | `WDBC_withoutdupl_norm_v02.arff` | OOS/IOS, MCCD family |
-| Vowels | `vowels.mat`, `Vowels_desc.pdf` | OOS/IOS, MCCD family |
-| Thyroid | `thyroid.mat`, `Thyroid_desc.pdf` | OOS/IOS, MCCD family |
-| Wilt | `Wilt_withoutdupl_05.arff` | OOS/IOS, MCCD family |
-| PageBlocks | `PageBlocks_withoutdupl_09.arff` | dissertation |
-| PenDigits | `PenDigits_withoutdupl_norm_v01.arff` | dissertation |
-| Pima | `Pima_withoutdupl_norm_10_v01.arff` | dissertation |
-| Shuttle | `Shuttle_withoutdupl_norm_v01.arff` | dissertation |
-| Waveform | `Waveform_withoutdupl_v01.arff` | dissertation |
-| Ecoli | `ecoli.csv`, `ecoli.mat` | dissertation |
-| Yeast | `yeast.data` | dissertation |
+**Used in the OOS/IOS manuscript:**
+
+| Dataset | File(s) |
+|---|---|
+| Hepatitis | `Hepatitis_withoutdupl_10_v01.arff` |
+| Lymphography | `Lymphography_withoutdupl_norm_idf.arff` |
+| Glass | `glass.mat`, `glass_desc.pdf` |
+| WBC (Wisconsin Breast Cancer) | `WBC_withoutdupl_norm_v02.arff` |
+| Vertebral | `vertebral.mat`, `Vertebral_desc.pdf` |
+| Stamps | `Stamps_withoutdupl_norm_09.arff` |
+| WDBC (Diagnostic Breast Cancer) | `WDBC_withoutdupl_norm_v02.arff` |
+| Vowels | `vowels.mat`, `Vowels_desc.pdf` |
+| Thyroid | `thyroid.mat`, `Thyroid_desc.pdf` |
+| Wilt | `Wilt_withoutdupl_05.arff` |
+
+**Additional datasets (extended MCCD benchmarks):**
+
+| Dataset | File(s) |
+|---|---|
+| PageBlocks | `PageBlocks_withoutdupl_09.arff` |
+| PenDigits | `PenDigits_withoutdupl_norm_v01.arff` |
+| Pima | `Pima_withoutdupl_norm_10_v01.arff` |
+| Shuttle | `Shuttle_withoutdupl_norm_v01.arff` |
+| Waveform | `Waveform_withoutdupl_v01.arff` |
+| Ecoli | `ecoli.csv`, `ecoli.mat` |
+| Yeast | `yeast.data` |
 
 `data/outlier_detection/RealData_Collection.R` and `LoadData.R` are
 loader scripts that read each dataset into a uniform format. Per-dataset
