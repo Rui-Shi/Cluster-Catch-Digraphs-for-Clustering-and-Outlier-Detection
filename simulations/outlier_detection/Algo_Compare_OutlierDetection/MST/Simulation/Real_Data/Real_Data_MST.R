@@ -4,8 +4,8 @@ library(doParallel)
 library(MASS)
 library(igraph)
 library(dbscan)
-source("G:/code_working_folder/Algo_Compare/MST/MST_Outlier.R")
-source("G:/code_working_folder/Algo_Compare/Real Datasets/RealData_Collection.R")
+source(here::here("simulations/outlier_detection/Algo_Compare_OutlierDetection/MST/MST_Outlier.R"))
+source(here::here("data/outlier_detection/RealData_Collection.R"))
 
 thresh=1.2  # thresh: the ratio to cut a edge when comparing its adjacent edges
 

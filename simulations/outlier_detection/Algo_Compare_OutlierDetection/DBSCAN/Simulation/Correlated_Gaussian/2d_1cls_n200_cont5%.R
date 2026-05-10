@@ -1,6 +1,6 @@
 t1 = Sys.time()
-source("G:/code_working_folder/Algo_Compare/DBSCAN/DBSCAN.R")
-source("G:/code_working_folder/general functions/Strauss.R")
+source(here::here("simulations/outlier_detection/Algo_Compare_OutlierDetection/DBSCAN/DBSCAN.R"))
+source(here::here("R/general_functions/Strauss.R"))
 
 library(parallel)
 library(doParallel)

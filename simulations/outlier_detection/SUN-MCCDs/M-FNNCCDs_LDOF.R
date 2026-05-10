@@ -1,5 +1,5 @@
-source("/media/rui/exNVME/code_working_folder/ccds/NN_CCD.R")
-source("/media/rui/exNVME/code_working_folder/ccds/mKNN_CCD_functions.R")
+source(here::here("R/ccds/NN_CCD.R"))
+source(here::here("R/ccds/mKNN_CCD_functions.R"))
 
 
 # datax: the data set for analysis

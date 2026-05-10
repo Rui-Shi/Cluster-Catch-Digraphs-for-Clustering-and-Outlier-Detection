@@ -1,10 +1,10 @@
 #!/usr/bin/env Rscript
 tt1 = Sys.time()
-source("/mmfs1/home/rzs0112/code_working_folder/M-FCCDs/M-FCCDs.R")
-source("/mmfs1/home/rzs0112/code_working_folder/general functions/count.R")
-source("/mmfs1/home/rzs0112/code_working_folder/general functions/Uni-Gau_cls.R")
-load("/mmfs1/home/rzs0112/code_working_folder/general functions/RK-test_quantile/RK-test-simul_5d_99%.RData")
-source("/mmfs1/home/rzs0112/code_working_folder/general functions/ratio1.R")
+source(here::here("methods/outlyingness_scores/M-FCCDs/M-FCCDs.R"))
+source(here::here("R/general_functions/count.R"))
+source(here::here("R/general_functions/Uni-Gau_cls.R"))
+load(here::here("R/RK-test_quantile/RK-test-simul_5d_99%.RData"))
+source(here::here("R/general_functions/ratio1.R"))
 
 library(parallel)
 library(doParallel)

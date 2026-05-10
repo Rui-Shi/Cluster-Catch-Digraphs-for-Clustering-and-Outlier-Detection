@@ -1,8 +1,8 @@
 library(parallel)
 
 ###code for KS-CCDs###
-#source("G:/OneDrive - Auburn University/Research_Outliers Detection/code/ccds/ccd_ks_NEW.R")
-#source("G:/OneDrive - Auburn University/Research_Outliers Detection/code/ccds/functions.R")
+#source(here::here("R/ccds/ccd_ks_NEW.R"))
+#source(here::here("R/ccds/functions.R"))
 
 #####
 ## simulate n uniform data
@@ -28,7 +28,7 @@ for(i in 1:len){
 }
 
 
-source("G:/OneDrive - Auburn University/Research Outliers Detection/code/KS-CCDs & mKNN/functions/mKNN_CCD_functions.R")
+source(here::here("R/ccds/mKNN_CCD_functions.R"))
 
 
 #####

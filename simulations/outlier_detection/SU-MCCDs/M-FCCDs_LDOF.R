@@ -1,5 +1,5 @@
-source("/media/rui/exNVME/code_working_folder/ccds/RK_CCD_New.R")
-source("/media/rui/exNVME/code_working_folder/ccds/mKNN_CCD_functions.R")
+source(here::here("R/ccds/RK_CCD_New.R"))
+source(here::here("R/ccds/mKNN_CCD_functions.R"))
 
 # datax: the data set for analysis
 # Simul:  Simulated boundaries for K-test

@@ -1,7 +1,7 @@
 tt1 = Sys.time()
-source("G:/code_working_folder/general functions/Uni-Gau_cls.R")
-source("G:/code_working_folder/general functions/ratio3.R")
-source("G:/code_working_folder/Algo_Compare/Isolation Forest/ISO.R")
+source(here::here("R/general_functions/Uni-Gau_cls.R"))
+source(here::here("R/general_functions/ratio3.R"))
+source(here::here("simulations/outlier_detection/Algo_Compare_OutlierDetection/Isolation Forest/ISO.R"))
 
 library(parallel)
 library(doParallel)

@@ -3,8 +3,8 @@ library(parallel)
 library(doParallel)
 library(MASS)
 library(igraph)
-source("G:/code_working_folder/Algo_Compare/DBSCAN/DBSCAN.R")
-source("G:/code_working_folder/Algo_Compare/Real Datasets/RealData_Collection.R")
+source(here::here("simulations/outlier_detection/Algo_Compare_OutlierDetection/DBSCAN/DBSCAN.R"))
+source(here::here("data/outlier_detection/RealData_Collection.R"))
 
 cores = detectCores()
 

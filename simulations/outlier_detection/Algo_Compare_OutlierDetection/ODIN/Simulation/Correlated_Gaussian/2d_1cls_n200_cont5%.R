@@ -1,6 +1,6 @@
 t1 = Sys.time()
-source("G:/code_working_folder/general functions/Strauss.R")
-source("G:/code_working_folder/Algo_Compare/ODIN/ODIN.R")
+source(here::here("R/general_functions/Strauss.R"))
+source(here::here("simulations/outlier_detection/Algo_Compare_OutlierDetection/ODIN/ODIN.R"))
 
 library(parallel)
 library(doParallel)

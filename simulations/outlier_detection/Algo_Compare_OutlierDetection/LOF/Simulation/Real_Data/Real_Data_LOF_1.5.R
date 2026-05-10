@@ -3,9 +3,9 @@ library(parallel)
 library(doParallel)
 library(MASS)
 library(igraph)
-source("G:/code_working_folder/Algo_Compare/LOF/LOF.R")
-source("G:/code_working_folder/Algo_Compare/Real Datasets/RealData_Collection.R")
-source("G:/code_working_folder/general functions/count.R")
+source(here::here("simulations/outlier_detection/Algo_Compare_OutlierDetection/LOF/LOF.R"))
+source(here::here("data/outlier_detection/RealData_Collection.R"))
+source(here::here("R/general_functions/count.R"))
 
 cores = detectCores()
 

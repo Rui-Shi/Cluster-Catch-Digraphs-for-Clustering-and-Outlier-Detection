@@ -1,5 +1,5 @@
 tt1 = Sys.time()
-source("G:/code_working_folder/general functions/Uni-Gau_cls.R")
+source(here::here("R/general_functions/Uni-Gau_cls.R"))
 
 library(parallel)
 library(doParallel)

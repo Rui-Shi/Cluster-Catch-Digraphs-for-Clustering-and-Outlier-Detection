@@ -35,6 +35,7 @@ a fresh clone after `install.packages("here")`.
 │
 ├── methods/                        method definitions / driver wrappers
 │   ├── clustering/                 RK-, UN-, KS-CCDs clustering wrappers
+│   ├── outlier_detection/          RU-, SU-, UN-, SUN-MCCDs (arXiv:2409.11596)
 │   └── outlyingness_scores/        OOS / IOS scoring wrappers (the manuscript's contribution)
 │
 ├── simulations/                    Monte-Carlo experiments grouped by task
@@ -61,10 +62,10 @@ a fresh clone after `install.packages("here")`.
 | **UN-CCDs** | Clustering via Nearest-Neighbour Distance (NND) spatial-randomness test | `methods/clustering/UN-CCDs.R` | `simulations/clustering/UN_CCDs/` |
 | **KS-CCDs** | Clustering via Kolmogorov–Smirnov-type density statistic | `methods/clustering/KS-CCDs.R` | `simulations/clustering/KS_CCDs/` |
 | **D-MCGs** | Density-based Mutual Catch Graphs for single-cluster outlier detection | (defined inside the simulation tree) | `simulations/outlier_detection/D-MCGs/` |
-| **RU-MCCDs** | Rapid Uniformity-Based CCDs with Mutual Catch Graphs (RK-CCD + MCG) | `simulations/outlier_detection/RU-MCCDs/RU-MCCDs.R` | `simulations/outlier_detection/RU-MCCDs/` |
-| **UN-MCCDs** | Uniformity- and Neighbour-based CCDs adapted for outlier detection | `simulations/outlier_detection/UN-MCCDs/UN-MCCD.R` | `simulations/outlier_detection/UN-MCCDs/` |
-| **SU-MCCDs** | Shape-adaptive variant of RU-MCCDs | `simulations/outlier_detection/SU-MCCDs/SU-MCCDs.R` | `simulations/outlier_detection/SU-MCCDs/` |
-| **SUN-MCCDs** | Shape-adaptive variant of UN-MCCDs | `simulations/outlier_detection/SUN-MCCDs/SUN-MCCD.R` | `simulations/outlier_detection/SUN-MCCDs/` |
+| **RU-MCCDs** | Rapid Uniformity-Based CCDs with Mutual Catch Graphs (RK-CCD + MCG) | `methods/outlier_detection/RU-MCCDs.R` | `simulations/outlier_detection/RU-MCCDs/` |
+| **UN-MCCDs** | Uniformity- and Neighbour-based CCDs adapted for outlier detection | `methods/outlier_detection/UN-MCCD.R` | `simulations/outlier_detection/UN-MCCDs/` |
+| **SU-MCCDs** | Shape-adaptive variant of RU-MCCDs | `methods/outlier_detection/SU-MCCDs.R` | `simulations/outlier_detection/SU-MCCDs/` |
+| **SUN-MCCDs** | Shape-adaptive variant of UN-MCCDs | `methods/outlier_detection/SUN-MCCD.R` | `simulations/outlier_detection/SUN-MCCDs/` |
 | **OOS** *(manuscript)* | Outbound Outlyingness Score: ratio of mean neighbour-density to a point's vicinity density | `methods/outlyingness_scores/Outlyingness_Score.R` | `simulations/outlyingness_scores/RKCCD_OOS_IOS/`, `simulations/outlyingness_scores/UNCCD_OOS_IOS/` |
 | **IOS** *(manuscript)* | Inbound Outlyingness Score: inverse of cumulative inbound-neighbour influence; robust to masking | `methods/outlyingness_scores/Outlyingness_Score.R` (shared with OOS) | same as OOS |
 | **RKCCD-OOS / RKCCD-IOS** | OOS / IOS computed on the RK-CCD covering-ball digraph | `methods/outlyingness_scores/RKCCD_OOS_IOS.R` | `simulations/outlyingness_scores/RKCCD_OOS_IOS/` |

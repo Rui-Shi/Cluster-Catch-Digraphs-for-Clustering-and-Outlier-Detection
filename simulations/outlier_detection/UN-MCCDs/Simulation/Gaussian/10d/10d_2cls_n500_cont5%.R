@@ -1,8 +1,8 @@
 #!/usr/bin/env Rscript
-source("/mmfs1/home/rzs0112/code_working_folder/ccds/NN_CCD.R")
-source("/mmfs1/home/rzs0112/code_working_folder/ccds/mKNN_CCD_functions.R")
-source("/mmfs1/home/rzs0112/code_working_folder/general functions/count.R")
-load("/mmfs1/home/rzs0112/code_working_folder/general functions/NN-test_quantile/NN-test-simul_10d_99%.RData")
+source(here::here("R/ccds/NN_CCD.R"))
+source(here::here("R/ccds/mKNN_CCD_functions.R"))
+source(here::here("R/general_functions/count.R"))
+load(here::here("R/NN-test_quantile/NN-test-simul_10d_99%.RData"))
 library(parallel)
 library(doParallel)
 library(MASS)

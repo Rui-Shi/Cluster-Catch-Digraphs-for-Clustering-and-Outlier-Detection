@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
-source("/mmfs1/home/rzs0112/code_working_folder/M-FNNCCDs/M-FNNCCDs.R")
-source("/mmfs1/home/rzs0112/code_working_folder/general functions/count.R")
-load("/mmfs1/home/rzs0112/code_working_folder/general functions/NN-test_quantile/NN-test-simul_20d_999%.RData")
+source(here::here("methods/outlyingness_scores/M-FNNCCDs/M-FNNCCDs.R"))
+source(here::here("R/general_functions/count.R"))
+load(here::here("R/NN-test_quantile/NN-test-simul_20d_999%.RData"))
 library(parallel)
 library(doParallel)
 library(MASS)

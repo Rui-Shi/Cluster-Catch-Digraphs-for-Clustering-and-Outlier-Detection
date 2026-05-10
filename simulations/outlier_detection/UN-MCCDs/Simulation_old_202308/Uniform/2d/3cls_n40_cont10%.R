@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
-source("/mmfs1/home/rzs0112/code_working_folder/ccds/NN_CCD.R")
-source("/mmfs1/home/rzs0112/code_working_folder/ccds/mKNN_CCD_functions.R")
-source("/mmfs1/home/rzs0112/code_working_folder/general functions/count.R")
+source(here::here("R/ccds/NN_CCD.R"))
+source(here::here("R/ccds/mKNN_CCD_functions.R"))
+source(here::here("R/general_functions/count.R"))
 library(doParallel)
 library(MASS)
 

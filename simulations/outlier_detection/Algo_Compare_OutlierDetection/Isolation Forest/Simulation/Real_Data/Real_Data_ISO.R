@@ -4,8 +4,8 @@ library(doParallel)
 library(MASS)
 library(igraph)
 library(dbscan)
-source("G:/code_working_folder/Algo_Compare/Isolation Forest/ISO.R")
-source("G:/code_working_folder/Algo_Compare/Real Datasets/RealData_Collection.R")
+source(here::here("simulations/outlier_detection/Algo_Compare_OutlierDetection/Isolation Forest/ISO.R"))
+source(here::here("data/outlier_detection/RealData_Collection.R"))
 
 ntrees = 1000; sample_size = 256; thresh = 0.55
 
