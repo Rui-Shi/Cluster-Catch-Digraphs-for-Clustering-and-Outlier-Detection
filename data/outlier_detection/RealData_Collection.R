@@ -3,8 +3,8 @@
 library(R.matlab)
 library(foreign)
 library(dplyr)
-# setwd("/media/rui/exNVME/code_working_folder/Algo_Compare_OD/Real_Datasets")
-setwd("G:/code_working_folder/Algo_Compare_OD/Real_Datasets")
+# setwd(here::here("data/outlier_detection"))
+setwd(here::here("data/outlier_detection"))
 
 # a robust version of normalization
 scale_R = function(x){

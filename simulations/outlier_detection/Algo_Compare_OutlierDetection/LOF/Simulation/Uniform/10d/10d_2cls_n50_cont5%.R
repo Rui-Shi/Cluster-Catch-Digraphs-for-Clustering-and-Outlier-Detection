@@ -77,4 +77,4 @@ print(paste("LOF: the mean TPR is", mean[1],",","the mean TNR", mean[2],",","the
 t2 = Sys.time()
 t2-t1
 
-save.image("G:/code_working_folder/Algo_Compare/LOF/Simulation/Uniform/10d/10d_2cls_n50_cont5%.RData")
+save.image(here::here("simulations/outlier_detection/Algo_Compare_OutlierDetection/LOF/Simulation/Uniform/10d/10d_2cls_n50_cont5%.RData"))

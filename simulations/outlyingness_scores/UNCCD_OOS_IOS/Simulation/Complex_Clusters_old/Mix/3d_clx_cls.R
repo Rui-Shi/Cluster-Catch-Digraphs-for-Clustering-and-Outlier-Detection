@@ -1,11 +1,11 @@
 #!/usr/bin/env Rscript
-source("/mmfs1/home/rzs0112/code_working_folder/ccds/NN_CCD.R")
-source("/mmfs1/home/rzs0112/code_working_folder/Outlyingness_Score/NNCCD_OOS_IOS.R")
-source("/mmfs1/home/rzs0112/code_working_folder/general functions/count.R")
-load("/mmfs1/home/rzs0112/code_working_folder/general functions/NN-test_quantile/NN-test-simul_3d_90%.RData")
-source("/mmfs1/home/rzs0112/code_working_folder/NNCCD_OOS_IOS/Simulation/Uniform/Threshold.R")
-source("/mmfs1/home/rzs0112/code_working_folder/general functions/Uni-Gau_cls.R")
-source("/mmfs1/home/rzs0112/code_working_folder/general functions/ratio3.R")
+source(here::here("R/ccds/NN_CCD.R"))
+source(here::here("methods/outlyingness_scores/NNCCD_OOS_IOS.R"))
+source(here::here("R/general_functions/count.R"))
+load(here::here("R/NN-test_quantile/NN-test-simul_3d_90%.RData"))
+source(here::here("simulations/outlyingness_scores/NNCCD_OOS_IOS/Simulation/Uniform/Threshold.R"))
+source(here::here("R/general_functions/Uni-Gau_cls.R"))
+source(here::here("R/general_functions/ratio3.R"))
 library(parallel)
 library(doParallel)
 library(MASS)
@@ -88,7 +88,7 @@ count.result_IOS = foreach(x=1:iteN,.combine = rbind) %do% count_scores1(x=x,sco
 mean_IOS = c(mean(count.result_IOS[,1]),mean(count.result_IOS[,2]),mean(count.result_IOS[,3]))
 print(paste("IOS: the mean TPR is", mean_IOS[1], "and, the mean TNR", mean_IOS[2], "and, the mean F2-score is", mean_IOS[3]))
 
-save.image("/mmfs1/home/rzs0112/code_working_folder/NNCCD_OOS_IOS/Simulation/Complex_Clusters/Mix/3d_clx_cls.RData")
+save.image(here::here("simulations/outlyingness_scores/NNCCD_OOS_IOS/Simulation/Complex_Clusters/Mix/3d_clx_cls.RData"))
 
 t2 = Sys.time()
 t2-t1

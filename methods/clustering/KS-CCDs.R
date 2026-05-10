@@ -1,5 +1,5 @@
-source("/media/rui/exNVME/code_working_folder/ccds/ccd_ks_NEW.R")
-source("/media/rui/exNVME/code_working_folder/ccds/ccdfunctions.R")
+source(here::here("R/ccds/ccd_ks_NEW.R"))
+source(here::here("R/ccds/ccdfunctions.R"))
 
 # datax: the input data set
 # m: K-S statistics parameter

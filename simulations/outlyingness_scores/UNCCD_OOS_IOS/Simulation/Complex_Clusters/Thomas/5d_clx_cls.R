@@ -1,11 +1,11 @@
 #!/usr/bin/env Rscript
-source("/mmfs1/home/rzs0112/code_working_folder/ccds/UN_CCD.R")
-source("/mmfs1/home/rzs0112/code_working_folder/Outlyingness_Score/UNCCD_OOS_IOS.R")
-source("/mmfs1/home/rzs0112/code_working_folder/general functions/count.R")
-load("/mmfs1/home/rzs0112/code_working_folder/general functions/NN-test_quantile/NN-test-simul_5d_95%.RData")
-source("/mmfs1/home/rzs0112/code_working_folder/UNCCD_OOS_IOS/Simulation/Complex_Clusters/Thomas/Threshold.R")
-source("/mmfs1/home/rzs0112/code_working_folder/general functions/Uni-Gau_cls.R")
-source("/mmfs1/home/rzs0112/code_working_folder/general functions/ratio2.R")
+source(here::here("R/ccds/UN_CCD.R"))
+source(here::here("methods/outlyingness_scores/UNCCD_OOS_IOS.R"))
+source(here::here("R/general_functions/count.R"))
+load(here::here("R/NN-test_quantile/NN-test-simul_5d_95%.RData"))
+source(here::here("simulations/outlyingness_scores/UNCCD_OOS_IOS/Simulation/Complex_Clusters/Thomas/Threshold.R"))
+source(here::here("R/general_functions/Uni-Gau_cls.R"))
+source(here::here("R/general_functions/ratio2.R"))
 library(parallel)
 library(doParallel)
 library(MASS)
@@ -91,7 +91,7 @@ mean_IOS = c(mean(count.result_IOS[,1]),mean(count.result_IOS[,2]),mean(count.re
 print(paste("IOS: the mean TPR is", mean_IOS[1], "and, the mean TNR", mean_IOS[2], "and, BA is", mean_IOS[3], "and, the mean F2-score is", mean_IOS[4]))
 
 
-save.image("/mmfs1/home/rzs0112/code_working_folder/UNCCD_OOS_IOS/Simulation/Complex_Clusters/Thomas/5d_clx_cls.RData")
+save.image(here::here("simulations/outlyingness_scores/UNCCD_OOS_IOS/Simulation/Complex_Clusters/Thomas/5d_clx_cls.RData"))
 
 t2 = Sys.time()
 t2-t1

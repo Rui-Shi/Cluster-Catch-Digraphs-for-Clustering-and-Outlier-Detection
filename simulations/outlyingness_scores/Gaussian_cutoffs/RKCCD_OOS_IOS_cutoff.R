@@ -1,4 +1,4 @@
-source("/media/rui/exNVME/code_working_folder/Outlyingness_Score/RKCCD_OOS_IOS.R")
+source(here::here("methods/outlyingness_scores/RKCCD_OOS_IOS.R"))
 library(parallel)
 library(doParallel)
 library(MASS)
@@ -42,7 +42,7 @@ if(d<=5){quant=0.99 # the level of K-test
 } else {
   quant=0.999
 }
-load("/media/rui/exNVME/code_working_folder/general functions/RK-test_quantile/RK-test-simul_2d_99%.RData")
+load(here::here("R/RK-test_quantile/RK-test-simul_2d_99%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -99,7 +99,7 @@ if(d<=5){quant=0.99 # the level of K-test
 } else {
   quant=0.999
 }
-load("/media/rui/exNVME/code_working_folder/general functions/RK-test_quantile/RK-test-simul_3d_99%.RData")
+load(here::here("R/RK-test_quantile/RK-test-simul_3d_99%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -156,7 +156,7 @@ if(d<=5){quant=0.99 # the level of K-test
 } else {
   quant=0.999
 }
-load("/media/rui/exNVME/code_working_folder/general functions/RK-test_quantile/RK-test-simul_5d_99%.RData")
+load(here::here("R/RK-test_quantile/RK-test-simul_5d_99%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -213,7 +213,7 @@ if(d<=5){quant=0.99 # the level of K-test
 } else {
   quant=0.999
 }
-load("/media/rui/exNVME/code_working_folder/general functions/RK-test_quantile/RK-test-simul_10d_999%.RData")
+load(here::here("R/RK-test_quantile/RK-test-simul_10d_999%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -270,7 +270,7 @@ if(d<=5){quant=0.99 # the level of K-test
 } else {
   quant=0.999
 }
-load("/media/rui/exNVME/code_working_folder/general functions/RK-test_quantile/RK-test-simul_20d_999%.RData")
+load(here::here("R/RK-test_quantile/RK-test-simul_20d_999%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -327,7 +327,7 @@ if(d<=5){quant=0.99 # the level of K-test
 } else {
   quant=0.999
 }
-load("/media/rui/exNVME/code_working_folder/general functions/RK-test_quantile/RK-test-simul_50d_999%.RData")
+load(here::here("R/RK-test_quantile/RK-test-simul_50d_999%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -384,7 +384,7 @@ if(d<=5){quant=0.99 # the level of K-test
 } else {
   quant=0.999
 }
-load("/media/rui/exNVME/code_working_folder/general functions/RK-test_quantile/RK-test-simul_100d_999%.RData")
+load(here::here("R/RK-test_quantile/RK-test-simul_100d_999%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -433,6 +433,6 @@ stopCluster(cl)
 median(unlist(RKCCD_IOS_100d))
 median(unlist(RKCCD_OOS_100d))
 
-save.image("/media/rui/exNVME/code_working_folder/Outlyingness_Score/RKCCD_OSS_IOS_cutoff.RData")
+save.image(here::here("methods/outlyingness_scores/RKCCD_OSS_IOS_cutoff.RData"))
 t2 = Sys.time()
 t2-t1

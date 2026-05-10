@@ -1,7 +1,7 @@
 t1 = Sys.time()
 
-source("/media/rui/exNVME/code_working_folder/CCDs_Clustering/KS-CCDs.R")
-source("/media/rui/exNVME/code_working_folder/Algo_Compare_Clustering/Real_Datasets/Real_Data_Collection.R")
+source(here::here("methods/clustering/KS-CCDs.R"))
+source(here::here("data/clustering/Real_Data_Collection.R"))
 library(mclust)
 library(parallel)
 library(doParallel)

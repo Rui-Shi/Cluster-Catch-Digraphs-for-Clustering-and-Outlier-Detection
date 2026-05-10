@@ -101,4 +101,4 @@ print(paste("The mean success rate is", mean[1],",","the mean true negative rate
 tt2 = Sys.time()
 tt2-tt1
 
-save.image("/mmfs1/home/rzs0112/code_working_folder/M-CCDs/Simulation/Complex_Clusters/Mix/10d_clx_cls.RData")
+save.image(here::here("simulations/outlier_detection/RU-MCCDs/Simulation/Complex_Clusters/Mix/10d_clx_cls.RData"))

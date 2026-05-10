@@ -2,8 +2,8 @@ library(R.matlab)
 library(foreign)
 library(dplyr)
 library(readxl)
-setwd("/media/rui/exNVME/code_working_folder/Algo_Compare_Clustering/Real_Datasets")
-# setwd("G:/code_working_folder/Algo_Compare_Clustering/Real_Datasets")
+setwd(here::here("simulations/clustering/Algo_Compare_Clustering/Real_Datasets"))
+# setwd(here::here("simulations/clustering/Algo_Compare_Clustering/Real_Datasets"))
 
 # a robust version of normalization
 scale_R = function(x){

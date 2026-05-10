@@ -74,4 +74,4 @@ print(paste("DBSCAN: the mean TPR is", mean[1],",","the mean TNR", mean[2],",","
 t2 = Sys.time()
 t2-t1
 
-save.image("G:/code_working_folder/Algo_Compare/DBSCAN/Simulation/Uniform/50d/50d_2cls_n50_cont5%.RData")
+save.image(here::here("simulations/outlier_detection/Algo_Compare_OutlierDetection/DBSCAN/Simulation/Uniform/50d/50d_2cls_n50_cont5%.RData"))

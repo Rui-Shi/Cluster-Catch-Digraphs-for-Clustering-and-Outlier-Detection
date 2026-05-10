@@ -1,5 +1,5 @@
 library(ClusterR)
-source("/media/rui/exNVME/code_working_folder/Algo_Compare_Clustering/Real_Datasets/Real_Data_Collection.R")
+source(here::here("data/clustering/Real_Data_Collection.R"))
 library(ggplot2)
 library(factoextra)
 library(mclust)

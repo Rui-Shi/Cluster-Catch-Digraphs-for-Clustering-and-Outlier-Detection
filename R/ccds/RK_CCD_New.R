@@ -1,8 +1,8 @@
 library(MASS)
 library(cluster)
 library(igraph)
-source("/mmfs1/home/rzs0112/code_working_folder/ccds/ccdfunctions.R")
-source("/mmfs1/home/rzs0112/code_working_folder/ccds/Kest.R")
+source(here::here("R/ccds/ccdfunctions.R"))
+source(here::here("R/ccds/Kest.R"))
 
 # ccd clustering that find the dominating set with greedy alg
 # translation correction as edge correction

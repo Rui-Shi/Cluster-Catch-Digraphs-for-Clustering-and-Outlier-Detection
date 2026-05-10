@@ -1,4 +1,4 @@
-source("/media/rui/exNVME/code_working_folder/ccds/UN_CCD.R")
+source(here::here("R/ccds/UN_CCD.R"))
 
 # main function for outlier function
 # datax: the data set

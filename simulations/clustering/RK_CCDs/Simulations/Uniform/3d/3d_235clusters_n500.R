@@ -1,8 +1,8 @@
 #!/usr/bin/env Rscript
-source("/mmfs1/home/rzs0112/code_working_folder/CCDs_Clustering/RK-CCDs.R")
-source("/mmfs1/home/rzs0112/code_working_folder/general functions/Uni-Gau_cls.R")
-load("/mmfs1/home/rzs0112/code_working_folder/general functions/RK-test_quantile/RK-test-simul_3d_99%.RData")
-setwd("/mmfs1/home/rzs0112/code_working_folder/CCDs_Clustering/RK_CCDs/Simulations/Uniform/3d")
+source(here::here("methods/clustering/RK-CCDs.R"))
+source(here::here("R/general_functions/Uni-Gau_cls.R"))
+load(here::here("R/RK-test_quantile/RK-test-simul_3d_99%.RData"))
+setwd(here::here("simulations/clustering/RK_CCDs/Simulations/Uniform/3d"))
 library(mclust)
 library(parallel)
 library(doParallel)

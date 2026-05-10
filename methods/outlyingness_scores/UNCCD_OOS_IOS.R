@@ -1,5 +1,5 @@
-source("/mmfs1/home/rzs0112/code_working_folder/Outlyingness_Score/Outlyingness_Score.R")
-source("/mmfs1/home/rzs0112/code_working_folder/ccds/UN_CCD.R")
+source(here::here("methods/outlyingness_scores/Outlyingness_Score.R"))
+source(here::here("R/ccds/UN_CCD.R"))
 
 # calculate the Outbound Outlyingness Scores of NNCCD
 # niter is the number of simulated data set for CSR test if simul is not provided

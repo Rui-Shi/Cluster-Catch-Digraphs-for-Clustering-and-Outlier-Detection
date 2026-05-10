@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
-source("/mmfs1/home/rzs0112/code_working_folder/CCDs_Clustering/KS-CCDs.R")
-source("/mmfs1/home/rzs0112/code_working_folder/general functions/Uni-Gau_cls.R")
-setwd("/mmfs1/home/rzs0112/code_working_folder/CCDs_Clustering/KS_CCDs/Simulations/Gaussian/5d")
+source(here::here("methods/clustering/KS-CCDs.R"))
+source(here::here("R/general_functions/Uni-Gau_cls.R"))
+setwd(here::here("simulations/clustering/KS_CCDs/Simulations/Gaussian/5d"))
 library(mclust)
 library(parallel)
 library(doParallel)

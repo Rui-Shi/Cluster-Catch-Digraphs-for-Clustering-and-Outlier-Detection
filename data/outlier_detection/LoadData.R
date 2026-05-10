@@ -1,4 +1,4 @@
-setwd("G:/code_working_folder/Algo_Compare_OD/Real_Datasets")
+setwd(here::here("data/outlier_detection"))
 library(R.matlab)
 library(foreign)
 

@@ -1,5 +1,5 @@
-source("G:/code_working_folder/Algo_Compare_Clustering/Real_Datasets/Real_Data_Collection.R")
-source("G:/code_working_folder/Algo_Compare_Clustering/MST/MST_Clustering.R")
+source(here::here("data/clustering/Real_Data_Collection.R"))
+source(here::here("simulations/clustering/Algo_Compare_Clustering/MST/MST_Clustering.R"))
 library(ggplot2)
 library(factoextra)
 library(mclust)

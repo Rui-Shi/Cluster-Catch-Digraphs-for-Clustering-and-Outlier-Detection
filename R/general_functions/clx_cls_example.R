@@ -1,4 +1,4 @@
-source("G:/code_working_folder/general functions/Uni-Gau_cls.R")
+source(here::here("R/general_functions/Uni-Gau_cls.R"))
 
 # plot some simulations of Matern Cluster process
 ratio = c(1.000000, 1.024079, 1.068926, 1.163903, 1.291596)

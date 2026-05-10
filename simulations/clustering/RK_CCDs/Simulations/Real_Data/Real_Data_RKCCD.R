@@ -1,7 +1,7 @@
 t1 = Sys.time()
 
-source("/media/rui/exNVME/code_working_folder/CCDs_Clustering/RK-CCDs.R")
-source("/media/rui/exNVME/code_working_folder/Algo_Compare_Clustering/Real_Datasets/Real_Data_Collection.R")
+source(here::here("methods/clustering/RK-CCDs.R"))
+source(here::here("data/clustering/Real_Data_Collection.R"))
 library(mclust)
 library(parallel)
 library(doParallel)
@@ -10,7 +10,7 @@ library(cluster)
 library(igraph)
 
 ##### iris data #####
-load("/media/rui/exNVME/code_working_folder/general functions/RK-test_quantile/RK-test-simul_4d_99%.RData")
+load(here::here("R/RK-test_quantile/RK-test-simul_4d_99%.RData"))
 quant = 0.99
 
 n_col = ncol(iris)
@@ -34,7 +34,7 @@ print(paste("iris x RK-CCDs: the ARI is", ari, "the average silhouette index is"
 
 
 ##### seeds data #####
-load("/media/rui/exNVME/code_working_folder/general functions/RK-test_quantile/RK-test-simul_7d_99%.RData")
+load(here::here("R/RK-test_quantile/RK-test-simul_7d_99%.RData"))
 quant = 0.99
 
 n_col = ncol(seeds)
@@ -58,7 +58,7 @@ print(paste("seeds x RK-CCDs: the ARI is", ari, "the average silhouette index is
 
 
 ##### user_knowledge data #####
-load("/media/rui/exNVME/code_working_folder/general functions/RK-test_quantile/RK-test-simul_6d_99%.RData")
+load(here::here("R/RK-test_quantile/RK-test-simul_6d_99%.RData"))
 quant = 0.99
 
 n_col = ncol(user_knowledge)
@@ -82,7 +82,7 @@ print(paste("user_knowledge x RK-CCDs: the ARI is", ari, "the average silhouette
 
 
 ##### wholesale data #####
-load("/media/rui/exNVME/code_working_folder/general functions/RK-test_quantile/RK-test-simul_8d_99%.RData")
+load(here::here("R/RK-test_quantile/RK-test-simul_8d_99%.RData"))
 quant = 0.99
 
 n_col = ncol(wholesale)
@@ -106,7 +106,7 @@ print(paste("wholesale x RK-CCDs: the ARI is", ari, "the average silhouette inde
 
 
 ##### breast_cancer data #####
-load("/media/rui/exNVME/code_working_folder/general functions/RK-test_quantile/RK-test-simul_9d_999%.RData")
+load(here::here("R/RK-test_quantile/RK-test-simul_9d_999%.RData"))
 quant = 0.999
 
 n_col = ncol(breast_cancer)
@@ -130,7 +130,7 @@ print(paste("breast_cancer x RK-CCDs: the ARI is", ari, "the average silhouette 
 
 
 ##### aggregation data #####
-load("/media/rui/exNVME/code_working_folder/general functions/RK-test_quantile/RK-test-simul_2d_99%.RData")
+load(here::here("R/RK-test_quantile/RK-test-simul_2d_99%.RData"))
 quant = 0.99
 
 n_col = ncol(aggregation)
@@ -154,7 +154,7 @@ print(paste("aggregation x RK-CCDs: the ARI is", ari, "the average silhouette in
 
 
 ##### asymmetric data #####
-load("/media/rui/exNVME/code_working_folder/general functions/RK-test_quantile/RK-test-simul_2d_99%.RData")
+load(here::here("R/RK-test_quantile/RK-test-simul_2d_99%.RData"))
 quant = 0.99
 
 n_col = ncol(asymmetric)
@@ -178,7 +178,7 @@ print(paste("asymmetric x RK-CCDs: the ARI is", ari, "the average silhouette ind
 
 
 ##### R15 data #####
-load("/media/rui/exNVME/code_working_folder/general functions/RK-test_quantile/RK-test-simul_2d_99%.RData")
+load(here::here("R/RK-test_quantile/RK-test-simul_2d_99%.RData"))
 quant = 0.99
 
 n_col = ncol(R15)
@@ -202,7 +202,7 @@ print(paste("R15 x RK-CCDs: the ARI is", ari, "the average silhouette index is",
 
 
 ##### D31 data #####
-load("/media/rui/exNVME/code_working_folder/general functions/RK-test_quantile/RK-test-simul_2d_99%.RData")
+load(here::here("R/RK-test_quantile/RK-test-simul_2d_99%.RData"))
 quant = 0.99
 
 n_col = ncol(D31)

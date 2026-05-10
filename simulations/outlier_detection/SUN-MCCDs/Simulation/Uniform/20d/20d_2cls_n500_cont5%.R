@@ -94,4 +94,4 @@ print(paste("The mean success rate is", mean[1],",","and, the mean True positive
 t2 = Sys.time()
 t2-t1
 
-save.image("/mmfs1/home/rzs0112/code_working_folder/M-FNNCCDs/Simulation/Uniform/20d/20d_2cls_n500_cont5%.RData")
+save.image(here::here("simulations/outlier_detection/SUN-MCCDs/Simulation/Uniform/20d/20d_2cls_n500_cont5%.RData"))

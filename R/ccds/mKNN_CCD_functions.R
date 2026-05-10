@@ -4,12 +4,12 @@ library(igraph)
 # step: the value m decreases each time
 # m.intial: the starting value of m
 connected.ksccd.m.old = function(t){
-  source("/mmfs1/home/rzs0112/code_working_folder/ccds/ccd_ks_NEW.R")
-  source("/mmfs1/home/rzs0112/code_working_folder/ccds/ccdfunctions.R")
-  #source("C:/Users/shiru/OneDrive - Auburn University/Research Outliers Detection/code/ccds/ccd_ks_NEW.R")
-  #source("C:/Users/shiru/OneDrive - Auburn University/Research Outliers Detection/code/ccds/functions.R")
-  #source("G:/OneDrive - Auburn University/Research Outliers Detection/code/ccds/ccd_ks_NEW.R")
-  #source("G:/OneDrive - Auburn University/Research Outliers Detection/code/ccds/functions.R")
+  source(here::here("R/ccds/ccd_ks_NEW.R"))
+  source(here::here("R/ccds/ccdfunctions.R"))
+  #source(here::here("R/ccds/ccd_ks_NEW.R"))
+  #source(here::here("R/ccds/functions.R"))
+  #source(here::here("R/ccds/ccd_ks_NEW.R"))
+  #source(here::here("R/ccds/functions.R"))
   if(is.null(nrow(t))){
     
     m = 1
@@ -48,12 +48,12 @@ connected.ksccd.m.old = function(t){
 # step: the value m decreases each time
 # m.intial: the starting value of m
 connected.ksccd.m = function(t){
-   source("/mmfs1/home/rzs0112/code_working_folder/ccds/ccd_ks_NEW.R")
-  source("/mmfs1/home/rzs0112/code_working_folder/ccds/ccdfunctions.R")
-  # source("C:/Users/shiru/OneDrive - Auburn University/Research Outliers Detection/code/ccds/ccd_ks_NEW.R")
-  # source("C:/Users/shiru/OneDrive - Auburn University/Research Outliers Detection/code/ccds/ccdfunctions.R")
-  #   source("/media/rui/exNVME/code_working_folder/ccds/ccd_ks_NEW.R")
-  #   source("/media/rui/exNVME/code_working_folder/ccds/ccdfunctions.R")
+   source(here::here("R/ccds/ccd_ks_NEW.R"))
+  source(here::here("R/ccds/ccdfunctions.R"))
+  # source(here::here("R/ccds/ccd_ks_NEW.R"))
+  # source(here::here("R/ccds/ccdfunctions.R"))
+  #   source(here::here("R/ccds/ccd_ks_NEW.R"))
+  #   source(here::here("R/ccds/ccdfunctions.R"))
   if(is.null(nrow(t))){
     m = 1
   } else {

@@ -1,4 +1,4 @@
-source("/media/rui/exNVME/code_working_folder/general functions/Uni-Gau_cls.R")
+source(here::here("R/general_functions/Uni-Gau_cls.R"))
 d = 2
 kappa1 = 3
 mu1 = 33.3

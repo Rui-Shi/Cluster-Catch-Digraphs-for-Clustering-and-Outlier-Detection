@@ -114,6 +114,6 @@ print(paste("The mean success rate is", mean[1],",","the mean true negative rate
 #   plot(x=outlier.result[[x]]$cluster[[i]][,1],y=outlier.result[[x]]$cluster[[i]][,2], asp=1,ylim=c(0,1),xlim=c(0,1), pch = p)
 # }
 
-save.image("/mmfs1/home/rzs0112/code_working_folder/M-FNNCCDs/Simulation/Complex_Clusters/Matern/20d_clx_cls.RData")
+save.image(here::here("simulations/outlier_detection/SUN-MCCDs/Simulation/Complex_Clusters/Matern/20d_clx_cls.RData"))
 tt2 = Sys.time()
 tt2-tt1

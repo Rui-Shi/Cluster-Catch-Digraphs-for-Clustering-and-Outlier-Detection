@@ -1,11 +1,11 @@
 #!/usr/bin/env Rscript
-source("/mmfs1/home/rzs0112/code_working_folder/ccds/RK_CCD_New.R")
-source("/mmfs1/home/rzs0112/code_working_folder/Outlyingness_Score/RKCCD_OOS_IOS.R")
-source("/mmfs1/home/rzs0112/code_working_folder/general functions/count.R")
-load("/mmfs1/home/rzs0112/code_working_folder/general functions/RK-test_quantile/RK-test-simul_50d_999%.RData")
-source("/mmfs1/home/rzs0112/code_working_folder/RKCCD_OOS_IOS/Simulation/Uniform/Threshold.R")
-source("/mmfs1/home/rzs0112/code_working_folder/general functions/Uni-Gau_cls.R")
-source("/mmfs1/home/rzs0112/code_working_folder/general functions/ratio1.R")
+source(here::here("R/ccds/RK_CCD_New.R"))
+source(here::here("methods/outlyingness_scores/RKCCD_OOS_IOS.R"))
+source(here::here("R/general_functions/count.R"))
+load(here::here("R/RK-test_quantile/RK-test-simul_50d_999%.RData"))
+source(here::here("simulations/outlyingness_scores/RKCCD_OOS_IOS/Simulation/Uniform/Threshold.R"))
+source(here::here("R/general_functions/Uni-Gau_cls.R"))
+source(here::here("R/general_functions/ratio1.R"))
 
 library(parallel)
 library(doParallel)
@@ -85,4 +85,4 @@ print(paste("IOS: the mean TPR is", mean_IOS[1], "and, the mean TNR", mean_IOS[2
 t2 = Sys.time()
 t2-t1
 
-save.image("/mmfs1/home/rzs0112/code_working_folder/RKCCD_OOS_IOS/Simulation/Complex_Clusters/Matern/50d_clx_cls.RData")
+save.image(here::here("simulations/outlyingness_scores/RKCCD_OOS_IOS/Simulation/Complex_Clusters/Matern/50d_clx_cls.RData"))

@@ -1,4 +1,4 @@
-source("/media/rui/exNVME/code_working_folder/Outlyingness_Score/NNCCD_OOS_IOS.R")
+source(here::here("methods/outlyingness_scores/NNCCD_OOS_IOS.R"))
 library(parallel)
 library(doParallel)
 library(MASS)
@@ -53,7 +53,7 @@ n2 = round(n*(1-cont)*0.5)
 n0 = round(n*cont)
 
 ##d=2##
-load("/media/rui/exNVME/code_working_folder/general functions/NN-test_quantile/NN-test-simul_2d_85%.RData")
+load(here::here("R/NN-test_quantile/NN-test-simul_2d_85%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -98,7 +98,7 @@ median(unlist(NNCCD_OOS_2d))
 
 ##d=3##
 d=3
-load("/media/rui/exNVME/code_working_folder/general functions/NN-test_quantile/NN-test-simul_3d_90%.RData")
+load(here::here("R/NN-test_quantile/NN-test-simul_3d_90%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -143,7 +143,7 @@ median(unlist(NNCCD_OOS_3d))
 
 ##d=5##
 d=5
-load("/media/rui/exNVME/code_working_folder/general functions/NN-test_quantile/NN-test-simul_5d_95%.RData")
+load(here::here("R/NN-test_quantile/NN-test-simul_5d_95%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -188,7 +188,7 @@ median(unlist(NNCCD_OOS_5d))
 
 ##d=10##
 d=10
-load("/media/rui/exNVME/code_working_folder/general functions/NN-test_quantile/NN-test-simul_10d_99%.RData")
+load(here::here("R/NN-test_quantile/NN-test-simul_10d_99%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -234,7 +234,7 @@ median(unlist(NNCCD_OOS_10d))
 
 ##d=20##
 d=20
-load("/media/rui/exNVME/code_working_folder/general functions/NN-test_quantile/NN-test-simul_20d_999%.RData")
+load(here::here("R/NN-test_quantile/NN-test-simul_20d_999%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -279,7 +279,7 @@ median(unlist(NNCCD_OOS_20d))
 
 ##d=50##
 d=50
-load("/media/rui/exNVME/code_working_folder/general functions/NN-test_quantile/NN-test-simul_50d_999%.RData")
+load(here::here("R/NN-test_quantile/NN-test-simul_50d_999%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -322,7 +322,7 @@ median(unlist(NNCCD_OOS_50d))
 
 ##d=100##
 d=100
-load("/media/rui/exNVME/code_working_folder/general functions/NN-test_quantile/NN-test-simul_100d_999%.RData")
+load(here::here("R/NN-test_quantile/NN-test-simul_100d_999%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -364,6 +364,6 @@ stopCluster(cl)
 median(unlist(NNCCD_IOS_100d))
 median(unlist(NNCCD_OOS_100d))
 
-save.image("/media/rui/exNVME/code_working_folder/Outlyingness_Score/NNCCD_OSS_IOS_cutoff.RData")
+save.image(here::here("methods/outlyingness_scores/NNCCD_OSS_IOS_cutoff.RData"))
 t2 = Sys.time()
 t2-t1
