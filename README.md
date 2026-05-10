@@ -20,16 +20,21 @@ has been rewritten to use
 [`here::here()`](https://here.r-lib.org/), so the scripts run as-is from
 a fresh clone after `install.packages("here")`.
 
-> ### ⚠️ The `*.html` files under `simulations/` are simulation **outputs**, not documentation
+> ### ⚠️ Files under `simulations/` that are **outputs**, not source
 >
-> Roughly 275 HTML files are scattered through the simulation tree
-> (e.g. `simulations/.../Real_Data_DBSCAN.html`). They are R Markdown /
-> R Notebook **knitted outputs** captured from previous runs of the
-> matching `*.R` scripts. They are kept for reference (so you can see
-> what a successful run produced) but they are **not** inputs, source
-> code, or documentation. **Only the `*.R` files in those directories
-> are runnable.** If you regenerate results, the `.html` files will
-> be overwritten.
+> Two kinds of files in the simulation tree are captured outputs from
+> previous runs, not inputs you should edit:
+>
+> - **~275 `*.html` files** (e.g. `Real_Data_DBSCAN.html`) — R Markdown
+>   / R Notebook knit outputs of the matching `*.R` scripts.
+> - **~2,685 `slurm-*.out` files** — stdout/stderr captured from the
+>   SLURM HPC jobs that produced the published results.
+>
+> Both are kept for reference (so you can see what a successful run
+> produced and inspect the original numerical output) but they are
+> **not** source, inputs, or documentation. **Only the `*.R` files in
+> those directories are runnable.** If you regenerate results, the
+> `.html` and `.out` files will be overwritten or replaced.
 
 ---
 
