@@ -208,20 +208,27 @@ simulation scripts will resolve.
 
 ## Notes on bundled vs missing artifacts
 
-A small number of `source()` references map to companion methods or
-threshold scripts that were not bundled in this repository. They are now
-written as `here::here("methods/outlyingness_scores/M-FCCDs/M-FCCDs.R")`
-(etc.) — i.e., the path tells you where the file should live if you
-obtain it. The affected references are:
+The MCCD simulation trees originally `source()`d files named `M-FCCDs.R`,
+`M-FNNCCDs.R`, and `M-CCDs.R`. These are earlier names for the
+outlier-detection method wrappers and have been re-pointed at their
+present-day equivalents:
+
+| Old name | Present-day file |
+|---|---|
+| `M-CCDs.R` | `methods/outlier_detection/RU-MCCDs.R` |
+| `M-FCCDs.R` | `methods/outlier_detection/SU-MCCDs.R` |
+| `M-FNNCCDs.R` | `methods/outlier_detection/SUN-MCCD.R` |
+
+The only `source()` references that remain unmappable are NNCCD
+threshold scripts referenced from deprecated `_old` simulation folders:
 
 | Missing target | Where it would live | Affected simulations |
 |---|---|---|
-| M-FCCDs.R | `methods/outlyingness_scores/M-FCCDs/M-FCCDs.R` | F-CCD-based OOS/IOS variants |
-| M-FNNCCDs.R | `methods/outlyingness_scores/M-FNNCCDs/M-FNNCCDs.R` | FNN-CCD-based OOS/IOS variants |
-| NNCCD threshold scripts | `simulations/outlyingness_scores/NNCCD_OOS_IOS/Simulation/...` | NNCCD threshold calibration |
+| NNCCD threshold scripts | `simulations/outlyingness_scores/NNCCD_OOS_IOS/Simulation/...` | only deprecated `_old/` runs under `simulations/outlyingness_scores/UNCCD_OOS_IOS/Simulation/` |
 
 The OOS/IOS results reported in the manuscript do not depend on these
-missing files (RKCCD and UNCCD variants are fully reproducible).
+missing files; the active RKCCD- and UNCCD-based simulation trees are
+fully reproducible.
 
 ---
 

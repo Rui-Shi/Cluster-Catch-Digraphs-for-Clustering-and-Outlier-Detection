@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 tt1 = Sys.time()
-source(here::here("methods/outlyingness_scores/M-FNNCCDs/M-FNNCCDs.R"))
+source(here::here("methods/outlier_detection/SUN-MCCD.R"))
 source(here::here("R/general_functions/count.R"))
 source(here::here("R/general_functions/Uni-Gau_cls.R"))
 load(here::here("R/NN-test_quantile/NN-test-simul_100d_999%.RData"))

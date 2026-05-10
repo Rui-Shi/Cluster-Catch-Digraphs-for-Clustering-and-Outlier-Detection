@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
 tt1 = Sys.time()
-source(here::here("methods/outlyingness_scores/M-FCCDs/M-FCCDs.R"))
+source(here::here("methods/outlier_detection/SU-MCCDs.R"))
 source(here::here("R/general_functions/count.R"))
 source(here::here("R/general_functions/Uni-Gau_cls.R"))
 load(here::here("R/RK-test_quantile/RK-test-simul_10d_999%.RData"))
