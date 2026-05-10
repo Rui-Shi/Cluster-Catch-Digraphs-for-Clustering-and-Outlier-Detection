@@ -20,6 +20,17 @@ has been rewritten to use
 [`here::here()`](https://here.r-lib.org/), so the scripts run as-is from
 a fresh clone after `install.packages("here")`.
 
+> ### ⚠️ The `*.html` files under `simulations/` are simulation **outputs**, not documentation
+>
+> Roughly 275 HTML files are scattered through the simulation tree
+> (e.g. `simulations/.../Real_Data_DBSCAN.html`). They are R Markdown /
+> R Notebook **knitted outputs** captured from previous runs of the
+> matching `*.R` scripts. They are kept for reference (so you can see
+> what a successful run produced) but they are **not** inputs, source
+> code, or documentation. **Only the `*.R` files in those directories
+> are runnable.** If you regenerate results, the `.html` files will
+> be overwritten.
+
 ---
 
 ## Repository layout
