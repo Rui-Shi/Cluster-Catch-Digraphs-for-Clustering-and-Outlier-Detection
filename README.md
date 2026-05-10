@@ -66,8 +66,8 @@ a fresh clone after `install.packages("here")`.
 | **UN-MCCDs** | Uniformity- and Neighbour-based CCDs adapted for outlier detection | `methods/outlier_detection/UN-MCCD.R` | `simulations/outlier_detection/UN-MCCDs/` |
 | **SU-MCCDs** | Shape-adaptive variant of RU-MCCDs | `methods/outlier_detection/SU-MCCDs.R` | `simulations/outlier_detection/SU-MCCDs/` |
 | **SUN-MCCDs** | Shape-adaptive variant of UN-MCCDs | `methods/outlier_detection/SUN-MCCD.R` | `simulations/outlier_detection/SUN-MCCDs/` |
-| **OOS** *(manuscript)* | Outbound Outlyingness Score: ratio of mean neighbour-density to a point's vicinity density | `methods/outlyingness_scores/Outlyingness_Score.R` | `simulations/outlyingness_scores/RKCCD_OOS_IOS/`, `simulations/outlyingness_scores/UNCCD_OOS_IOS/` |
-| **IOS** *(manuscript)* | Inbound Outlyingness Score: inverse of cumulative inbound-neighbour influence; robust to masking | `methods/outlyingness_scores/Outlyingness_Score.R` (shared with OOS) | same as OOS |
+| **OOS** | Outbound Outlyingness Score: ratio of mean neighbour-density to a point's vicinity density | `methods/outlyingness_scores/Outlyingness_Score.R` | `simulations/outlyingness_scores/RKCCD_OOS_IOS/`, `simulations/outlyingness_scores/UNCCD_OOS_IOS/` |
+| **IOS** | Inbound Outlyingness Score: inverse of cumulative inbound-neighbour influence; robust to masking | `methods/outlyingness_scores/Outlyingness_Score.R` (shared with OOS) | same as OOS |
 | **RKCCD-OOS / RKCCD-IOS** | OOS / IOS computed on the RK-CCD covering-ball digraph | `methods/outlyingness_scores/RKCCD_OOS_IOS.R` | `simulations/outlyingness_scores/RKCCD_OOS_IOS/` |
 | **UNCCD-OOS / UNCCD-IOS** | OOS / IOS computed on the UN-CCD covering-ball digraph | `methods/outlyingness_scores/UNCCD_OOS_IOS.R` | `simulations/outlyingness_scores/UNCCD_OOS_IOS/` |
 
@@ -229,23 +229,6 @@ threshold scripts referenced from deprecated `_old` simulation folders:
 The OOS/IOS results reported in the manuscript do not depend on these
 missing files; the active RKCCD- and UNCCD-based simulation trees are
 fully reproducible.
-
----
-
-## Manuscript correspondence (Pattern Recognition / SLDS)
-
-The manuscript cited above benchmarks **OOS** and **IOS** against the
-MCCD family (RU, SU, UN, SUN) and against the established detectors
-LOF, DBSCAN, MST, ODIN, and Isolation Forest. The exact correspondence
-is:
-
-| Manuscript element | Repository location |
-|---|---|
-| OOS / IOS definition (Section 2) | `methods/outlyingness_scores/Outlyingness_Score.R` |
-| Synthetic-data Monte Carlo (Section 3) | `simulations/outlyingness_scores/RKCCD_OOS_IOS/`, `simulations/outlyingness_scores/UNCCD_OOS_IOS/` |
-| Cutoff calibration (Section 3.1, Tables 2-3) | `simulations/outlyingness_scores/Uniform_cutoffs/`, `simulations/outlyingness_scores/Gaussian_cutoffs/` |
-| Real-data benchmarks (Section 4) | `data/outlier_detection/` + the 10 datasets listed above |
-| Baseline detectors (Section 4) | `simulations/outlier_detection/Algo_Compare_OutlierDetection/` |
 
 ---
 
