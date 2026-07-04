@@ -10,7 +10,7 @@ source(here::here("R/general_functions/count.R"))
 cores = detectCores()
 
 LB = 11 # Lower bound for MinPts
-UB = 50 # Upper bound for MinPts
+UB = 30 # Upper bound for MinPts
 Thresh = 1.5 # threshhold for outliers
 
 
