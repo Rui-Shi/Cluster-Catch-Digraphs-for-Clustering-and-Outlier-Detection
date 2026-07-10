@@ -1,0 +1,3 @@
+*.RData
+revision_experiments/results/
+revision_experiments/.venv/
