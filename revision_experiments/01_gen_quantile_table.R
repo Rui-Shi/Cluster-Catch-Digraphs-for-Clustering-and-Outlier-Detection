@@ -7,10 +7,20 @@
 # construction, reusing the ORIGINAL generator functions
 # (KestP.simpois.edge.quantile in R/ccds/Kest.R, and
 #  NNDestP.simpois.lower.quant in R/ccds/NN_Dist_Est.R) unmodified.
-# Exception: for RK at d >= 342 the original edge-correction weight overflows
+# Exception 1: for RK at d >= 342 the original edge-correction weight overflows
 # (gamma() -> Inf/NaN); a log-space-stable override defined in THIS file is
 # selected automatically there (see "Numerically stable RK override" below;
 # validated by 01c_validate_rk_stable.R). Original files are never touched.
+# Exception 2: for NN (every d), a performance override defined in
+# revision_experiments/01e_nn_fast.R is used in place of the original
+# NNDestP.simpois.lower.quant -- distributionally identical output (proven,
+# not approximated; see that file's header), same statistical definition and
+# object shape, but avoids an O(d^3) eigendecomposition per draw and cuts
+# peak per-worker RAM by ~2-3 orders of magnitude by streaming the
+# per-iteration workload instead of materializing it as a list first.
+# Validated by 01f_validate_nn_fast.R (statistical equivalence + timing +
+# RAM). Needed to make d=400 at niter=10000/cores=20 tractable at all
+# (original path RAM-caps at ~16 cores there); originals are never touched.
 #
 # --------------------------------------------------------------------------
 # Reverse-engineered production parameters (see revision_experiments notes /
@@ -127,6 +137,9 @@ if (variant == "RK") {
   source(here::here("R/ccds/Kest.R"))
 } else {
   source(here::here("R/ccds/NN_Dist_Est.R"))
+  # Optimized NN override (rnorm-equivalence + streaming) -- see file header
+  # and "Exception 2" note above. Selected for every NN run, all d.
+  source(here::here("revision_experiments/01e_nn_fast.R"))
 }
 
 # ---- Numerically stable RK override for very high d -----------------------
@@ -243,10 +256,10 @@ if (variant == "RK") {
   }
 } else {
   cat(sprintf(
-    "Calling NNDestP.simpois.lower.quant(n=%d, d=%d, quant=%s, niter=%d, shape='sphere')\n",
+    "Calling NNDestP.simpois.lower.quant.fast(n=%d, d=%d, quant=%s, niter=%d, shape='sphere') [optimized override, see 01e_nn_fast.R]\n",
     PROD_N, d, quant, niter
   ))
-  simul <- NNDestP.simpois.lower.quant(PROD_N, d, quant = quant, niter = niter, shape = "sphere")
+  simul <- NNDestP.simpois.lower.quant.fast(PROD_N, d, quant = quant, niter = niter, shape = "sphere")
 }
 
 t_end <- Sys.time()

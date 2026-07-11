@@ -36,6 +36,15 @@ NN table costs (measured probes, cores=20): d=166 ≈ 15.4 h, 274 ≈ 31.5 h; d>
 - Speech (3686×400): every method near chance (best BA 0.527; AUCs 0.475-0.529), consistent with PyOD rows and the literature.
 - Coherence with WP6 PyOD numbers confirmed dataset-by-dataset; no contradictions.
 
+## 4c. WP3 sensitivity: real sweeps + probe complete (T7a, 2026-07-11)
+wp3_sensitivity_real.csv: WBC + Thyroid × 4 OS methods × 18 cutoffs (144 rows); WBC reproduction gate at cutoff=2 PASSED (all 4 methods match published values). All 5 figures rendered (2 real + 3 synthetic-probe). Synthetic probe: 30 reps in 34.7 min on 20 cores (gaussian 107 s/rep, uniform 89, matern 11); production sweep at 200 reps/setting ≈ 11.5 h — queued after the WP4 timing grids. Thyroid timings: RKCCD-OOS 587 s construct / RKCCD-IOS 514 s; UNCCD completed overnight (caches present).
+
+## 4d. NN fast generator validated; user command sheet ready (T3b, 2026-07-11)
+01e_nn_fast.R: rnorm swap (rotation-invariance argument, kills O(d^3) eigen per draw) + streaming SimuOnce. Validation (nn_fast_validation*.log): statistical agreement original-vs-fast within the different-seed MC yardstick (d=50: cor 0.995, mean rel diff 0.4%); per-worker RAM at d=400 2.29 GB → 0.27 GB; measured speedups 1.08x (d=166) to 1.29x (d=400) plus the cores=20 unlock. A worker-export bug (rpoisball.unit.fast not exported to PSOCK workers) was caught in validation step C and fixed before it could reach a production run. USER_RUN_TABLES.md: three commands (NN 166/274/400, niter=10000, cores=20), est. ~14 h / ~28 h / ~37-42 h, no checkpointing (a killed run restarts from zero), full-R-path invocations.
+
+## 4e. R upgraded 4.4.1 → 4.6.1 mid-pipeline (discovered 2026-07-11, after power outage)
+R 4.4.1 was uninstalled (stale PATH entry remains); only 4.6.1 exists. 9 of 17 required packages were missing from 4.6.1's library and scales/ggplot2 were corrupted ("unknown input format", plausibly the power outage) — all reinstalled; 00_env_check.R passes under 4.6.1; the exact user table command completed a toy run. Consequences: all metrics so far (computed under 4.4.1) remain valid; ALL WP4 timing runs execute uniformly under 4.6.1 (none had run yet, so no mixed-version timings); report R 4.6.1 in the manuscript's runtime section provenance.
+
 ## 5. Environment quirks (T0/T2/T6)
 - Bash tool segfaults invoking Rscript → use PowerShell.
 - pip into the venv needs `subst X:` long-path workaround.
