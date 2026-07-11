@@ -128,6 +128,53 @@ partA <- run_all_methods(
 )
 
 # ---------------------------------------------------------------------------
+# PART A2: Glass ordering-guard sanity check (LOF only)
+# ---------------------------------------------------------------------------
+#
+# RealData_Collection.R's glass block sorts by glass[,9] (a feature, Fe)
+# instead of glass[,10] (the label), so -- unlike every other dataset --
+# glass's outliers are NOT positionally last. evaluate() now guards against
+# this by jointly reordering (Y, score) regulars-first before count_scores2.
+# This section runs one cheap method (LOF, Thresh = 1.5 per Real_Data_LOF.R's
+# glass block) through the guarded path to pin a known-good Glass reference.
+cat("\n---- Part A2: Glass ordering-guard sanity (LOF) ----\n")
+
+glass_ds <- load_real_dataset("glass")
+outlier_pos <- which(glass_ds$Y == 0)
+cat(sprintf("glass: n=%d, d=%d, #outliers=%d; outlier row positions: %s\n",
+            glass_ds$n, glass_ds$d, length(outlier_pos),
+            paste(range(outlier_pos), collapse = "-")))
+if (max(outlier_pos) == glass_ds$n && min(outlier_pos) == glass_ds$n - length(outlier_pos) + 1) {
+  cat("glass outliers ARE positionally last (guard is a no-op here)\n")
+} else {
+  cat("glass outliers are NOT positionally last -- evaluate()'s reorder guard is load-bearing\n")
+}
+
+GLASS_CSV <- file.path(RESULTS_DIR, "smoke_glass.csv")
+glass_keys <- c(dataset = "glass", method = "LOF", seed = "1")
+if (has_result(GLASS_CSV, glass_keys)) {
+  cat("  [skip, already recorded] LOF x glass\n")
+  prev <- read.csv(GLASS_CSV, stringsAsFactors = FALSE)
+  r <- prev[prev$dataset == "glass" & prev$method == "LOF" & as.character(prev$seed) == "1", ][1, ]
+  glass_lof_metrics <- c(TPR = r$TPR, TNR = r$TNR, BA = r$BA, F2 = r$F2)
+} else {
+  res_glass <- lof_method(glass_ds$X, glass_ds$d, glass_ds$Y)
+  assert_scores_sane(res_glass$score, glass_ds$n, "LOF(glass)")
+  glass_lof_metrics <- evaluate(glass_ds$Y, res_glass$score, 1.5)
+  assert_metrics_sane(glass_lof_metrics, "LOF(glass)")
+  append_result(GLASS_CSV, c(
+    dataset = "glass", method = "LOF", seed = "1",
+    n = glass_ds$n, d = glass_ds$d, threshold = 1.5,
+    TPR = unname(glass_lof_metrics["TPR"]), TNR = unname(glass_lof_metrics["TNR"]),
+    BA = unname(glass_lof_metrics["BA"]), F2 = unname(glass_lof_metrics["F2"]),
+    t_construct = NA, t_total = round(res_glass$t_total, 4)
+  ))
+}
+cat(sprintf("  LOF x glass (guarded): TPR=%.3f TNR=%.3f BA=%.3f F2=%.3f\n",
+            glass_lof_metrics["TPR"], glass_lof_metrics["TNR"],
+            glass_lof_metrics["BA"], glass_lof_metrics["F2"]))
+
+# ---------------------------------------------------------------------------
 # PART B: synthetic Gaussian, d=20, n=250, 2 clusters + 5% contamination
 # ---------------------------------------------------------------------------
 cat("\n---- Part B: synthetic Gaussian d=20, n=250, 2cls, 5% contamination ----\n")

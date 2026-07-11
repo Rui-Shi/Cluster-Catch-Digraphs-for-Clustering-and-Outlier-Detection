@@ -479,12 +479,18 @@ REAL_DATA_THRESHOLDS <- list(
 # 0 = outlier; and count_scores2 assumes the data is POSITIONALLY ordered
 # with all regular points first and all outliers last (it slices
 # label_pred[1:(n-n0)] and label_pred[(n-n0+1):n], it does not look up Y at
-# each index beyond using it to count n0). This matches
-# data/outlier_detection/RealData_Collection.R, which explicitly sorts every
-# real dataset with "# move outliers to the end", and matches the synthetic
-# generator idiom (rbind(cluster1, cluster2, outliers)).
+# each index beyond using it to count n0). RealData_Collection.R intends to
+# sort every real dataset outliers-last ("# move outliers to the end"), and
+# the synthetic generator idiom (rbind(cluster1, cluster2, outliers)) does so
+# by construction -- BUT the loader's glass block sorts by glass[,9] (the 9th
+# FEATURE, Fe; glass has 10 columns with the label in column 10), so glass
+# comes back with its outliers in the middle rather than last, and
+# count_scores2 would silently miscount it. Guard: jointly reorder (Y, score)
+# regulars-first (stable sort, so relative order within each class is
+# preserved) before calling count_scores2. A no-op for already-sorted data.
 evaluate <- function(Y, score, threshold) {
-  v <- count_scores2(Y, score, threshold)
+  ord <- order(Y, decreasing = TRUE)  # Y: 1 = regular first, 0 = outlier last
+  v <- count_scores2(Y[ord], score[ord], threshold)
   names(v) <- c("TPR", "TNR", "BA", "F2")
   v
 }
