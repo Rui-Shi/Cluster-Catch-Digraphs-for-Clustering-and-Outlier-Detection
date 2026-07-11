@@ -10,8 +10,15 @@ WBC reproduction gate: 6 of 9 methods reproduce the manuscript's real-data WBC r
 Consequence for the manuscript: published Glass LOF row (TPR .778/TNR .618/BA .697/F2 .289) has matching TPR but TNR inconsistent with the corrected pipeline (guarded reference: .778/.794/.786/.412; also affected by the LOF UB=50→30 fix in commit 38013d9). The Glass row (at least LOF; possibly other methods) should be regenerated for the revised manuscript, and the change disclosed in the response letter if numbers move.
 Also: published run used the deduped 9-outlier glass while the paper's dataset table claims n0=10 — check the dataset-description table when revising.
 
-## 3. RK-CCD quantile generation produces NaN at d=1555 (T3a, in progress)
-Probe failed with NaN — original RK math breaks at very high d (suspected overflow/underflow in d-dependent terms). Diagnosis in progress; fallback if unfixable: UN-CCD-based scores only on InternetAds, disclosed in response letter.
+## 3. RK-CCD quantile machinery breaks down at high d (T3a, complete 2026-07-11, commit 0160701)
+Numerical: `Kest.R:449` cons term uses gamma() → finite through d=341, 0 at d=342, NaN at d>=343. Fixed via log-space stable override in 01_gen_quantile_table.R (auto-selected at d>=342; validated to 2.8e-15 relative diff vs original at d=20, identical at d=100; originals untouched).
+Statistical (the deeper problem): the RK CSR envelope is already 91.4% zero quantiles in the production d=100 table and 100% zero at d=166/274/1555 probes — the Monte-Carlo spatial-randomness test carries no signal at these dimensions. RK tables at d>=166 are generatable but scientifically vacuous.
+Consequence: WP5 CCD rows at d>=166 should be UN-CCD-based only (UNCCD-OOS/IOS); this is also manuscript-relevant — it is a concrete "condition under which the approach degrades" answering R2's failure-conditions comment, worth a sentence in the paper.
+Production parameters reconciled: two tiers in recovered tables — low/mid d: RK m=5000, rn=10, niter=2000; NN n=5000. High d (50, 100): m=n=1000, rn=10, niter=10000 (matches committed 50100d driver). New dims adopt the high-d tier.
+NN table costs (measured probes, cores=20): d=166 ≈ 15.4 h, 274 ≈ 31.5 h; d>=400 needs two validated generator optimizations (mvrnorm(0, diag(d)) → matrix(rnorm) — distributionally identical, kills an O(d^3) eigen per call; streaming to cut RAM) → 400 ≈ 43 h, 1555 ≈ 257 h at niter=10000 or ≈ 51 h at niter=2000 (matches the low-d production tier; needs sign-off).
+
+## 3b. Unattributed files in R/NN-test_quantile/ (2026-07-11)
+`35-99d_999%.R` (new, loops NN table generation d=35:99 at niter=10000), whitespace-only edit to `20d_999%.R`, and a fresh `.Rhistory` — created by an interactive R session, not by any pipeline agent. Presumed user activity; awaiting confirmation. Not running as of 2026-07-11 01:30.
 
 ## 4. WP6 PyOD baselines complete (T6, 2026-07-10, commit 42caaed)
 154/154 fits, no failures. ECOD strongest of the three (Musk raw-score ROC-AUC 0.956, matches ADBench ~0.95). Speech near-chance for all (BA≈0.51) — consistent with literature. pyod 3.6.1, torch 2.13.0+cpu, defaults, LUNAR/AE 5 seeds. Metrics: results/wp6_pyod_metrics.csv (both contamination=0.1 and true-rate labelings).
