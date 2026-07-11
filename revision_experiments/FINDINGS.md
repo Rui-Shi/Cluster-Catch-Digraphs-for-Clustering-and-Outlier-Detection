@@ -18,7 +18,13 @@ Production parameters reconciled: two tiers in recovered tables — low/mid d: R
 NN table costs (measured probes, cores=20): d=166 ≈ 15.4 h, 274 ≈ 31.5 h; d>=400 needs two validated generator optimizations (mvrnorm(0, diag(d)) → matrix(rnorm) — distributionally identical, kills an O(d^3) eigen per call; streaming to cut RAM) → 400 ≈ 43 h, 1555 ≈ 257 h at niter=10000 or ≈ 51 h at niter=2000 (matches the low-d production tier; needs sign-off).
 
 ## 3b. Unattributed files in R/NN-test_quantile/ (2026-07-11)
-`35-99d_999%.R` (new, loops NN table generation d=35:99 at niter=10000), whitespace-only edit to `20d_999%.R`, and a fresh `.Rhistory` — created by an interactive R session, not by any pipeline agent. Presumed user activity; awaiting confirmation. Not running as of 2026-07-11 01:30.
+`35-99d_999%.R` (new, loops NN table generation d=35:99 at niter=10000), whitespace-only edit to `20d_999%.R`, and a fresh `.Rhistory` — user's own exploratory R session (confirmed 2026-07-11). Left uncommitted; not part of the pipeline; not running.
+
+## 3c. User scope decisions (2026-07-11)
+- WP5 CCD rows at d>=166: **UN-CCD only** (UNCCD-OOS/IOS). RKCCD rows dropped there on degeneracy evidence; the paper gains a failure-conditions sentence (answers R2).
+- **InternetAds (d=1555) CCD experiments skipped for now** — baselines + PyOD cover it; NN-1555 cost analysis (11 d full / 2 d thinned) retained as documentation for the response letter.
+- WP4 runtime d-grid: **{10, 50, 100, 166, 274, 400}** (500/1000 dropped; 166-400 reuse WP5 tables; RKCCD cells auto-skip where no table).
+- Phase B therefore: NN tables at d ∈ {166, 274, 400} only (~15 + 32 + 43 h), after implementing + validating T3a's two generator optimizations (rnorm swap — distributionally identical; streaming for RAM).
 
 ## 4. WP6 PyOD baselines complete (T6, 2026-07-10, commit 42caaed)
 154/154 fits, no failures. ECOD strongest of the three (Musk raw-score ROC-AUC 0.956, matches ADBench ~0.95). Speech near-chance for all (BA≈0.51) — consistent with literature. pyod 3.6.1, torch 2.13.0+cpu, defaults, LUNAR/AE 5 seeds. Metrics: results/wp6_pyod_metrics.csv (both contamination=0.1 and true-rate labelings).
