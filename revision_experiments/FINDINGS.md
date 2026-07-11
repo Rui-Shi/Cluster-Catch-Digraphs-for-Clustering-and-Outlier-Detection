@@ -29,6 +29,13 @@ NN table costs (measured probes, cores=20): d=166 ≈ 15.4 h, 274 ≈ 31.5 h; d>
 ## 4. WP6 PyOD baselines complete (T6, 2026-07-10, commit 42caaed)
 154/154 fits, no failures. ECOD strongest of the three (Musk raw-score ROC-AUC 0.956, matches ADBench ~0.95). Speech near-chance for all (BA≈0.51) — consistent with literature. pyod 3.6.1, torch 2.13.0+cpu, defaults, LUNAR/AE 5 seeds. Metrics: results/wp6_pyod_metrics.csv (both contamination=0.1 and true-rate labelings).
 
+## 4b. WP5 baseline rows complete (T5, 2026-07-11, commit 2b56120)
+20 rows (5 baselines × 4 new datasets) in results/wp5_highdim_metrics.csv; UNCCD rows pending user-generated NN tables (6 skip markers). Paper-relevant observations, all verified non-bugs:
+- iForest near-ceiling on Musk (BA 0.943, rank-AUC 1.000 — matches ADBench) but TPR≈0 on Arrhythmia/InternetAds/Speech purely because the fixed 0.55 threshold sits above its whole score range there (ranking still good: AUC 0.804 on Arrhythmia). Threshold-calibration artifact worth a sentence.
+- MST degenerates on Musk (TPR=1, TNR=0): pruned-MST components all fall below the min-cluster size, so everything is flagged — distance concentration at d=166 flattens edge ratios. Genuine high-d failure mode of a first-cycle baseline.
+- Speech (3686×400): every method near chance (best BA 0.527; AUCs 0.475-0.529), consistent with PyOD rows and the literature.
+- Coherence with WP6 PyOD numbers confirmed dataset-by-dataset; no contradictions.
+
 ## 5. Environment quirks (T0/T2/T6)
 - Bash tool segfaults invoking Rscript → use PowerShell.
 - pip into the venv needs `subst X:` long-path workaround.
