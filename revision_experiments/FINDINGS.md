@@ -45,9 +45,27 @@ wp3_sensitivity_real.csv: WBC + Thyroid × 4 OS methods × 18 cutoffs (144 rows)
 ## 4e. R upgraded 4.4.1 → 4.6.1 mid-pipeline (discovered 2026-07-11, after power outage)
 R 4.4.1 was uninstalled (stale PATH entry remains); only 4.6.1 exists. 9 of 17 required packages were missing from 4.6.1's library and scales/ggplot2 were corrupted ("unknown input format", plausibly the power outage) — all reinstalled; 00_env_check.R passes under 4.6.1; the exact user table command completed a toy run. Consequences: all metrics so far (computed under 4.4.1) remain valid; ALL WP4 timing runs execute uniformly under 4.6.1 (none had run yet, so no mixed-version timings); report R 4.6.1 in the manuscript's runtime section provenance.
 
+## 4c. WP3 sensitivity — real-data plateau confirmed (T7a, 2026-07-11, commit 753dc76)
+The reviewers' "too empirical" cutoff concern (R1 #3, R2 3rd) is answered: the flagship IOS methods are stable across the whole 0.5x-2x cutoff range.
+- Thyroid UNCCD-IOS: BA in [0.866, 0.920] across cutoff 1->4; 0.908 at the calibrated cutoff 2, peak 0.920 nearby — a wide flat plateau.
+- WBC UNCCD-IOS: BA in [0.85, 0.91], peak at the calibrated value.
+- OOS methods vary more (BA swings ~0.48-0.66 on WBC) — on-message, since OOS is the masking-susceptible score; TPR is pinned low by masking regardless of cutoff.
+Real sweeps complete + figures rendered (wp3_real_WBC.png, wp3_real_Thyroid.png). Synthetic: 10-rep probe done; 100-rep production sweep pending (launch queued; script 09 checkpoints per rep). Musk sensitivity (T7b) awaits user NN tables.
+
+## 4d. R upgraded 4.4.1 -> 4.6.1 mid-project (2026-07-11)
+The desktop's R was upgraded to 4.6.1 (only R-4.6.1 remains under C:\Program Files\R; Git Bash PATH still points at the dead 4.4.1 bin). Repaired in commit 753dc76; env re-verified under 4.6.1 (00_env_check.R: ENV CHECK OK, all packages + sample tables load). Operational note: invoke R via the explicit path `C:\Program Files\R\R-4.6.1\bin\Rscript.exe` from PowerShell (Bash can't resolve Rscript and segfaults on it).
+
 ## 5. Environment quirks (T0/T2/T6)
 - Bash tool segfaults invoking Rscript → use PowerShell.
 - pip into the venv needs `subst X:` long-path workaround.
 - `Rscript --%` (PowerShell stop-parse) breaks argument handling — invoke without it.
 - Windows 260-char path limit: repo needs `core.longpaths true` (set locally) for 3 deep SVDD files.
 - UNCCD registry entries pay construction twice when t_construct is timed separately — skip separate timing for long cells.
+
+## 6. WP4 runtime grids complete (T4, 2026-07-12)
+R grid finished 2026-07-12 07:02 (702 raw rows; n-grid n∈{250,500,1000,2000,4000}@d=20 and d-grid d∈{10,50,100,500,1000}@n=1000; 45-row aggregates wp4_runtime_n.csv / wp4_runtime_d.csv; statuses 662 OK / 18 OK_NOCONSTRUCT / 14 FLAGGED_TIMEOUT / 8 SKIPPED_NO_TABLE — all as designed). PyOD production grid finished 07:23 (reps=10, single-threaded; 300 raw rows, 0 failed; 30-row aggregate wp4_runtime_pyod.csv; 2-rep probe archived to wp4_runtime_pyod_raw_probe.csv / wp4_runtime_pyod_probe.csv). Headline timings (mean total seconds unless noted):
+- n-scaling at d=20: RKCCD grows ≈ n^2.5 empirically (3.4 s @ n=250 → 35.9 @ 1000 → 197 @ 2000; timeout-flagged at 4000); UNCCD is the bottleneck (41-45 s @ 250, 366-893 s @ 500, FLAGGED_TIMEOUT at n≥1000 in both grids). LOF grows ≈ n^2 but stays cheap (0.04 → 9.8 s over the same range); iForest near-linear (0.03 → 0.44 s). At n=2000, RKCCD ≈ 80x LOF; at n=500, UNCCD is already ~3 orders above LOF.
+- d-scaling at n=1000: RKCCD is flat in d (24.3 s @ d=10, 20.9 @ 50, 20.2 @ 100 — distance-matrix-driven), while LOF grows ~linearly in d (0.44 → 9.3 s @ d=1000) and iForest stays ~0.1 s. CCD cells at d∈{500,1000} are SKIPPED_NO_TABLE (per scope decision §3c); UNCCD d-cells all timeout (n=1000).
+- PyOD (fit-only): ECOD is near-free everywhere (median 0.0044 s @ n=4000, 0.10 s @ d=1000). LUNAR is dominated by fixed GNN training cost — flat in d (~4-4.7 s across d=10-1000), ~linear in n (1.4 s @ 250 → median 14.6 s @ 4000). AutoEncoder ~linear in n (0.06 → 1.08 s), near-flat in d (0.27 → 0.53 s). All three sit well below CCD costs at every cell; the deep methods are epoch-bound, not d-bound.
+- Manuscript take: the paper's O(n^2)-on-top-of-CCD complexity discussion is empirically confirmed as the practical limit in n (UNCCD unusable beyond n≈500 single-threaded, RKCCD beyond n≈2000), while d is not the CCD runtime bottleneck — the quantile-table requirement is (ties into §3/§3c failure-conditions text for R2).
+Production sensitivity figures re-rendered from the 216-row production sweep (wp3_sensitivity_synthetic.csv, 200 reps/setting; all 5 PNGs fresh 2026-07-12 07:14).
