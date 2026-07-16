@@ -9,7 +9,11 @@ Vic_Den = function(data, R, d){
   Den = sapply(1:n, function(x){
     size = length(which(ddatax[x,]<=R[x]))
     # return(size/(R[x]^d))
-    return((size/R[x]^d)^(1/d))
+    # return((size/R[x]^d)^(1/d))  # overflows: R^d = Inf for R > exp(709/d)
+    #                              # (~13.3 at d=274), giving Den = 0 -> OOS NaN,
+    #                              # IOS Inf. See revision_experiments/
+    #                              # test_outlyingness_density.R (2026-07-16).
+    return(size^(1/d)/R[x])       # algebraically identical, numerically stable
   })
   return(Den)
 }
