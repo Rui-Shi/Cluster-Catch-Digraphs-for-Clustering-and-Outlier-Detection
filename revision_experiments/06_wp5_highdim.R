@@ -131,7 +131,11 @@ cat(sprintf("=== 06_wp5_highdim.R === mode=%s\n", MODE))
 # Scope (FIXED enumeration + FIXED execution order: cheap first)
 # ---------------------------------------------------------------------------
 ALL_DATASETS     <- c("Arrhythmia", "Musk", "InternetAds", "Speech")
-CCD_DATASETS     <- c("Arrhythmia", "Musk", "Speech")   # InternetAds excluded by decision
+CCD_DATASETS     <- c("Arrhythmia")   # InternetAds excluded by decision; Musk + Speech
+                                      # excluded by decision 2026-07-16: high-d (d>=50)
+                                      # RK/NN quantile tables are simulated for dataset
+                                      # size n<=1000 only (harness clamps beyond -- see
+                                      # FINDINGS §7); Musk n=3062, Speech n=3686
 BASELINE_METHODS <- c("LOF", "DBSCAN", "MST", "ODIN", "iForest")
 CCD_METHODS      <- c("UNCCD-OOS", "UNCCD-IOS")
 
