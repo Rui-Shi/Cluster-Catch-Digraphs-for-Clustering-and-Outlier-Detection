@@ -9,9 +9,14 @@
 # cache it to results/scores_cache/<dataset>_<method>.rds, then sweep an
 # absolute cutoff grid and write results/wp3_sensitivity_real.csv.
 #
-# Datasets: WBC (n=223, d=9), Thyroid (n=3656, d=6) now; Musk (d=166) is
-# auto-included once results/scores_cache/musk_*.rds exist (produced by a
-# later task) and skipped with a log line until then.
+# Datasets: WBC (n=223, d=9), Thyroid (n=3656, d=6), Arrhythmia (n=452,
+# d=274) now. Arrhythmia is cache-only: UNCCD-OOS/IOS scores come from
+# results/scores_cache/Arrhythmia_UNCCD-{OOS,IOS}.rds (written by
+# 06_wp5_highdim.R); RKCCD has no d=274 quantile table and the RK machinery
+# does not work at that dimension, so RKCCD-OOS/IOS are skipped for
+# Arrhythmia ONLY (per-method, not the whole dataset -- see get_scores()).
+# Musk (d=166) is auto-included once results/scores_cache/musk_*.rds exist
+# (produced by a later task) and skipped with a log line until then.
 #
 # Cutoff grid: seq(1, 4, length.out = 17) -- spanning 0.5x to 2x of the
 # calibrated real-data threshold of 2 (manuscript Section 4). NOTE:
@@ -44,9 +49,12 @@ dir.create(CACHE_DIR, recursive = TRUE, showWarnings = FALSE)
 # computes Musk scores itself (d=166 tables + scoring are a later task);
 # it only sweeps cutoffs over cached vectors when they appear.
 DATASETS <- list(
-  wbc     = list(label = "WBC",     robj = "WBC",     compute = TRUE),
-  thyroid = list(label = "Thyroid", robj = "thyroid", compute = TRUE),
-  musk    = list(label = "Musk",    robj = NA,        compute = FALSE)
+  wbc        = list(label = "WBC",        robj = "WBC",     compute = TRUE),
+  thyroid    = list(label = "Thyroid",    robj = "thyroid", compute = TRUE),
+  musk       = list(label = "Musk",       robj = NA,        compute = FALSE),
+  # List name must match the cache filename prefix exactly (case-sensitive):
+  # 06_wp5_highdim.R wrote Arrhythmia_UNCCD-{OOS,IOS}.rds with capital "A".
+  Arrhythmia = list(label = "Arrhythmia", robj = NA,        compute = FALSE)
 )
 
 cache_path <- function(ds_key, method) file.path(CACHE_DIR, sprintf("%s_%s.rds", ds_key, method))
@@ -57,8 +65,8 @@ get_scores <- function(ds_key, ds_cfg) {
   paths <- vapply(OS_METHODS, function(m) cache_path(ds_key, m), character(1))
   cached <- file.exists(paths)
 
-  if (!ds_cfg$compute && !all(cached)) {
-    cat(sprintf("[%s] scores_cache/%s_*.rds not (fully) present (%d/4 cached) -- skipping; rerun after the scoring task lands.\n",
+  if (!ds_cfg$compute && !any(cached)) {
+    cat(sprintf("[%s] scores_cache/%s_*.rds not present (%d/4 cached) -- skipping; rerun after the scoring task lands.\n",
                 ds_cfg$label, ds_key, sum(cached)))
     return(NULL)
   }
@@ -78,6 +86,13 @@ get_scores <- function(ds_key, ds_cfg) {
     if (file.exists(p)) {
       out[[m]] <- readRDS(p)
       cat(sprintf("[%s] %-10s loaded from cache (%s)\n", ds_cfg$label, m, basename(p)))
+    } else if (!ds_cfg$compute) {
+      # Cache-only dataset missing this particular method's cache (e.g.
+      # RKCCD has no quantile table at Arrhythmia's d=274 and cannot be
+      # scored at all). Skip just this method, not the whole dataset --
+      # out[[m]] is left unset and the sweep loop below skips it.
+      cat(sprintf("[%s] %-10s scores_cache/%s not present -- skipping this method (cache-only dataset).\n",
+                  ds_cfg$label, m, basename(p)))
     } else {
       t0 <- Sys.time()
       res <- METHOD_REGISTRY[[m]](X = X, d = d, Y = Y)
@@ -120,6 +135,10 @@ for (ds_key in names(DATASETS)) {
 
   for (m in OS_METHODS) {
     rec <- got$scores[[m]]
+    if (is.null(rec)) {
+      cat(sprintf("[%s] %-10s no cached/computed score -- skipping in sweep.\n", ds_cfg$label, m))
+      next
+    }
     stopifnot(length(rec$score) == got$n, !any(is.na(rec$score)))
     for (cutoff in FULL_GRID) {
       v <- evaluate(got$Y, rec$score, cutoff)
@@ -141,7 +160,7 @@ for (ds_key in names(DATASETS)) {
 
 res <- do.call(rbind, all_rows)
 write.csv(res, OUT_CSV, row.names = FALSE)
-cat(sprintf("\nWrote %d rows (%d dataset(s) x 4 methods x %d cutoffs) -> %s\n",
+cat(sprintf("\nWrote %d rows (%d dataset(s), up to 4 methods x %d cutoffs each) -> %s\n",
             nrow(res), length(unique(res$dataset)), length(FULL_GRID), OUT_CSV))
 
 # ---------------------------------------------------------------------------
