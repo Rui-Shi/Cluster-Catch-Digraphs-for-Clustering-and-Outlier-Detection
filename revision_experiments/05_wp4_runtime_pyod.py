@@ -2,7 +2,21 @@
 
 Times ECOD, LUNAR, and AutoEncoder *fits* (fit only, features only -- labels
 are never passed to .fit()) on the datasets exported by 04_wp4_runtime.R to
-results/wp4_data/<grid>_<cell_value>_rep1.csv, 10 reps each by default.
+results/wp4_data2/<grid>_<cell_value>_rep1.csv, 10 reps each by default.
+
+REDESIGN (2026-07-19, "runtime2"): 04_wp4_runtime.R's grids changed --
+Grid 1 ("n"): n in {100,250,500,1000,2000} at d=10 (was d=20, n to 4000);
+Grid 2 ("d"): d in {5,10,50,100,500} at n=500 (was n=1000, d to 1000). This
+script has NO hardcoded grid of its own -- it only discovers whatever
+*_rep1.csv files exist under DATA_DIR and times them -- so "updating its
+grids" means pointing DATA_DIR at the NEW export directory (wp4_data2, not
+the original wp4_data) and writing to NEW raw/aggregate files
+(wp4_runtime2_pyod_raw.csv / wp4_runtime2_pyod.csv). wp4_data2 exists
+because the old and new grids' cell_value labels collide (e.g. both have a
+"n_250" cell, at d=20 vs d=10) -- reusing the old export directory would
+silently time the WRONG dataset for several new-grid cells. The ORIGINAL
+wp4_data/, wp4_runtime_pyod_raw.csv, and wp4_runtime_pyod.csv are untouched
+by this file.
 
 Comparability notes (documented per task brief):
   - Single-threaded: OMP/MKL/OPENBLAS/NUMEXPR thread env vars are pinned to 1
@@ -73,9 +87,9 @@ from pyod.models.ecod import ECOD
 from pyod.models.lunar import LUNAR
 
 HERE = Path(__file__).resolve().parent
-DATA_DIR = HERE / "results" / "wp4_data"
-RAW_PATH = HERE / "results" / "wp4_runtime_pyod_raw.csv"
-AGG_PATH = HERE / "results" / "wp4_runtime_pyod.csv"
+DATA_DIR = HERE / "results" / "wp4_data2"
+RAW_PATH = HERE / "results" / "wp4_runtime2_pyod_raw.csv"
+AGG_PATH = HERE / "results" / "wp4_runtime2_pyod.csv"
 ERROR_LOG_PATH = HERE / "results" / "wp4_pyod_errors.log"
 
 METHODS = ["ECOD", "LUNAR", "AutoEncoder"]

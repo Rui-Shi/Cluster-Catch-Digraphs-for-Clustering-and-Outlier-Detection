@@ -3,31 +3,52 @@
 #
 # WP4: wall-clock runtime / scalability experiments (task T4; reviewers R1 #2,
 # R2 5th comment). Times all 9 R methods from the harness registry on
-# synthetic Gaussian 2-cluster data (5% contamination) over two grids:
+# synthetic Gaussian 2-cluster data (5% contamination) over two grids.
 #
-#   Grid A ("n"): n in {250, 500, 1000, 2000, 4000} at d = 20
-#   Grid B ("d"): d in {10, 50, 100, 500, 1000}     at n = 1000
+# REDESIGN (2026-07-19, "runtime2"): the original grids (n up to 4000 at
+# d=20; d up to 1000 at n=1000) left several UNCCD/RKCCD cells empty because
+# no quantile table exists past d=100 and serial UNCCD construction was
+# impractical near n=4000. The grids below are chosen so every CCD cell has
+# either a real table or a documented, by-design SKIPPED_NO_TABLE, and so
+# UNCCD construction (now 22-core parallel, see below) finishes in bounded
+# time at every cell:
+#
+#   Grid 1 ("n"): n in {100, 250, 500, 1000, 2000} at d = 10
+#   Grid 2 ("d"): d in {5, 10, 50, 100, 500}        at n = 500
+#
+# RKCCD at d = 500 (grid 2) is EXCLUDED BY DESIGN: the RK envelope's
+# edge-correction weights are ~100% zero quantiles at high d (orchestrator
+# decision) and no RK-test-simul_500d_999%.RData table exists or will be
+# generated -- that cell emits the existing SKIPPED_NO_TABLE marker
+# unchanged. UNCCD at d = 500 DOES run: revision_experiments/01h_nn_d500_
+# quant.R (written, not run by this file) generates the missing NN table.
 #
 # USAGE
-#   Rscript "revision_experiments/04_wp4_runtime.R" <reps> <mode>
+#   Rscript "revision_experiments/04_wp4_runtime.R" <reps> <mode> [cores]
 #
 #   <reps>  number of repetitions per (cell, method), e.g. 10
 #   <mode>  one of:
 #     all            export rep-1 datasets for every cell, then run the full
 #                    R grid (both grids, cheapest cell first), then aggregate.
 #     r_only         same grid run + aggregation, but skips the dataset-export
-#                    step (use for reruns when results/wp4_data/ already
-#                    exists, e.g. after the d=500/1000 quantile tables arrive).
-#     cell=GRID:VAL  run a single cell. GRID is A|n (value = n at d=20) or
-#                    B|d (value = d at n=1000). Examples: cell=A:2000,
-#                    cell=n:4000, cell=B:500, cell=d:1000. Exports that
-#                    cell's rep-1 dataset if missing, runs it, aggregates.
+#                    step (use for reruns when results/wp4_data2/ already
+#                    exists).
+#     cell=GRID:VAL  run a single cell. GRID is A|n (value = n at d=10) or
+#                    B|d (value = d at n=500). Examples: cell=n:2000,
+#                    cell=A:100, cell=B:500, cell=d:5. Exports that cell's
+#                    rep-1 dataset if missing, runs it, aggregates.
 #     micro          hidden validation mode: three tiny cells
 #                    (n=100,d=10), (n=200,d=10), (n=100,d=40). The d=40 cell
 #                    exercises the SKIPPED_NO_TABLE path (no RK/NN quantile
 #                    table exists at d=40). Micro results go to SEPARATE files
 #                    (wp4_runtime_micro_raw.csv / wp4_runtime_micro.csv) so
-#                    the production raw file stays clean.
+#                    the production raw file stays clean. Unaffected by the
+#                    grid redesign.
+#   [cores] optional 3rd positional arg: core count for the UNCCD parallel
+#           radius search (PAR_RADI_CORES, default 22). Production runs pass
+#           22 explicitly; validation/smoke runs pass 4 so the 20-core
+#           full-data Musk/Speech chain (07b_wp5_fulldata_ccd.R) is not
+#           starved. Has NO effect on RKCCD or the five baselines.
 #
 # DESIGN NOTES (read before launching the full grid)
 #
@@ -45,27 +66,38 @@
 # 0 = outlier (repo convention).
 #
 # Seeding rule (documented, deterministic): seed = 1000*rep + cell_index,
-# where cell_index is the fixed enumeration below (Grid A cells 1-5 in
-# ascending n, Grid B cells 6-10 in ascending d; micro cells 101-103). Each
+# where cell_index is the fixed enumeration below (Grid 1 cells 1-5 in
+# ascending n, Grid 2 cells 6-10 in ascending d; micro cells 101-103). Each
 # R rep therefore times a FRESH dataset drawn from the same distribution.
 #
 # Dataset export (FIRST ACTION of a run): each in-scope cell's rep-1 dataset
 # (seed = 1000*1 + cell_index) is written to
-#   results/wp4_data/<grid>_<cell_value>_rep1.csv   (V1..Vd + label)
-# BEFORE any timing starts, so 05_wp4_runtime_pyod.py times the IDENTICAL
-# data. Asymmetry (documented): only rep 1 per cell is exported; PyOD runs
-# its 10 timing reps on that one file (its reps vary model seeds and system
-# noise only), while the R reps vary the dataset draw as well. Existing
-# files are not rewritten (the generator is deterministic, so a rewrite
-# would be byte-identical anyway).
+#   results/wp4_data2/<grid>_<cell_value>_rep1.csv   (V1..Vd + label)
+# BEFORE any timing starts, so a PyOD companion run times the IDENTICAL
+# data. NEW data directory (wp4_data2, not the original wp4_data): the old
+# grid's cell_value labels overlap the new grid's (e.g. old grid "n" had a
+# cell "250" at d=20; new grid "n" also has a cell "250", now at d=10) --
+# reusing wp4_data would silently replay the WRONG dimensionality's dataset
+# for the new grid, since export_cells_rep1() skips writing when the target
+# path already exists. A fresh directory removes that hazard entirely.
+# Asymmetry (documented): only rep 1 per cell is exported; PyOD runs its
+# timing reps on that one file (its reps vary model seeds and system noise
+# only), while the R reps vary the dataset draw as well. Existing files are
+# not rewritten (the generator is deterministic, so a rewrite would be
+# byte-identical anyway).
 #
-# Timing protocol: sequential execution in a single R process; no doParallel
-# anywhere in the timed path (the harness registry is serial); OMP/MKL/
+# Timing protocol: sequential execution in a single R process; OMP/MKL/
 # OPENBLAS thread env vars pinned to 1; the registry's iForest entry is
 # replaced by a local single-threaded variant (isotree defaults to all
 # cores, which would break single-worker comparability -- same
-# hyperparameters, nthreads = 1). Dataset generation and quantile-table
-# loading are NOT timed. gc() runs before each timed rep.
+# hyperparameters, nthreads = 1). ONE exception to "no parallelism in the
+# timed path": UNCCD-OOS/UNCCD-IOS now use a 22-core parallel port of
+# nnccd.radi's per-point radius search (see "Parallel nnccd.radi override"
+# below) -- t_construct/t_total for UNCCD therefore measure PARALLEL wall
+# time, not single-worker time, an intentional, declared asymmetry vs the
+# other 7 methods (RKCCD and the 5 baselines remain single-threaded).
+# Dataset generation and quantile-table loading are NOT timed. gc() runs
+# before each timed rep.
 #
 # Reported columns per rep:
 #   t_construct  CCD digraph-construction time alone (NA for baselines, and
@@ -81,11 +113,18 @@
 # construction twice (once for t_construct, once inside the scorer). If any
 # prior rep of the same (cell, method) took > 300 s wall clock, remaining
 # reps call the scorer directly (single pass): t_construct = NA, status
-# OK_NOCONSTRUCT. This avoids doubling already-long runs.
+# OK_NOCONSTRUCT. This avoids doubling already-long runs. UNCCD at n=2000
+# (grid 1) is expected to hit this after rep 1 (double parallel construction
+# at ~40-50 min/pass would otherwise repeat every rep).
 #
-# Timeout discipline: each rep runs under setTimeLimit(elapsed = 1800,
-# transient); if a rep exceeds 30 min it is aborted, a FLAGGED_TIMEOUT row
-# is recorded (seconds = elapsed at abort), and the remaining reps of that
+# Timeout discipline (RAISED for this redesign): each rep runs under
+# setTimeLimit(elapsed = 7200, transient) -- a 2 h hard per-rep cap, up from
+# the original 30 min. Rationale: UNCCD-OOS/IOS at n=2000 (grid 1), d=10,
+# 22 cores is expected at ~40-50 min/rep, comfortably under 30 min's old cap
+# but is kept well clear of the new 2 h ceiling; RKCCD and the 5 baselines
+# finish in seconds to ~1 min regardless of cell, so the larger cap costs
+# them nothing. If a rep exceeds 2 h it is aborted, a FLAGGED_TIMEOUT row is
+# recorded (seconds = elapsed at abort), and the remaining reps of that
 # (cell, method) are dropped -- completed reps stay, so the cell reduces to
 # the reps already done (min 1 recorded row; a cell is NEVER silently
 # dropped). On resume, a FLAGGED_TIMEOUT row blocks re-running that
@@ -93,31 +132,55 @@
 # Note: setTimeLimit fires at R-level interrupt points; long uninterruptible
 # C calls (e.g. one dist() call) can overshoot slightly.
 #
-# Missing quantile tables: tables for d in {500, 1000} do not exist yet.
-# CCD cells at those d get ONE marker row (rep = 0, status =
-# SKIPPED_NO_TABLE) and are skipped. SKIPPED_NO_TABLE rows do NOT block
-# resume: when the tables arrive, rerunning (mode r_only) fills in the real
-# reps; the marker row is ignored by the timing aggregation.
+# Missing quantile tables: RKCCD at d=500 (grid 2) has no table and none
+# will be generated (orchestrator decision, see header). That cell gets ONE
+# marker row (rep = 0, status = SKIPPED_NO_TABLE) and is skipped -- this is
+# the ONLY expected SKIPPED_NO_TABLE cell in the redesigned grids (all other
+# RK/NN tables needed by the new grids exist; NN d=500 is generated by
+# 01h_nn_d500_quant.R before the production run, see that file's header).
+# SKIPPED_NO_TABLE rows do NOT block resume: if a table later arrives,
+# rerunning (mode r_only) fills in the real reps; the marker row is ignored
+# by the timing aggregation.
 #
 # Checkpointing: every rep appends immediately to the raw CSV
-# (results/wp4_runtime_raw.csv; micro mode uses wp4_runtime_micro_raw.csv)
-# keyed by (grid, cell_value, method, rep). Fully resumable: on restart,
-# reps already recorded with a non-SKIPPED status are skipped.
+# (results/wp4_runtime2_raw.csv; micro mode still uses the ORIGINAL
+# wp4_runtime_micro_raw.csv, unaffected by the redesign) keyed by
+# (grid, cell_value, method, rep). Fully resumable: on restart, reps already
+# recorded with a non-SKIPPED status are skipped.
 #
 # Aggregation (end of every invocation): mean/sd per (cell, method) over
 # status OK/OK_NOCONSTRUCT rows, plus a semicolon-joined status summary:
-#   grid "n"     -> results/wp4_runtime_n.csv
-#   grid "d"     -> results/wp4_runtime_d.csv
-#   grid "micro" -> results/wp4_runtime_micro.csv
+#   grid "n"     -> results/wp4_runtime2_n.csv
+#   grid "d"     -> results/wp4_runtime2_d.csv
+#   grid "micro" -> results/wp4_runtime_micro.csv (unchanged)
+# The ORIGINAL results/wp4_runtime_raw.csv, wp4_runtime_n.csv,
+# wp4_runtime_d.csv from the first grid design are untouched by this file.
 #
 # UN-CCD radius-search direction follows the original simulation scripts:
 # method = "ascend" for d <= 5, "descend" for d >= 10 (grep over
-# simulations/outlyingness_scores/UNCCD_OOS_IOS/Simulation/Gaussian/*).
+# simulations/outlyingness_scores/UNCCD_OOS_IOS/Simulation/Gaussian/*). Both
+# new grids only ever hit d <= 5 (grid 2's d=5 cell) or d >= 10, so the
+# existing two-way rule needs no extension.
 # MST uses cont = 0.05 (the datasets' true contamination); DBSCAN uses the
 # registry's oracle-contamination convention (needs Y).
+#
+# Parallel nnccd.radi override (UNCCD-OOS/UNCCD-IOS only): ported from
+# revision_experiments/07b_wp5_fulldata_ccd.R's validated parallel radius
+# search, WITHOUT its chunk-checkpoint disk cache -- that cache exists there
+# to survive interruptions on multi-hour full-data runs; reusing it HERE
+# would let a later rep silently replay an earlier rep's cached radii
+# instead of recomputing them, corrupting the very quantity being timed.
+# Every timed UNCCD rep below therefore calls the parallel search fresh,
+# start to finish, every time. Per-point arithmetic is byte-identical to
+# harness.R's clamped serial nnccd.radi (itself byte-identical to the
+# R/ccds/UN_CCD.R original except for a defensive pmin() index clamp); only
+# the loop-over-points is redistributed across PAR_RADI_CORES workers via
+# parallel::parSapplyLB, order-preserving. RKCCD's path is completely
+# untouched by this override (it never calls nnccd.radi).
 
 suppressPackageStartupMessages({
   library(here)
+  library(parallel)   # makeCluster/parSapplyLB/clusterExport/stopCluster for the UNCCD override
 })
 
 # ---------------------------------------------------------------------------
@@ -125,15 +188,24 @@ suppressPackageStartupMessages({
 # ---------------------------------------------------------------------------
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) < 2) {
-  stop("Usage: Rscript \"revision_experiments/04_wp4_runtime.R\" <reps> <mode: all|r_only|cell=GRID:VALUE|micro>",
+  stop("Usage: Rscript \"revision_experiments/04_wp4_runtime.R\" <reps> <mode: all|r_only|cell=GRID:VALUE|micro> [cores]",
        call. = FALSE)
 }
 REPS <- as.integer(args[[1]])
 MODE <- args[[2]]
 stopifnot("reps must be a positive integer" = is.finite(REPS) && REPS >= 1)
 
-TIMEOUT_SEC        <- 30 * 60   # hard per-rep cap
-CONSTRUCT_SKIP_SEC <- 5 * 60    # prior-rep threshold for skipping t_construct
+TIMEOUT_SEC        <- 2 * 60 * 60   # hard per-rep cap, RAISED from 30 min (see header)
+CONSTRUCT_SKIP_SEC <- 5 * 60        # prior-rep threshold for skipping t_construct
+
+# Core count for the UNCCD parallel radius search (PAR_RADI_CORES below);
+# default 22 (production); pass a 3rd CLI arg to override (validation/smoke
+# runs use 4 so the concurrently-running 20-core full-data Musk/Speech chain
+# is not starved). No effect on RKCCD or the baselines.
+PAR_RADI_CORES <- {
+  ci <- if (length(args) >= 3) suppressWarnings(as.integer(args[[3]])) else NA_integer_
+  if (!is.na(ci) && ci >= 1) ci else 22L
+}
 
 # Pin math-library threading BEFORE any heavy computation (comparability;
 # R's own interpreter is single-threaded already).
@@ -142,20 +214,103 @@ Sys.setenv(OMP_NUM_THREADS = "1", MKL_NUM_THREADS = "1",
 
 source(here::here("revision_experiments/harness.R"))
 
+cat(sprintf("[config] PAR_RADI_CORES = %d (UNCCD parallel radius search; RKCCD/baselines untouched)\n",
+            PAR_RADI_CORES))
+
+# ---------------------------------------------------------------------------
+# Parallel nnccd.radi override (UNCCD-OOS/UNCCD-IOS only)
+# ---------------------------------------------------------------------------
+# Ported from revision_experiments/07b_wp5_fulldata_ccd.R (read-only source;
+# NOT edited or sourced by this file -- the arithmetic below is a manual,
+# verbatim port). Per-point logic is byte-identical to harness.R's clamped
+# nnccd.radi (captured below as nnccd.radi.serial before being overridden);
+# the only change is distributing the 1:n loop across PAR_RADI_CORES workers
+# via parSapplyLB instead of a serial for loop. Deliberately WITHOUT 07b's
+# chunk-checkpoint disk cache (see header "Parallel nnccd.radi override"
+# note) -- every call here recomputes from scratch.
+nnccd.radi.serial <- nnccd.radi   # harness.R's clamped serial version; kept
+                                   # for the bit-exactness validation script
+                                   # (revision_experiments/04b_validate_par_radi.R)
+
+nnccd.radi <- function(dx, quantile = "lower", method = "ascend", low.num, quant,
+                       simul = NULL, niter, scores = F) {
+  ddx <- as.matrix(dist(dx))
+  n <- nrow(dx)
+  d <- ncol(dx)
+
+  if (quantile != "lower") stop("parallel nnccd.radi: only quantile='lower' supported (as used by all callers)")
+
+  if (!is.null(simul)) {
+    avg_len <- length(simul$average)
+    med_len <- length(simul$median)
+    NN.envelop <- list(
+      average = simul$average[pmin(1:n, avg_len)],
+      median  = simul$median[pmin(1:n, med_len)]
+    )
+  } else {
+    NN.envelop <- NNDest.simpois.lower.quant(n, d, quant, niter)
+  }
+
+  radi_one <- function(i) {
+    R_i <- 0
+    if (method == "ascend") {
+      o.d <- order(ddx[i, ])
+      for (j in low.num:n) {
+        r <- ddx[i, o.d[j]]
+        NN.dist.obs <- NNDest.dist.f(ddx[o.d[2:j], o.d[2:j]], r)
+        lower.bound.ave <- NN.envelop$average[j - 1]
+        lower.bound.med <- NN.envelop$median[j - 1]
+        if (NN.dist.obs$averge < lower.bound.ave | NN.dist.obs$median < lower.bound.med) {
+          if (j == low.num) R_i <- 0
+          else R_i <- ddx[i, o.d[j - 1]]
+          break
+        }
+      }
+    }
+    if (method == "descend") {
+      o.d <- order(ddx[i, ], decreasing = T)
+      for (j in 1:(n - low.num)) {
+        r <- ddx[i, o.d[j]]
+        NN.dist.obs <- NNDest.dist.f(ddx[o.d[j:(n - 1)], o.d[j:(n - 1)]], r)
+        lower.bound.ave <- rev(NN.envelop$average)[j + 2]
+        lower.bound.med <- rev(NN.envelop$median)[j + 2]
+        if (NN.dist.obs$averge > lower.bound.ave & NN.dist.obs$median > lower.bound.med) {
+          R_i <- r
+          break
+        }
+      }
+    }
+    if (scores && R_i == 0) R_i <- sort(ddx[i, ])[2]   # zero-radius fallback (scores mode only)
+    R_i
+  }
+
+  cl <- makeCluster(PAR_RADI_CORES)
+  on.exit(stopCluster(cl), add = TRUE)
+  clusterExport(cl, c("ddx", "n", "low.num", "method", "scores", "NN.envelop", "NNDest.dist.f"),
+                envir = environment())
+  # unname(): parSapplyLB attaches a names attribute to its result; the
+  # serial path returns an unnamed vector. identical() checks attributes, so
+  # this strip is required for bit-exactness (see 04b_validate_par_radi.R).
+  R <- unname(parSapplyLB(cl, 1:n, radi_one))
+  return(list(R = R, KS = NULL))
+}
+
 RESULTS_DIR <- here::here("revision_experiments/results")
-DATA_DIR    <- file.path(RESULTS_DIR, "wp4_data")
+DATA_DIR    <- file.path(RESULTS_DIR, "wp4_data2")   # NEW dir; see header "Dataset export" note
 dir.create(DATA_DIR, recursive = TRUE, showWarnings = FALSE)
 
 # ---------------------------------------------------------------------------
 # Cell enumeration (FIXED -- the seeding rule depends on cell_index)
 # ---------------------------------------------------------------------------
+# Grid 1 ("n"): n-scaling at fixed d=10. Grid 2 ("d"): d-scaling at fixed
+# n=500. See header for the empty-cell rationale.
 CELLS_MAIN <- data.frame(
   cell_index = 1:10,
   grid       = c(rep("n", 5), rep("d", 5)),
-  cell_value = c("250", "500", "1000", "2000", "4000",
-                 "10", "50", "100", "500", "1000"),
-  n          = c(250, 500, 1000, 2000, 4000, rep(1000, 5)),
-  d          = c(rep(20, 5), 10, 50, 100, 500, 1000),
+  cell_value = c("100", "250", "500", "1000", "2000",
+                 "5", "10", "50", "100", "500"),
+  n          = c(100, 250, 500, 1000, 2000, rep(500, 5)),
+  d          = c(rep(10, 5), 5, 10, 50, 100, 500),
   stringsAsFactors = FALSE
 )
 
@@ -190,20 +345,20 @@ parse_cell_spec <- function(spec) {
   grid <- if (g %in% c("a", "n")) "n" else "d"
   hit <- CELLS_MAIN[CELLS_MAIN$grid == grid & CELLS_MAIN$cell_value == v, ]
   if (nrow(hit) != 1) {
-    stop("cell=", spec, " does not match a defined cell. Grid A values: 250/500/1000/2000/4000; Grid B values: 10/50/100/500/1000.", call. = FALSE)
+    stop("cell=", spec, " does not match a defined cell. Grid A/n values: 100/250/500/1000/2000; Grid B/d values: 5/10/50/100/500.", call. = FALSE)
   }
   hit
 }
 
 if (MODE == "all") {
   CELLS <- CELLS_MAIN; DO_EXPORT <- TRUE
-  RAW_CSV <- file.path(RESULTS_DIR, "wp4_runtime_raw.csv")
+  RAW_CSV <- file.path(RESULTS_DIR, "wp4_runtime2_raw.csv")
 } else if (MODE == "r_only") {
   CELLS <- CELLS_MAIN; DO_EXPORT <- FALSE
-  RAW_CSV <- file.path(RESULTS_DIR, "wp4_runtime_raw.csv")
+  RAW_CSV <- file.path(RESULTS_DIR, "wp4_runtime2_raw.csv")
 } else if (grepl("^cell=", MODE)) {
   CELLS <- parse_cell_spec(MODE); DO_EXPORT <- TRUE
-  RAW_CSV <- file.path(RESULTS_DIR, "wp4_runtime_raw.csv")
+  RAW_CSV <- file.path(RESULTS_DIR, "wp4_runtime2_raw.csv")
 } else if (MODE == "micro") {
   CELLS <- CELLS_MICRO; DO_EXPORT <- TRUE
   RAW_CSV <- file.path(RESULTS_DIR, "wp4_runtime_micro_raw.csv")
@@ -412,8 +567,8 @@ make_row <- function(cell, method, rep, seed, t_construct, t_total, seconds, sta
 # ---------------------------------------------------------------------------
 # Aggregation
 # ---------------------------------------------------------------------------
-GRID_AGG_FILE <- c(n = "wp4_runtime_n.csv", d = "wp4_runtime_d.csv",
-                   micro = "wp4_runtime_micro.csv")
+GRID_AGG_FILE <- c(n = "wp4_runtime2_n.csv", d = "wp4_runtime2_d.csv",
+                   micro = "wp4_runtime_micro.csv")   # micro unchanged (separate file, unaffected by redesign)
 
 aggregate_wp4 <- function(raw_csv) {
   if (!file.exists(raw_csv)) {
