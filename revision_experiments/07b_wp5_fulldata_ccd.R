@@ -111,15 +111,39 @@ nnccd.radi <- function(dx, quantile = "lower", method = "ascend", low.num, quant
     R_i
   }
 
+  # Chunked with per-chunk disk checkpoints: the 2026-07-19 Windows-Update
+  # reboot killed a 13-h all-or-nothing search. Chunks make an interruption
+  # cost at most one chunk and give live progress in the log. Values are
+  # bit-exact vs the unchunked call: radi_one per point is unchanged and
+  # parSapplyLB preserves input order within each chunk.
+  fp  <- gsub("[^0-9a-zA-Z]", "", sprintf("%.10e", sum(ddx)))  # data fingerprint
+  key <- sprintf("radi_n%d_d%d_%s_low%d_sc%d_%s", n, d, method, low.num,
+                 as.integer(isTRUE(scores)), fp)
+  chunk_dir <- file.path(CACHE_DIR, "radi_chunks")
+  dir.create(chunk_dir, showWarnings = FALSE, recursive = TRUE)
+  chunks <- split(1:n, ceiling((1:n) / 200))
+
   cl <- makeCluster(PAR_RADI_CORES)
   on.exit(stopCluster(cl), add = TRUE)
   clusterExport(cl, c("ddx", "n", "low.num", "method", "scores", "NN.envelop", "NNDest.dist.f"),
                 envir = environment())
   t0 <- Sys.time()
-  R <- unname(parSapplyLB(cl, 1:n, radi_one))  # unname: parSapplyLB attaches names;
-                                               # serial builds an unnamed vector, and
-                                               # identical()-grade equivalence requires
-                                               # matching attributes, not just values
+  R <- numeric(n)
+  for (ci in seq_along(chunks)) {
+    idx <- chunks[[ci]]
+    cf  <- file.path(chunk_dir, sprintf("%s_c%03d.rds", key, ci))
+    if (file.exists(cf)) {
+      R[idx] <- readRDS(cf)
+      cat(sprintf("  [radi] chunk %d/%d reused from checkpoint\n", ci, length(chunks)))
+    } else {
+      R[idx] <- unname(parSapplyLB(cl, idx, radi_one))  # unname: parSapplyLB attaches
+                                                        # names; serial is unnamed and
+                                                        # identical() checks attributes
+      saveRDS(R[idx], cf)
+      cat(sprintf("  [radi] chunk %d/%d done, elapsed %.1f min\n", ci, length(chunks),
+                  as.numeric(difftime(Sys.time(), t0, units = "mins"))))
+    }
+  }
   cat(sprintf("  [parallel radi] n=%d cores=%d wall=%.1f s\n", n, PAR_RADI_CORES,
               as.numeric(difftime(Sys.time(), t0, units = "secs"))))
   return(list(R = R, KS = NULL))
