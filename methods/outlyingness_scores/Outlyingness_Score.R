@@ -51,14 +51,23 @@ IOS = function(data, R, d){
   return(scores)
 }
 
-# standardization using MADN
+# standardization using MADN, with the manuscript's degenerate-case fallback
+# chain MADN -> SD -> 0 (CCDwScores.tex line 625, item B3): when MADN = 0 the
+# denominator is replaced by the sample SD (median centering unchanged); if SD
+# also vanishes (or is undefined, i.e. a singleton cluster), all scores are 0.
+# See revision_experiments/test_std_madn.R.
 # x: a set of sample point
 std_MADN = function(x){
   if(mad(x)!=0){
     # s = abs((x-median(x))/mad(x))
     s = (x-median(x))/mad(x) # allow negative scores
   } else {
-    s = rep(0,length(x))
+    sdx = sd(x)
+    if(!is.na(sdx) && sdx!=0){
+      s = (x-median(x))/sdx  # MADN=0 fallback: replace denominator with SD
+    } else {
+      s = rep(0,length(x))   # MADN=SD=0 (or singleton): degenerate cluster
+    }
   }
   return(s)
 }
