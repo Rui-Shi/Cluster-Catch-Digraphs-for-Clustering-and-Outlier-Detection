@@ -127,6 +127,30 @@ All 4 jobs OK (07_wp5_subsample_ccd.R, n=1000 subsamples, seed 20260716; wall �
 
 **Correction history (kept deliberately — two earlier versions of this finding were wrong).** (1) First write-up: "OOS all-zero, AUC 0.500, degenerate; conclusion survives." (2) Verification pass: kept "OOS carries no signal (raw AUC 0.496)". Both concluded OOS fails on Musk. **Both wrong on OOS.** Raw OOS *is* 0.496 (that sub-number was right), but the *method* (with tie-break, once std_MADN is fixed) is 0.7357. The error was treating raw OOS as the method and forgetting the tie-break — compounded by the pre-fix all-zero std_MADN masking the true behaviour. IOS's 0.0853 inversion held across all three passes and is solid. Lesson for future score checks: compute through the published `NNCCD_*` pipeline (tie-break + standardization included), never `OOS()`/`IOS()` on raw radii alone.
 
+**Label-orientation validated — the IOS inversion is NOT a flipped label (checked 2026-07-20 on user challenge).** `Musk.csv` has exactly 97 rows with `label==0` of 3062, matching the ODDS/ADBench documented outlier count (3.2%), so `label==0 ⇒ outlier` is the right reading. Decisive test — every cached Musk score judged against the SAME `y` with the SAME AUC code:
+
+| cached score | AUC(y) | AUC(flipped y) |
+|---|---|---|
+| iForest | **1.0000** | 0.0000 |
+| LOF | 0.6803 | 0.3197 |
+| ODIN | 0.5775 | 0.4225 |
+| DBSCAN | 0.5237 | 0.4763 |
+| MST | 0.5000 | 0.5000 |
+| UNCCD-OOS (fixed) | 0.7357 | 0.2643 |
+| **UNCCD-IOS** | **0.0853** | 0.9147 |
+
+If `y` were flipped, iForest would read 0.0 instead of the 1.0 that matches its published ADBench result. Five methods on identical labels are correctly oriented; only IOS is below 0.5. A label error would move all rows together, so this is method-specific, not data-specific. **Do not flip IOS to harvest the 0.9147** — orientation is fixed by construction, and the same convention yields correctly-oriented 0.728 (Arrhythmia) and 0.639 (Speech-sub); a global flip would invert those.
+
+**Why AUC ≈ 0 rather than ≈ 0.5 (i.e. why IOS is an anti-detector here, not merely a weak one).** AUC 0.5 means the score carries *no information*; AUC 0.085 means it carries *strong* information with the sign contract violated (91.5% of outlier–inlier pairs cleanly separated, wrong way round). Mechanism, in order:
+1. **At d=166 the density collapses to an inverse radius.** ρ = size^(1/d)/R with ball sizes 1–6 ⇒ size^(1/166) ∈ [1, 1.011], so ρ ≈ 1/R and IOS = 1/(CI+ρ) is effectively a monotone function of local covering radius alone.
+2. **The outlier class is the tightest structure in the dataset** — median radius 0.176 vs 6.098 (35×), two barely-overlapping distributions. Any monotone function of R therefore near-perfectly separates the classes.
+3. **It is not "more supporters" but "denser supporters."** Median inbound count is ≈2 for BOTH classes; the difference is that an outlier's few supporters are clump-mates with 35× smaller radii, so median CI+ρ is 10.91 vs 0.32 (34×).
+4. **IOS's core hypothesis is maximally false here.** It encodes "anomalous ⇒ receives little influence"; the Musk anomaly class has the most mutually-reinforced influence in the data. A systematically (not randomly) violated assumption yields a systematic anti-detector — that is precisely the 0.5-vs-0 distinction.
+5. **Near-perfection comes from group homogeneity.** All 97 are one chemical class with near-identical 166-dim vectors (inbound purity 1.000), so essentially every outlier scores below every inlier. Partial tightness would have given ~0.3. Masking taken to completion: each outlier is vouched for by 96 accomplices.
+6. **Standardization cannot repair it** — median/MADN is monotone within a cluster, so it rescales but never reorders (end-to-end pipeline vs raw global IOS: Spearman 0.989).
+
+Contrast that makes it publishable: iForest's assumption ("anomalies occupy an easily isolated region") happens to hold for the same points (AUC 1.0), while IOS's assumption fails. Same data, same labels — one hypothesis true, one inverted. The instructive result for the paper is that the masking failure mode of influence-based scores is **not degradation toward noise but certification of collective outliers as the most normal points in the data** — a qualitatively more dangerous failure.
+
 **Manuscript significance (frame with Ceyhan — WP2/WP5/WP7).**
 - **OOS works on Musk (0.74); IOS inverts (0.09).** The real high-d failure story is *IOS-specific masking*, not "both scores fail." This is a cleaner, stronger answer to R2's "under what conditions may the advantage fail": on a dense collective-outlier cluster, OOS (density ratio + tie-break) succeeds while IOS's inbound-influence mechanism is actively fooled.
 - **WP2 regime refinement:** the Musk outlier cluster is *denser* than the genuine data (ρ_c ≫ ρ_g), the opposite of the WP2 masking model's ρ_c < ρ_g. In that regime IOS flips sign because cumulative influence rewards the tight mutual support collective outliers give each other. WP2's failure-condition discussion should cover this ρ_c > ρ_g branch; Musk is its real-data witness. Do **not** post-hoc flip IOS to claim 0.915 — orientation is fixed by construction.
