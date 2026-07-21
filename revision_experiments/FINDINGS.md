@@ -165,6 +165,25 @@ Contrast that makes it publishable: iForest's assumption ("anomalies occupy an e
 - **Why it is not merely cosmetic:** `std_MADN` is monotone when MADN>0, so in isolation it cannot reorder points (AUC-neutral). But it feeds the tie-break loop, whose tie-detection branches on `x == 0` versus a *relative* tolerance `|s-x|/x < 1e-4`; after standardization the big tied block sits exactly at 0 (the median maps there), whereas on raw scores it sits at a positive value and takes the other branch. Standardization and tie-breaking are therefore coupled, and removing the former would change the latter's behaviour.
 - **Recommended fix (minimal, for Ceyhan):** generalise Def 7 / Eq. `equ:Rstandardization` to both scores, state that OOS is standardized globally (over the whole dataset) and IOS per cluster, and soften line 519 to "globally comparable *in principle* — being cluster-assignment-independent — with the standardization applied to put scores on a calibrated threshold scale." Do NOT instead strip standardization from the code: every OOS threshold in the paper would need recalibration (both simulation tables + all real-data rows).
 
+**Musk_sub1000 re-run under fixed std_MADN (2026-07-21 05:12) — and it yields the masking mechanism's n-trajectory.** The fingerprint scan flagged this as the only corrupted cached result; cache + CSV rows were cleared and both methods recomputed (seed 20260716, same subsample).
+
+| method | AUC before → after | points changed | zeros | fixed-cutoff after |
+|---|---|---|---|---|
+| UNCCD-OOS | 0.5000 → **0.6211** | 1000/1000 | 1000 → 0 | TPR .094 / TNR .992 / BA .543 / F2 .108 |
+| UNCCD-IOS | 0.5164 → 0.5112 | 12/1000 | 466 → 454 | TPR .094 / TNR .935 / BA .514 / F2 .077 (unchanged) |
+
+- OOS reproduces the full-data rescue exactly (all-zero → real signal), confirming the bug bit OOS at both n=1000 and n=3062.
+- IOS is essentially untouched: only **12 of the 466 zeros lifted**, so the remaining 454 sit in clusters where IOS is genuinely *constant* (MADN **and** SD both 0) and correctly stay 0 under the manuscript's own rule. Useful evidence that the degenerate-cluster convention fires often at high d for IOS — worth a sentence in §2.
+- **THE FINDING — masking completes as the collective group fills in.** Putting the two n's side by side (both now on fixed code):
+
+| Musk | n | outliers present | OOS AUC | IOS AUC |
+|---|---|---|---|---|
+| sub1000 | 1000 | 32 of 97 | 0.6211 | 0.5112 (chance) |
+| full | 3062 | 97 of 97 | **0.7357** | **0.0853 (inverted)** |
+
+  As n grows, **OOS improves (0.62 → 0.74) while IOS collapses from chance into full inversion (0.51 → 0.09)**. This is exactly what the mechanism predicts: the inversion requires a dense, mutually-reinforcing outlier clump, and subsampling to n=1000 retains only 32 of the 97 musk-class points, diluting the clump so each outlier accrues far less mutual inbound influence. Masking is therefore not a fixed property of the dataset but **scales with the completeness of the collective group** — a much sharper statement for WP2 than "IOS fails on Musk", and a direct, quantified answer to R2's "under what conditions may the advantage fail." It also retroactively explains §9's puzzling "Musk IOS ≈ 0.516, degenerate" subsample reading: that was masking half-formed, not absent.
+- **Contention note (methodological):** wall was 27,948 s vs the original 9,351 s — **2.99×** — because these single-threaded jobs ran alongside Speech's 20 workers churning 3686×3686 distance matrices. Identical work, identical seed; only wall inflated. Lesson for scheduling: do not co-schedule single-threaded CCD jobs with a large parallel radius search — the memory-bandwidth tax runs both ways (it also cost Speech ~29%, i.e. 106.5 min/chunk against an expected ~82.6).
+
 **Manuscript significance (frame with Ceyhan — WP2/WP5/WP7).**
 - **OOS works on Musk (0.74); IOS inverts (0.09).** The real high-d failure story is *IOS-specific masking*, not "both scores fail." This is a cleaner, stronger answer to R2's "under what conditions may the advantage fail": on a dense collective-outlier cluster, OOS (density ratio + tie-break) succeeds while IOS's inbound-influence mechanism is actively fooled.
 - **WP2 regime refinement:** the Musk outlier cluster is *denser* than the genuine data (ρ_c ≫ ρ_g), the opposite of the WP2 masking model's ρ_c < ρ_g. In that regime IOS flips sign because cumulative influence rewards the tight mutual support collective outliers give each other. WP2's failure-condition discussion should cover this ρ_c > ρ_g branch; Musk is its real-data witness. Do **not** post-hoc flip IOS to claim 0.915 — orientation is fixed by construction.
