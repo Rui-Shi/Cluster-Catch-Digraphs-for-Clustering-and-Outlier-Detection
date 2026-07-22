@@ -184,6 +184,30 @@ Contrast that makes it publishable: iForest's assumption ("anomalies occupy an e
   As n grows, **OOS improves (0.62 → 0.74) while IOS collapses from chance into full inversion (0.51 → 0.09)**. This is exactly what the mechanism predicts: the inversion requires a dense, mutually-reinforcing outlier clump, and subsampling to n=1000 retains only 32 of the 97 musk-class points, diluting the clump so each outlier accrues far less mutual inbound influence. Masking is therefore not a fixed property of the dataset but **scales with the completeness of the collective group** — a much sharper statement for WP2 than "IOS fails on Musk", and a direct, quantified answer to R2's "under what conditions may the advantage fail." It also retroactively explains §9's puzzling "Musk IOS ≈ 0.516, degenerate" subsample reading: that was masking half-formed, not absent.
 - **Contention note (methodological):** wall was 27,948 s vs the original 9,351 s — **2.99×** — because these single-threaded jobs ran alongside Speech's 20 workers churning 3686×3686 distance matrices. Identical work, identical seed; only wall inflated. Lesson for scheduling: do not co-schedule single-threaded CCD jobs with a large parallel radius search — the memory-bandwidth tax runs both ways (it also cost Speech ~29%, i.e. 106.5 min/chunk against an expected ~82.6).
 
+**Speech full-data complete (2026-07-22 05:01) — the inversion is MUSK-SPECIFIC, and OOS now leads at high d. This is the most consequential WP5 result; it puts a locked claim under strain.** n=3686, d=400, 61 outliers (1.65%). Radius search 19/19 chunks, **112,968 s = 31.4 h at 20 cores** (~628 CPU-h); IOS added 341 s on the memoized construction.
+
+| method | AUC | fixed-cutoff | zeros | sd |
+|---|---|---|---|---|
+| UNCCD-OOS | **0.7406** | TPR .197 / TNR .984 / BA **.590** / F2 .191 | 0 | 1.00 |
+| UNCCD-IOS | 0.5799 | TPR .066 / TNR .956 / BA .511 / F2 .049 | **2098 (57%)** | 1.56 |
+
+- **Inversion does NOT generalise.** Speech has *more* dimensions than Musk (400 vs 166) yet IOS stays correctly oriented (0.58 > 0.5). So the Musk collapse is not "high d breaks IOS" — it is the specific geometry of Musk's outlier class (one homogeneous chemical class forming a tight ρ_c ≫ ρ_g clump). The WP2 failure branch should be stated in terms of **collective-outlier density and homogeneity**, not dimensionality.
+- **But IOS fails on Speech in a second, distinct way: mass degeneracy.** 57% of points sit in clusters where IOS is *constant*, so MADN=SD=0 and the B3 convention zeroes them — more than half the dataset carries no ranking information, which is why AUC sags to 0.58 with a huge tie block. OOS on identical data has 0 zeros. Two different high-d IOS failure modes are now documented: **inversion** (Musk) and **degeneracy** (Speech).
+- **Cross-dataset picture, everything on fixed std_MADN:**
+
+| dataset | d | outlier % | OOS AUC | IOS AUC | winner |
+|---|---|---|---|---|---|
+| Musk_sub1000 | 166 | 3.20% | 0.6211 | 0.5112 | OOS |
+| Musk_full | 166 | 3.17% | 0.7357 | 0.0853 | OOS |
+| Speech_sub1000 | 400 | 1.70% | 0.6530 | 0.6395 | OOS |
+| Speech_full | 400 | 1.65% | 0.7406 | 0.5799 | OOS |
+| Arrhythmia | 274 | 14.60% | 0.6337 | 0.7276 | IOS |
+
+  **OOS wins 4 of 5 high-dimensional datasets**, on BA as well as AUC (Speech .590 vs .511; Musk .536 vs .471), and OOS improves monotonically with n on both datasets (Musk .62→.74, Speech .65→.74).
+- **CLAIM UNDER STRAIN (flag for Ceyhan before any writing).** CLAUDE.md §4 locks: *"IOS delivers the strongest overall performance among CCD-based methods … with the largest gains in high-dimensional settings."* The new high-d evidence points the other way: OOS leads 4/5, and IOS's only win is Arrhythmia (the lowest-n, highest-contamination set). The claim may still hold for the **low-d simulation** regime it was derived from, but "largest gains in high-dimensional settings" is not supported by these five datasets and must not be carried into the revision unexamined.
+- **OPEN QUESTION worth one cheap experiment.** The std_MADN bug suppressed OOS *precisely* in the degenerate high-d regime (all-zero → AUC 0.500). The paper's high-d **simulation** results (d=50, d=100) came from the same buggy code path and are NOT covered by the fingerprint scan (simulation scores were never cached as .rds). If any of those cells hit MADN=0, the published "IOS > OOS at high d" comparison could be partly an artifact of OOS being zeroed. **Testable**: re-run one or two high-d simulation cells (e.g. 100d uniform/Gaussian) under fixed code and diff. Not launched — Stage 2 owns the machine, and this is a scope call for the user.
+- **Scaling note (WP4):** Speech's search cost 2.13× Musk's (112,968 s vs 53,006 s) for 1.20× the n — an apparent exponent near 4. Confounded by d (400 vs 166) and by the ~5.6% contention tax on Speech's early chunks, so do not quote it as a clean n-exponent without isolating d.
+
 **Manuscript significance (frame with Ceyhan — WP2/WP5/WP7).**
 - **OOS works on Musk (0.74); IOS inverts (0.09).** The real high-d failure story is *IOS-specific masking*, not "both scores fail." This is a cleaner, stronger answer to R2's "under what conditions may the advantage fail": on a dense collective-outlier cluster, OOS (density ratio + tie-break) succeeds while IOS's inbound-influence mechanism is actively fooled.
 - **WP2 regime refinement:** the Musk outlier cluster is *denser* than the genuine data (ρ_c ≫ ρ_g), the opposite of the WP2 masking model's ρ_c < ρ_g. In that regime IOS flips sign because cumulative influence rewards the tight mutual support collective outliers give each other. WP2's failure-condition discussion should cover this ρ_c > ρ_g branch; Musk is its real-data witness. Do **not** post-hoc flip IOS to claim 0.915 — orientation is fixed by construction.
