@@ -195,7 +195,15 @@ REPS <- as.integer(args[[1]])
 MODE <- args[[2]]
 stopifnot("reps must be a positive integer" = is.finite(REPS) && REPS >= 1)
 
-TIMEOUT_SEC        <- 2 * 60 * 60   # hard per-rep cap, RAISED from 30 min (see header)
+# Hard per-rep cap. Default 2 h; pass an optional 4th CLI arg (seconds) to
+# override for cells whose per-rep cost exceeds 2 h. n=2000 UNCCD at 22 cores
+# was measured (n-grid, exponent ~3.9) at ~2.3 h single-pass / ~4.6 h rep-1
+# double-pass, so that cell is run with a 10 h cap (arg4 = 36000) and reps=3.
+# Backward-compatible: 3-arg invocations keep the 2 h default.
+TIMEOUT_SEC        <- {
+  ti <- if (length(args) >= 4) suppressWarnings(as.numeric(args[[4]])) else NA_real_
+  if (!is.na(ti) && ti >= 1) ti else 2 * 60 * 60
+}
 CONSTRUCT_SKIP_SEC <- 5 * 60        # prior-rep threshold for skipping t_construct
 
 # Core count for the UNCCD parallel radius search (PAR_RADI_CORES below);
@@ -216,6 +224,8 @@ source(here::here("revision_experiments/harness.R"))
 
 cat(sprintf("[config] PAR_RADI_CORES = %d (UNCCD parallel radius search; RKCCD/baselines untouched)\n",
             PAR_RADI_CORES))
+cat(sprintf("[config] REPS = %d | TIMEOUT_SEC = %.0f (%.1f h per-rep cap)\n",
+            REPS, TIMEOUT_SEC, TIMEOUT_SEC / 3600))
 
 # ---------------------------------------------------------------------------
 # Parallel nnccd.radi override (UNCCD-OOS/UNCCD-IOS only)
