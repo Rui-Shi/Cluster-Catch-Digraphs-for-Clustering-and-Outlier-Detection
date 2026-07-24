@@ -205,7 +205,7 @@ Contrast that makes it publishable: iForest's assumption ("anomalies occupy an e
 
   **OOS wins 4 of 5 high-dimensional datasets**, on BA as well as AUC (Speech .590 vs .511; Musk .536 vs .471), and OOS improves monotonically with n on both datasets (Musk .62→.74, Speech .65→.74).
 - **CLAIM UNDER STRAIN (flag for Ceyhan before any writing).** CLAUDE.md §4 locks: *"IOS delivers the strongest overall performance among CCD-based methods … with the largest gains in high-dimensional settings."* The new high-d evidence points the other way: OOS leads 4/5, and IOS's only win is Arrhythmia (the lowest-n, highest-contamination set). The claim may still hold for the **low-d simulation** regime it was derived from, but "largest gains in high-dimensional settings" is not supported by these five datasets and must not be carried into the revision unexamined.
-- **OPEN QUESTION worth one cheap experiment.** The std_MADN bug suppressed OOS *precisely* in the degenerate high-d regime (all-zero → AUC 0.500). The paper's high-d **simulation** results (d=50, d=100) came from the same buggy code path and are NOT covered by the fingerprint scan (simulation scores were never cached as .rds). If any of those cells hit MADN=0, the published "IOS > OOS at high d" comparison could be partly an artifact of OOS being zeroed. **Testable**: re-run one or two high-d simulation cells (e.g. 100d uniform/Gaussian) under fixed code and diff. Not launched — Stage 2 owns the machine, and this is a scope call for the user.
+- **~~OPEN QUESTION~~ → RESOLVED 2026-07-24 (see "High-d std_MADN recheck" section below).** The std_MADN bug suppressed OOS *precisely* in the degenerate high-d regime (all-zero → AUC 0.500). The paper's high-d **simulation** results (d=50, d=100) came from the same buggy code path and are NOT covered by the fingerprint scan (simulation scores were never cached as .rds). If any of those cells hit MADN=0, the published "IOS > OOS at high d" comparison could be partly an artifact of OOS being zeroed. **Measured** across 10 high-d cells: the fix is a no-op for OOS (Gaussian) or slightly *helps* it (Uniform); OOS is never zeroed to chance; and OOS actually ≥ IOS in the Gaussian/uniform high-d settings. NOT an artifact. Full detail below.
 - **Scaling note (WP4):** Speech's search cost 2.13× Musk's (112,968 s vs 53,006 s) for 1.20× the n — an apparent exponent near 4. Confounded by d (400 vs 166) and by the ~5.6% contention tax on Speech's early chunks, so do not quote it as a clean n-exponent without isolating d.
 
 **Stage-2 incident (2026-07-22): the d=500 quantile table ran 5.65 h and was then THROWN AWAY by its own verification. Two bugs, both now fixed.**
@@ -235,3 +235,38 @@ Contrast that makes it publishable: iForest's assumption ("anomalies occupy an e
 - Speech (n=3686, d=400) must be re-run under the fixed code (no cached chunks survived the cancel); its AUC will show whether the IOS inversion is Musk-specific or general.
 
 - **n=500 UNCCD: 282.6 (OOS) / 288.2 (IOS) s, CV 1.3–1.7%** (was 337.5/811.8 s at CV up to 45%). The largest correction: the old IOS value was inflated ~182%, and the apparent 2.4× OOS-vs-IOS cost asymmetry at n=500 was pure contention noise — clean OOS and IOS costs are near-equal (~285 s), as expected since construction dominates both. UNCCD n-scaling 250→500 is now ≈13× for 2× n (exponent ~3.7) — still the bottleneck method and consistent with the n³–n⁴ construction band, but §6's "super-quartic" (exponent ~5 from the loaded IOS row) softens to "roughly cubic-to-quartic". "3–4 orders of magnitude above LOF at n=500" still holds (~2,200×). Re-time wall: 1.5 h, not the forecast 5 h (forecast was built on the inflated per-rep numbers).
+
+---
+
+## High-d std_MADN recheck — is "IOS > OOS at high d" a standardization artifact? (2026-07-24)
+
+**Answer: no.** The std_MADN fix (MADN→SD→0, commit e138b85) does not change the high-d simulation OOS/IOS comparison, OOS is never zeroed to chance at high d, and in the non-masking Gaussian/uniform settings OOS actually **beats** IOS. This resolves the open question flagged at line ~208 and independently corroborates the WP5 real-data concern (OOS wins 4/5 high-d datasets).
+
+**Method** (`revision_experiments/12_highd_madn_recheck.R`, driver `run_highd_recheck.ps1`). For each cell: regenerate the identical MC data (seed 123, generation code copied verbatim from the first-cycle drivers), build each digraph **once**, and apply **both** std_MADN variants to that one graph — the shipped fixed one and a byte-faithful copy of the old buggy one (`mad==0 → all-zeros`, no SD step). Standardization is downstream of the digraph/radii, so the fixed-vs-buggy diff is **exact per replicate**. A fidelity guard proved the copied post-graph logic reproduces the shipped `RKCCD/NNCCD_OOS/IOS` to `0.000e+00` for both families before any production run. 10 cells × 100 reps: RKCCD & UNCCD × Gaussian/Uniform × d∈{50,100} at n=500, plus RKCCD n=1000 at d=100 (the paper's stressed endpoint). Records per rep: whether `mad(rawOOS)==0` fired (the OOS-zeroing trigger), per-cluster IOS `mad==0` events, fixed-vs-buggy identity, rank-AUC, and TPR/TNR/BA/F2 at the published cutoff. Results: `results/highd_madn_recheck.csv` (+ per-rep dumps).
+
+**Artifact test — the fix barely moves anything, and never the wrong way:**
+
+| cell | MADN0(OOS) reps | OOS AUC fix / bug (Δ) | IOS AUC fix / bug (Δ) |
+|---|---|---|---|
+| RKCCD Gaussian d100 n500  | 0/100 | 1.0000 / 1.0000 (+0.0000) | 0.8490 / 0.8503 (−0.0013) |
+| RKCCD Gaussian d100 n1000 | 0/100 | 1.0000 / 1.0000 (+0.0000) | 0.7923 / 0.7937 (−0.0014) |
+| RKCCD Gaussian d50 n500   | 0/100 | 0.9993 / 0.9993 (+0.0000) | 0.8321 / 0.8336 (−0.0015) |
+| RKCCD Uniform d100 n500   | 6/100 | 1.0000 / 0.9700 (+0.0300) | 0.9122 / 0.9116 (+0.0006) |
+| RKCCD Uniform d100 n1000  | 1/100 | 1.0000 / 0.9950 (+0.0050) | 0.8980 / 0.8974 (+0.0007) |
+| RKCCD Uniform d50 n500    | 1/100 | 0.9999 / 0.9949 (+0.0050) | 0.9154 / 0.9153 (+0.0001) |
+| UNCCD Gaussian d100 n500  | 0/100 | 1.0000 / 1.0000 (+0.0000) | 0.9318 / 0.9323 (−0.0004) |
+| UNCCD Gaussian d50 n500   | 0/100 | 0.9994 / 0.9994 (+0.0000) | 1.0000 / 1.0000 (+0.0000) |
+| UNCCD Uniform d100 n500   | 3/100 | 1.0000 / 0.9850 (+0.0150) | 0.9756 / 0.9749 (+0.0007) |
+| UNCCD Uniform d50 n500    | 0/100 | 0.9998 / 0.9998 (+0.0000) | 0.9981 / 0.9981 (+0.0000) |
+
+- **`MADN(OOS)=0` fires 0/100 in every Gaussian cell and only 0–6/100 in Uniform.** Where it does fire, the fix *recovers* OOS (Δ up to +0.030 AUC) — i.e. the buggy path slightly **understated** OOS, so the published comparison was conservative toward OOS, not inflated in IOS's favour.
+- **OOS is never collapsed to chance.** Worst-case buggy OOS AUC is 0.9700 (RKCCD Uniform d100 n500); a zeroed OOS would read ~0.5. The all-zero fingerprint (TPR=0, TNR=1) appears in no cell.
+- **IOS is effectively unchanged** (|Δ AUC| ≤ 0.0015) even though per-cluster `mad==0` fires often (up to 73/100 reps in UNCCD Gaussian d100) — the tie-break and the other clusters absorb it.
+
+**The actual science (bonus): OOS ≥ IOS at high d in non-masking settings.** TPR at the published cutoff, fixed path: OOS 0.94–1.00 across all high-d Gaussian/uniform cells vs IOS 0.40–0.77 at d=100. The only "IOS > OOS" cell is UNCCD Gaussian d50 (0.999 vs 0.999, a tie). This matches the manuscript's own prose ("RKCCD-OOS leading at d≥50, F2>0.9"; "RKCCD-IOS drops at d≥50, F2=0.521 at d=100/n=1000") and the WP5 real-data finding. The genuine "IOS > OOS at high d" result lives **only** in the §3.2 Matérn/masking table (`tab:Matern_score1`), where OOS TPR=0.311 by design — and that is real masking, not a std_MADN artifact: the published Matérn OOS is TPR 0.311 / TNR 0.905 (**not** the 0/1 zeroing fingerprint), and the measured bug effect here (≤0.03 AUC) cannot manufacture the 0.31-vs-0.99 gap seen there.
+
+**Cross-check vs published slurm numbers (validates the harness):** UNCCD Gaussian d100 n500 IOS TPR 0.770 (mine) vs 0.7735 (published); OOS TPR 1.000 vs 0.996. RKCCD Uniform OOS TPR rises with n (0.94 @ n=500 → 0.99 @ n=1000), exactly the manuscript's stated "0.535 → 0.994 as n increases" trend. (The earlier ad-hoc slurm read of 0.535 was a small-n file, not n=500.)
+
+**Harness bug found & fixed (nominal-vs-actual n).** The generator produces `n1+n2+n0` points where `n1=round(N·0.475)`, `n2=n1−1`, `n0=round(N·0.05)`; this equals N at N=500 but is **999** at N=1000. Passing nominal N to the rank-AUC label vector mismatched the 999-length score vector and NA'd every n=1000 rep in the first pass (the 8 n=500 cells were unaffected and correct). Fixed to use `nrow(datax)`; the 2 n=1000 cells were re-run clean (3.1 / 3.5 min). The original `count_scores` tolerates the off-by-one silently (one point mislabelled); AUC does not.
+
+**Loose end (unchanged, not blocking):** the paper's headline still says "IOS … largest gains in high-dimensional settings" (CLAUDE.md §4). This recheck reinforces the line-207 CAUTION: at high d, OOS is the stronger CCD score in both the Gaussian/uniform simulations *and* 4/5 real datasets. IOS's high-d advantage is **masking-specific** (§3.2 Matérn, Arrhythmia). Ceyhan decision needed before the revision carries the claim unqualified.
