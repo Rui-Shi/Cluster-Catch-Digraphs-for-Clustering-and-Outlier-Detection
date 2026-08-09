@@ -30,14 +30,14 @@
 #   run_in_background) -- wilt in particular needs its own invocation, since
 #   it builds a 4819x4819 distance matrix and a complete-graph MST.
 #
-# Output: revision_experiments/results/regen_baselines.csv (this script's
+# Output: revision_experiments/results/tr1/regen_baselines.csv (this script's
 # OWN shard -- never written to by any other agent). Resumable: checkpoints
 # via has_result()/append_result() keyed on (dataset, method, variant).
 
 suppressMessages(library(here))
 source(here::here("revision_experiments", "harness.R"))
 
-OUT_CSV   <- here::here("revision_experiments", "results", "regen_baselines.csv")
+OUT_CSV   <- here::here("revision_experiments", "results", "tr1", "regen_baselines.csv")
 TRUTH_CSV <- here::here("revision_experiments", "published_realdata_truth.csv")
 
 args <- commandArgs(trailingOnly = TRUE)

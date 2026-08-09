@@ -27,7 +27,7 @@ suppressMessages({
 source(here::here("revision_experiments", "harness.R"))
 source(here::here("revision_experiments", "wp0_mccd_methods.R"))
 
-OUT   <- here::here("revision_experiments/results/waveform_scaling.csv")
+OUT   <- here::here("revision_experiments/results/tr1/waveform_scaling.csv")
 S_MIN <- 0.0625
 
 TRUTH <- read.csv(here::here("revision_experiments/published_realdata_truth.csv"),

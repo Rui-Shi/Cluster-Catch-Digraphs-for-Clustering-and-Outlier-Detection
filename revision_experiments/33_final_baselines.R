@@ -28,7 +28,7 @@ DATASETS <- if (length(args) >= 1 && nzchar(args[1])) strsplit(args[1], ",")[[1]
                 "PenDigits", "thyroid", "pageblocks")
 
 OUT <- Sys.getenv("FINAL_BASE_OUT_CSV",
-                  here::here("revision_experiments/results/final_baselines.csv"))
+                  here::here("revision_experiments/results/tr1/final_baselines.csv"))
 
 cat(sprintf("33_final_baselines.R: datasets = %s\n  output = %s\n",
             paste(DATASETS, collapse = ", "), OUT))

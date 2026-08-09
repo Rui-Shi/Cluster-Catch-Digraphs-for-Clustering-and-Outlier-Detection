@@ -38,10 +38,12 @@ Sys.setenv(OMP_NUM_THREADS = "1", MKL_NUM_THREADS = "1",
 
 source(here::here("revision_experiments/harness.R"))
 
-RESULTS_DIR      <- here::here("revision_experiments/results")
-DATASETS_CSV_DIR <- file.path(RESULTS_DIR, "datasets_csv")
-CACHE_DIR        <- file.path(RESULTS_DIR, "scores_cache")
+SHARED_DIR       <- here::here("revision_experiments/results")       # shared infra: not project-specific
+RESULTS_DIR      <- file.path(SHARED_DIR, "tr2")
+DATASETS_CSV_DIR <- file.path(SHARED_DIR, "datasets_csv")
+CACHE_DIR        <- file.path(SHARED_DIR, "scores_cache")
 RAW_CSV          <- file.path(RESULTS_DIR, "wp5_fulldata_raw.csv")
+dir.create(RESULTS_DIR, recursive = TRUE, showWarnings = FALSE)
 
 FULL_SPECS <- list(
   musk   = list(csv = "Musk",   d = 166, nmax = 3062,

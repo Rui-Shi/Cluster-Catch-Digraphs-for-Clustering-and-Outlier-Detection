@@ -6,7 +6,7 @@
 # Read-only.
 
 suppressMessages(library(here))
-cmp <- read.csv(here::here("revision_experiments/results/final_comparison.csv"),
+cmp <- read.csv(here::here("revision_experiments/results/tr1/final_comparison.csv"),
                 stringsAsFactors = FALSE)
 
 # Manuscript order: original eight first (as currently printed), then the new

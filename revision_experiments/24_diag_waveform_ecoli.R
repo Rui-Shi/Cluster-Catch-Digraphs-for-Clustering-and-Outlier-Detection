@@ -25,7 +25,7 @@ suppressMessages(library(here))
 source(here::here("revision_experiments/harness.R"))
 source(here::here("revision_experiments/wp0_mccd_methods.R"))
 
-OUT_CSV   <- here::here("revision_experiments/results/diag_waveform_ecoli.csv")
+OUT_CSV   <- here::here("revision_experiments/results/tr1/diag_waveform_ecoli.csv")
 TRUTH_CSV <- here::here("revision_experiments/published_realdata_truth.csv")
 truth <- read.csv(TRUTH_CSV, stringsAsFactors = FALSE)
 

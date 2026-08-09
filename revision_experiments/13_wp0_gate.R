@@ -62,7 +62,7 @@ REPO_ROOT   <- here::here()
 # to the original wp0_gate_v2.csv is never touched by this one (two writers
 # on one CSV can interleave partial appended lines). Default unchanged for
 # any other caller that doesn't set the env var.
-OUT_CSV     <- Sys.getenv("WP0_GATE_OUT_CSV", file.path(REPO_ROOT, "revision_experiments/results/wp0_gate_v2.csv"))
+OUT_CSV     <- Sys.getenv("WP0_GATE_OUT_CSV", file.path(REPO_ROOT, "revision_experiments/results/tr1/wp0_gate_v2.csv"))
 TRUTH_CSV   <- file.path(REPO_ROOT, "revision_experiments/published_realdata_truth.csv")
 TIMEOUT_SEC <- as.numeric(Sys.getenv("WP0_GATE_TIMEOUT_SEC", "600"))
 

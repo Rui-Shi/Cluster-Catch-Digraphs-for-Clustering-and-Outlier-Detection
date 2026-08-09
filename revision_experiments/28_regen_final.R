@@ -28,7 +28,7 @@ METHODS  <- if (length(args) >= 2 && nzchar(args[2])) strsplit(args[2], ",")[[1]
 S_MIN    <- if (length(args) >= 3 && nzchar(args[3])) as.numeric(args[3]) else 0.0625
 
 OUT_CSV <- Sys.getenv("REGEN_FINAL_OUT_CSV",
-                      here::here("revision_experiments/results/regen_final.csv"))
+                      here::here("revision_experiments/results/tr1/regen_final.csv"))
 
 stopifnot(all(METHODS %in% names(METHOD_REGISTRY)))
 MIN_CLS_METHODS <- c("SU-MCCD", "SUN-MCCD")

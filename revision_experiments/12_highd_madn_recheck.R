@@ -398,7 +398,7 @@ agg <- data.frame(
   TPR_IOS_bug = mean(ok$TPR_IOS_bug), TNR_IOS_bug = mean(ok$TNR_IOS_bug),
   stringsAsFactors = FALSE)
 
-res_dir <- here::here("revision_experiments/results")
+res_dir <- here::here("revision_experiments/results/tr2")
 dir.create(res_dir, showWarnings = FALSE, recursive = TRUE)
 perrep_file <- file.path(res_dir, sprintf("highd_madn_recheck_%s_perrep.csv", CELL))
 write.csv(ok, perrep_file, row.names = FALSE)

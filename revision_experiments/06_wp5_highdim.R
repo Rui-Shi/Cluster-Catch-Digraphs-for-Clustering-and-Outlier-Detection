@@ -118,11 +118,13 @@ Sys.setenv(OMP_NUM_THREADS = "1", MKL_NUM_THREADS = "1",
 
 source(here::here("revision_experiments/harness.R"))
 
-RESULTS_DIR      <- here::here("revision_experiments/results")
-DATASETS_CSV_DIR <- file.path(RESULTS_DIR, "datasets_csv")
-CACHE_DIR        <- file.path(RESULTS_DIR, "scores_cache")
+SHARED_DIR       <- here::here("revision_experiments/results")       # shared infra: not project-specific
+RESULTS_DIR      <- file.path(SHARED_DIR, "tr2")
+DATASETS_CSV_DIR <- file.path(SHARED_DIR, "datasets_csv")
+CACHE_DIR        <- file.path(SHARED_DIR, "scores_cache")
 RAW_CSV          <- file.path(RESULTS_DIR, "wp5_highdim_raw.csv")
 METRICS_CSV      <- file.path(RESULTS_DIR, "wp5_highdim_metrics.csv")
+dir.create(RESULTS_DIR, recursive = TRUE, showWarnings = FALSE)
 dir.create(CACHE_DIR, recursive = TRUE, showWarnings = FALSE)
 
 cat(sprintf("=== 06_wp5_highdim.R === mode=%s\n", MODE))

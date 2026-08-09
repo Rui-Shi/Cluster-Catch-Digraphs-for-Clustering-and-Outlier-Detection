@@ -18,7 +18,7 @@
 # Writes results/final_comparison.csv and prints the tables.
 
 suppressMessages(library(here))
-RES <- here::here("revision_experiments/results")
+RES <- here::here("revision_experiments/results/tr1")
 
 ORIG <- c("hepatitis", "glass", "vertebral", "ecoli", "stamps", "vowels", "waveform", "wilt")
 NEW  <- c("lymphography", "WBC", "WDBC", "pima", "shuffle", "PenDigits", "thyroid", "pageblocks")
@@ -142,4 +142,4 @@ for (ds in ord) {
   cat(sprintf("      %.3f\n", max(vb, na.rm = TRUE)))
 }
 
-cat("\nWritten: results/final_comparison.csv\n")
+cat("\nWritten: results/tr1/final_comparison.csv\n")

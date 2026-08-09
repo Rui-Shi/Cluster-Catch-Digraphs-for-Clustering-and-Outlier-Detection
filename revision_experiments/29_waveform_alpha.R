@@ -29,7 +29,7 @@ suppressMessages(library(here))
 source(here::here("revision_experiments", "harness.R"))
 source(here::here("revision_experiments", "wp0_mccd_methods.R"))
 
-OUT <- here::here("revision_experiments/results/waveform_alpha.csv")
+OUT <- here::here("revision_experiments/results/tr1/waveform_alpha.csv")
 
 TRUTH <- read.csv(here::here("revision_experiments/published_realdata_truth.csv"),
                   stringsAsFactors = FALSE)

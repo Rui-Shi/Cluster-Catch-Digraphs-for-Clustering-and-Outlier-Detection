@@ -18,7 +18,7 @@
 # Read-only. Writes nothing.
 
 suppressMessages(library(here))
-RES <- here::here("revision_experiments/results")
+RES <- here::here("revision_experiments/results/tr1")
 
 DATASETS <- c("hepatitis", "glass", "vertebral", "ecoli",
               "stamps", "vowels", "waveform", "wilt")

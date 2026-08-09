@@ -58,11 +58,11 @@ for (nm in CANDIDATES) {
 }
 
 inv <- do.call(rbind, rows)
-write.csv(inv, here::here("revision_experiments/results/dataset_inventory.csv"),
+write.csv(inv, here::here("revision_experiments/results/tr1/dataset_inventory.csv"),
           row.names = FALSE)
 
 cat("\nNOTE: 'MIS-SORTED' means the loader's final order(...) call uses a\n",
     "feature column rather than the label column. It does NOT affect our\n",
     "numbers -- evaluate() reorders (Y, score) jointly before counting -- but\n",
     "it invalidates any published figure that was counted positionally.\n", sep = "")
-cat("\nWritten: results/dataset_inventory.csv\n")
+cat("\nWritten: results/tr1/dataset_inventory.csv\n")

@@ -67,8 +67,8 @@ suppressPackageStartupMessages({
 })
 
 REPO_ROOT <- here::here()
-RAW_CSV <- file.path(REPO_ROOT, "revision_experiments/results/wp3_synthetic_raw.csv")
-AGG_CSV <- file.path(REPO_ROOT, "revision_experiments/results/wp3_sensitivity_synthetic.csv")
+RAW_CSV <- file.path(REPO_ROOT, "revision_experiments/results/tr2/wp3_synthetic_raw.csv")
+AGG_CSV <- file.path(REPO_ROOT, "revision_experiments/results/tr2/wp3_sensitivity_synthetic.csv")
 
 D <- 10L
 D_INDEX <- 4L  # d=10 -> index 4 (vectors ordered d = 2,3,5,10,20,50,100)

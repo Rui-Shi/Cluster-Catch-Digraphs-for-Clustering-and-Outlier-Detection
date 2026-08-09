@@ -15,7 +15,7 @@
 
 suppressMessages(library(here))
 
-GRID  <- read.csv(here::here("revision_experiments/results/regen_smin_grid.csv"),
+GRID  <- read.csv(here::here("revision_experiments/results/tr1/regen_smin_grid.csv"),
                   stringsAsFactors = FALSE)
 TRUTH <- read.csv(here::here("revision_experiments/published_realdata_truth.csv"),
                   stringsAsFactors = FALSE)

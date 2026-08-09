@@ -33,7 +33,7 @@ source(here::here("revision_experiments/harness.R"))
 source(here::here("revision_experiments/wp0_mccd_methods.R"))
 
 REPO_ROOT   <- here::here()
-OUT_CSV     <- file.path(REPO_ROOT, "revision_experiments/results/regen_smin_grid.csv")
+OUT_CSV     <- file.path(REPO_ROOT, "revision_experiments/results/tr1/regen_smin_grid.csv")
 TRUTH_CSV   <- file.path(REPO_ROOT, "revision_experiments/published_realdata_truth.csv")
 TIMEOUT_SEC <- 600
 

@@ -19,7 +19,7 @@ suppressPackageStartupMessages({
   library(ggplot2)
 })
 
-RESULTS_DIR <- here::here("revision_experiments/results")
+RESULTS_DIR <- here::here("revision_experiments/results/tr2")
 FIG_DIR     <- file.path(RESULTS_DIR, "figures")
 SYNTH_CSV   <- file.path(RESULTS_DIR, "wp3_sensitivity_synthetic.csv")
 dir.create(FIG_DIR, recursive = TRUE, showWarnings = FALSE)
