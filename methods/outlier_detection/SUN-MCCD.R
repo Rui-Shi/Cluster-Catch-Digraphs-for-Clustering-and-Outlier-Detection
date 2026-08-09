@@ -49,5 +49,5 @@ SUNMCCD_outlier = function(datax, simul=NULL, min.cls=0, method="ascend", low.nu
   # find the connected components for each cluster with the delta obtained above.
   cluster_component = lapply(1:NN_result$si.ind, function(x){
     return(ksccd.connected(nnccd_clusters[[x]],delta_max[x],sequential=FALSE,alpha=0.05)$member)})
-  return(c(clusters=list(nnccd_clusters),label=list(cluster_component)))
+  return(c(clusters=list(nnccd_clusters),label=list(cluster_component),radii=list(NN_result$R)))
 }

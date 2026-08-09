@@ -24,5 +24,5 @@ RUMCCD_outlier = function(datax, simul=NULL, quant=0.99, cls=NULL,ind=NULL, nite
   # find the connected components for each cluster with the delta obtained above.
   cluster.component = lapply(1:RK.result$si.ind, function(x){
     return(ksccd.connected(rccd.clusters[[x]],delta.max[x],sequential=FALSE,alpha=0.05)$member)})
-  return(c(clusters=list(rccd.clusters),label=list(cluster.component)))
+  return(c(clusters=list(rccd.clusters),label=list(cluster.component),radii=list(RK.result$R)))
 }
