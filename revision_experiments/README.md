@@ -117,15 +117,17 @@ any live path.
 `table_gen_*`, `wp3_*`, `wp4*`, `wp5*`, `wp6*`, plus subdirectories
 `figures/`, `probes/`, `wp4_data/`, `wp4_data2/`, `wp6_scores/`.
 
-`shutdown_watcher_274.log` and the `wp5sub_*_launcher.ps1` files literally
-name the pre-move path
+`shutdown_watcher_274.log` named the pre-move path
 `G:\Submissions\TR2\Pattern Recognition (Elsevier) - Resubmit\...` (this
-codebase's location before it was copied into the TR1 repo on 2026-08-08) --
-confirming TR2 origin, and confirming those two `.ps1` launchers were already
-stale (unrunnable from their hardcoded old path) before this reorg; that is
-pre-existing breakage, not something this reorg introduced, and they were
-left un-rewritten since they are a historical record of how those jobs were
-launched, not part of the live pipeline.
+codebase's location before it was copied into the TR1 repo on 2026-08-08),
+confirming TR2 origin. The four `wp5sub_{Musk,Speech}_{IOS,OOS}_launcher.ps1`
+files (not two -- an earlier pass through this repo undercounted them) carried
+the same stale absolute path and were unrunnable after the move. A later
+cleanup pass (2026-08-09) repaired all four in place: `Set-Location` now
+points at the current TR1 root, and each script's stderr/stdout redirect was
+updated from the pre-split `revision_experiments/results/wp5sub_*.log` to
+`revision_experiments/results/tr2/wp5sub_*.log`. They were fixed rather than
+deleted because they are the only record of how those jobs were launched.
 
 ## Note on `36_patch_tr2_tables.ps1`
 
