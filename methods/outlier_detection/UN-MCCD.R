@@ -25,5 +25,5 @@ UNMCCD_outlier = function(datax, simul, method="ascend", niter=1000){
   # find the connected components for each cluster with the delta obtained above.
   cluster.component = lapply(1:NN.result$si.ind, function(x){
     return(ksccd.connected(nnccd.clusters[[x]],delta.max[x],sequential=FALSE,alpha=0.05)$member)})
-  return(c(clusters=list(nnccd.clusters),label=list(cluster.component)))
+  return(c(clusters=list(nnccd.clusters),label=list(cluster.component),radii=list(NN.result$R)))
 }

@@ -47,7 +47,7 @@
 #   Rscript "revision_experiments/08_wp6_metrics.R"
 #
 # Output:
-#   revision_experiments/results/wp6_pyod_metrics.csv
+#   revision_experiments/results/tr2/wp6_pyod_metrics.csv
 #     dataset, method, labeling, TPR_mean, TPR_sd, TNR_mean, TNR_sd,
 #     BA_mean, BA_sd, F2_mean, F2_sd, n_seeds
 
@@ -73,8 +73,8 @@ source(count_r_path)
 stopifnot("count_scores2 not defined after sourcing count.R" = exists("count_scores2"))
 
 data_dir <- file.path(repo_root, "revision_experiments", "results", "datasets_csv")
-scores_dir <- file.path(repo_root, "revision_experiments", "results", "wp6_scores")
-out_path <- file.path(repo_root, "revision_experiments", "results", "wp6_pyod_metrics.csv")
+scores_dir <- file.path(repo_root, "revision_experiments", "results", "tr2", "wp6_scores")
+out_path <- file.path(repo_root, "revision_experiments", "results", "tr2", "wp6_pyod_metrics.csv")
 
 stopifnot("datasets_csv directory not found" = dir.exists(data_dir))
 stopifnot("wp6_scores directory not found (run 07_wp6_pyod.py first)" = dir.exists(scores_dir))

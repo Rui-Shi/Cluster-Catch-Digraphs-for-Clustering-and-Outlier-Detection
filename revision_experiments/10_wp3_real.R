@@ -36,12 +36,13 @@ suppressMessages(source(here::here("revision_experiments/harness.R")))
 
 REPO_ROOT  <- here::here()
 CACHE_DIR  <- file.path(REPO_ROOT, "revision_experiments/results/scores_cache")
-OUT_CSV    <- file.path(REPO_ROOT, "revision_experiments/results/wp3_sensitivity_real.csv")
+OUT_CSV    <- file.path(REPO_ROOT, "revision_experiments/results/tr2/wp3_sensitivity_real.csv")
 FULL_GRID  <- sort(unique(c(seq(1, 4, length.out = 17), 2)))  # 18 cutoffs incl. calibrated 2.0
 CALIBRATED <- 2  # manuscript: "The four OSs use a threshold of 2" (Section 4)
 OS_METHODS <- c("RKCCD-OOS", "RKCCD-IOS", "UNCCD-OOS", "UNCCD-IOS")
 
 dir.create(CACHE_DIR, recursive = TRUE, showWarnings = FALSE)
+dir.create(dirname(OUT_CSV), recursive = TRUE, showWarnings = FALSE)
 
 # dataset key -> loader. WBC and Thyroid load through the harness
 # (RealData_Collection.R objects "WBC" and "thyroid" -- same objects the

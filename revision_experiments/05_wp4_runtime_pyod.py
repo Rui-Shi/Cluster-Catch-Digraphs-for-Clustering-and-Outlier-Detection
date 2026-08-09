@@ -87,10 +87,10 @@ from pyod.models.ecod import ECOD
 from pyod.models.lunar import LUNAR
 
 HERE = Path(__file__).resolve().parent
-DATA_DIR = HERE / "results" / "wp4_data2"
-RAW_PATH = HERE / "results" / "wp4_runtime2_pyod_raw.csv"
-AGG_PATH = HERE / "results" / "wp4_runtime2_pyod.csv"
-ERROR_LOG_PATH = HERE / "results" / "wp4_pyod_errors.log"
+DATA_DIR = HERE / "results" / "tr2" / "wp4_data2"
+RAW_PATH = HERE / "results" / "tr2" / "wp4_runtime2_pyod_raw.csv"
+AGG_PATH = HERE / "results" / "tr2" / "wp4_runtime2_pyod.csv"
+ERROR_LOG_PATH = HERE / "results" / "tr2" / "wp4_pyod_errors.log"
 
 METHODS = ["ECOD", "LUNAR", "AutoEncoder"]
 FILE_RE = re.compile(r"^(n|d|micro)_(.+)_rep1\.csv$")

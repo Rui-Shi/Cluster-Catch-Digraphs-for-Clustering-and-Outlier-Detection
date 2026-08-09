@@ -78,10 +78,10 @@ from pyod.models.lunar import LUNAR
 
 HERE = Path(__file__).resolve().parent
 DATA_DIR = HERE / "results" / "datasets_csv"
-SCORES_DIR = HERE / "results" / "wp6_scores"
-FIT_LOG_PATH = HERE / "results" / "wp6_fit_log.csv"
-ERROR_LOG_PATH = HERE / "results" / "wp6_fit_errors.log"
-DETERMINISM_LOG_PATH = HERE / "results" / "wp6_determinism_check.txt"
+SCORES_DIR = HERE / "results" / "tr2" / "wp6_scores"
+FIT_LOG_PATH = HERE / "results" / "tr2" / "wp6_fit_log.csv"
+ERROR_LOG_PATH = HERE / "results" / "tr2" / "wp6_fit_errors.log"
+DETERMINISM_LOG_PATH = HERE / "results" / "tr2" / "wp6_determinism_check.txt"
 
 LUNAR_AE_SEEDS = [1, 2, 3, 4, 5]
 DETERMINISM_DATASET = "Hepatitis"  # smallest dataset -> fast double-fit check

@@ -3,7 +3,7 @@
 #
 # WP3 threshold-sensitivity plots (Task T7 Phase A).
 # Reads whichever of the two sensitivity CSVs exist and renders 300-dpi PNG
-# line plots into revision_experiments/results/figures/:
+# line plots into revision_experiments/results/tr2/figures/:
 #   - wp3_sensitivity_synthetic.csv -> wp3_synthetic_<setting>.png
 #       x = cutoff multiplier, y = BA / F2 (mean over reps), one line per
 #       OS method, dashed vertical line at multiplier = 1 (the calibrated
@@ -28,7 +28,7 @@ suppressPackageStartupMessages({
   library(ggplot2)
 })
 
-RESULTS_DIR <- here::here("revision_experiments/results")
+RESULTS_DIR <- here::here("revision_experiments/results/tr2")
 FIG_DIR     <- file.path(RESULTS_DIR, "figures")
 SYNTH_CSV   <- file.path(RESULTS_DIR, "wp3_sensitivity_synthetic.csv")
 REAL_CSV    <- file.path(RESULTS_DIR, "wp3_sensitivity_real.csv")

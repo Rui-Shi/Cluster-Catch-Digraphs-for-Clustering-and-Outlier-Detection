@@ -39,7 +39,7 @@ SPECS <- list(
 )
 QUANT      <- 0.999
 TABLE_DIR  <- here::here("R/NN-test_quantile")
-RESULTS    <- here::here("revision_experiments/results")
+RESULTS    <- here::here("revision_experiments/results/tr2")
 
 # One Monte Carlo rep for one size: simulate k points, return c(mean, median)
 # of the per-point NN distances. Identical statistic to NNDest(P).simpois.

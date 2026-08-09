@@ -1,0 +1,9 @@
+dataset,n,d,n_outliers,outlier_pct,source_line
+hepatitis,74,19,7,9.5,1069
+glass,214,9,10,4.5,1070
+vertebral,240,6,30,12.5,1071
+ecoli,336,7,9,2.6,1072
+stamps,340,9,31,9.1,1073
+vowels,1456,12,50,3.4,1074
+waveform,3443,21,100,2.9,1075
+wilt,4735,5,257,5.4,1076

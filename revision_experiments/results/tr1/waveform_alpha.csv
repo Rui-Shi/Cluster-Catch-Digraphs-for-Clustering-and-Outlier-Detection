@@ -1,0 +1,3 @@
+"dataset","method","quant_label","s_min","n","d","TPR","TNR","BA","F2","published_TPR","published_TNR","published_BA","published_F2","max_abs_diff","match_3dp","t_total","status","note","timestamp"
+"waveform","UN-MCCD","99",0.0625,3443,21,0.54,0.700867484295543,0.620433742147771,0.185694635488308,0.86,0.664,0.762,0.267,0.32,FALSE,429.832039117813,"ok",NA,"2026-08-08 22:51:29"
+"waveform","SUN-MCCD","99",0.0625,3443,21,0.32,0.919533353275501,0.619766676637751,0.228245363766048,0.62,0.898,0.759,0.387,0.3,FALSE,263.730751037598,"ok",NA,"2026-08-08 22:55:53"

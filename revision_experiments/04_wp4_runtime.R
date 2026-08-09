@@ -305,7 +305,7 @@ nnccd.radi <- function(dx, quantile = "lower", method = "ascend", low.num, quant
   return(list(R = R, KS = NULL))
 }
 
-RESULTS_DIR <- here::here("revision_experiments/results")
+RESULTS_DIR <- here::here("revision_experiments/results/tr2")
 DATA_DIR    <- file.path(RESULTS_DIR, "wp4_data2")   # NEW dir; see header "Dataset export" note
 dir.create(DATA_DIR, recursive = TRUE, showWarnings = FALSE)
 

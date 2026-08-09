@@ -37,7 +37,7 @@
 #     BEFORE any distance computation, holding n matrices of sizes
 #     1*d, 2*d, ..., n*d simultaneously resident: sum_{x=1}^n x*d elements =
 #     d*n*(n+1)/2. At n=1000, d=400 that's 400*500500*8 bytes ~= 1.6 GB
-#     PER WORKER just for this list (see revision_experiments/results/probes
+#     PER WORKER just for this list (see revision_experiments/results/tr2/probes
 #     /probe_report.csv: NN d=400 was capped at 16 of 20 cores by RAM).
 #     data.simu.list[[x]] is used exactly once, immediately, inside the
 #     x-th term of the sapply(2:n, ...) that follows (list element x=1 is

@@ -94,10 +94,12 @@ cat(sprintf("=== 07_wp5_subsample_ccd.R === dataset=%s method=%s pid=%d\n",
 
 source(here::here("revision_experiments/harness.R"))
 
-RESULTS_DIR      <- here::here("revision_experiments/results")
-DATASETS_CSV_DIR <- file.path(RESULTS_DIR, "datasets_csv")
-CACHE_DIR        <- file.path(RESULTS_DIR, "scores_cache")
+SHARED_DIR       <- here::here("revision_experiments/results")       # shared infra: not project-specific
+RESULTS_DIR      <- file.path(SHARED_DIR, "tr2")
+DATASETS_CSV_DIR <- file.path(SHARED_DIR, "datasets_csv")
+CACHE_DIR        <- file.path(SHARED_DIR, "scores_cache")
 RAW_CSV          <- file.path(RESULTS_DIR, "wp5_subsample_raw.csv")
+dir.create(RESULTS_DIR, recursive = TRUE, showWarnings = FALSE)
 dir.create(CACHE_DIR, recursive = TRUE, showWarnings = FALSE)
 
 # ---------------------------------------------------------------------------

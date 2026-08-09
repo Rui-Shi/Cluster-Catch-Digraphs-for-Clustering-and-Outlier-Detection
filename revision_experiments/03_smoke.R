@@ -15,7 +15,7 @@ source(here::here("revision_experiments/harness.R"))
 
 cat("\n================ 03_smoke.R : START ================\n")
 
-RESULTS_DIR   <- here::here("revision_experiments/results")
+RESULTS_DIR   <- here::here("revision_experiments/results/tr2")
 WBC_CSV       <- file.path(RESULTS_DIR, "smoke_wbc.csv")
 SYNTH_CSV     <- file.path(RESULTS_DIR, "smoke_synthetic.csv")
 METHOD_NAMES  <- names(METHOD_REGISTRY)
