@@ -20,13 +20,26 @@ The published counting code (`count_scores2`, `count_DBSCAN`, `count_MST2`,
 `count_ODIN`) slices positionally — it calls the last n0 rows the outliers and
 never reads Y. On glass the true outliers sit at rows 182–190 of 213; on ecoli
 at rows 26, 60, 116, 119, 123, 125, 141, 163. **In both cases the last n0 rows
-contain zero true outliers, so the published counting had a TPR ceiling of
-0.000.**
+contain zero true outliers.**
 
-Proof for ecoli: scoring our own scores positionally returns TPR 0.750 on all
-four detectors — exactly the published value — while correct counting returns
-0.875. ecoli UN-MCCD reproduces the published row *exactly* under positional
-counting: 0.750 / 0.668 / 0.709 / 0.204.
+This is *not* a TPR ceiling of 0 — an earlier draft of this report said so and
+was wrong, and the published glass and ecoli TPRs of 0.778 and 0.500 refute it
+directly. A positional count reports the flag rate over the last n0 positions,
+and a detector can flag those rows freely. The actual consequence: the
+published "TPR" for these two sets is the flag rate on a block of **regular**
+points, and the published "TNR" is computed over a block that still contains
+**every** true outlier. Neither is the rate its heading names.
+
+Two independent proofs:
+
+- ecoli: scoring our own scores positionally returns TPR 0.750 on all four
+  detectors — exactly the published value — while correct counting returns
+  0.875. ecoli UN-MCCD reproduces the published row *exactly* under positional
+  counting: 0.750 / 0.668 / 0.709 / 0.204.
+- LOF, recomputed at its unchanged published configuration with only the
+  counting changed (`38_lof_original8.R`): 3 of 8 rows reproduce exactly
+  (hepatitis, stamps, waveform), and the two largest moves are glass
+  (TNR 0.618 → 0.794) and ecoli (TPR 0.500 → 0.750) — the mis-sorted pair.
 
 `harness.R`'s `evaluate()` reorders `(Y, score)` jointly before counting, so no
 number in this report is affected.
@@ -45,8 +58,14 @@ row on 4 of 8 sets; the two failures are glass and ecoli, the mis-sorted pair.
 **1.4 MST was tuned per data set**, `thresh` ranging 1.05–1.4. Reproducing the
 per-set values matches 7 of 8.
 
-**1.5 The wilt DBSCAN row is arithmetically impossible**: BA 0.673 and
-F₂ 0.381 cannot follow from TPR 0.000 and TNR 0.959.
+**1.5 Two published rows are internally inconsistent.** The wilt DBSCAN row is
+arithmetically impossible: BA 0.673 and F₂ 0.381 cannot follow from TPR 0.000
+and TNR 0.959. The vertebral LOF row reports TPR 0.033, TNR 0.938, BA 0.488,
+but those rates give 0.485. Recomputation resolves it in favour of the BA —
+the true TNR is 0.943 (198/210, not 197/210), from which 0.488 follows exactly.
+
+`37_arith_audit.R` checks BA = (TPR+TNR)/2 across all 144 cells of the current
+table; it holds everywhere to rounding.
 
 **1.6 No real-data driver exists for the four proposed methods.** Every
 baseline has one under `Algo_Compare_OutlierDetection/*/Simulation/Real_Data/`.
@@ -110,24 +129,25 @@ F₂, best per row in **bold**.
 
 | data set | d | U-MCCD | SU-MCCD | UN-MCCD | SUN-MCCD | LOF | DBSCAN | MST | ODIN | iForest |
 |---|---|---|---|---|---|---|---|---|---|---|
-| wilt | 5 | **0.336** | 0.182 | 0.118 | 0.206 | 0.035 | 0.000 | 0.232 | 0.069 | 0.004 |
-| vertebral | 6 | **0.311** | 0.140 | 0.036 | 0.109 | 0.037 | 0.000 | 0.282 | 0.159 | 0.000 |
+| wilt | 5 | **0.336** | 0.182 | 0.118 | 0.206 | 0.022 | 0.000 | 0.232 | 0.069 | 0.004 |
+| vertebral | 6 | **0.311** | 0.140 | 0.036 | 0.109 | 0.038 | 0.000 | 0.282 | 0.159 | 0.000 |
 | thyroid | 6 | 0.293 | 0.327 | 0.261 | 0.389 | 0.172 | 0.412 | 0.138 | 0.093 | **0.664** |
-| ecoli | 7 | 0.235 | 0.321 | 0.238 | 0.333 | 0.328 | 0.000 | 0.186 | 0.294 | **0.638** |
+| ecoli | 7 | 0.235 | 0.321 | 0.238 | 0.333 | 0.492 | 0.152 | 0.186 | 0.294 | **0.638** |
 | pima | 8 | 0.399 | **0.504** | 0.232 | 0.497 | 0.098 | 0.084 | 0.327 | 0.144 | 0.083 |
-| glass | 9 | 0.283 | **0.385** | 0.116 | 0.324 | 0.289 | 0.122 | 0.286 | 0.205 | 0.100 |
+| glass | 9 | 0.283 | 0.385 | 0.116 | 0.324 | **0.412** | 0.122 | 0.286 | 0.205 | 0.100 |
 | stamps | 9 | 0.072 | 0.376 | 0.381 | **0.455** | 0.162 | 0.144 | 0.373 | 0.262 | 0.108 |
 | WBC | 9 | 0.316 | 0.316 | 0.318 | 0.350 | 0.543 | 0.652 | 0.354 | 0.342 | **0.656** |
 | shuffle | 9 | 0.224 | 0.179 | 0.183 | 0.162 | **0.389** | 0.317 | 0.065 | 0.243 | 0.174 |
 | pageblocks | 10 | **0.570** | 0.525 | 0.100 | 0.526 | 0.218 | 0.545 | 0.378 | 0.078 | 0.343 |
-| vowels | 12 | 0.196 | 0.193 | 0.263 | 0.267 | 0.383 | 0.343 | 0.153 | **0.427** | 0.027 |
+| vowels | 12 | 0.196 | 0.193 | 0.263 | 0.267 | 0.364 | 0.249 | 0.153 | **0.427** | 0.027 |
 | PenDigits | 16 | 0.046 | 0.033 | 0.034 | 0.033 | **0.053** | 0.000 | 0.043 | 0.027 | 0.026 |
 | lymphography | 18 | 0.682 | 0.732 | 0.600 | 0.638 | 0.667 | **0.862** | 0.224 | 0.532 | 0.750 |
 | hepatitis | 19 | 0.278 | 0.286 | **0.446** | **0.446** | 0.000 | 0.000 | 0.375 | 0.313 | 0.122 |
 | waveform | 21 | **0.252** | 0.219 | 0.186 | 0.228 | 0.000 | 0.107 | 0.130 | 0.193 | 0.000 |
 | WDBC | 30 | 0.170 | 0.131 | 0.146 | 0.172 | 0.441 | 0.111 | 0.242 | 0.286 | **0.472** |
 
-**Proposed methods take 8 of 16.**
+**Proposed methods take 7 of 16.** (Was 8 before LOF was recomputed; the
+corrected LOF now takes glass at 0.412, ahead of SU-MCCD's 0.385.)
 
 ### Mean across all sixteen
 
@@ -137,7 +157,7 @@ F₂, best per row in **bold**.
 | SU-MCCD | 0.303 | 0.689 |
 | U-MCCD | 0.291 | 0.709 |
 | iForest | 0.260 | 0.632 |
-| LOF | 0.238 | 0.641 |
+| LOF | 0.254 | 0.654 |
 | MST | 0.237 | 0.606 |
 | DBSCAN | 0.234 | 0.599 |
 | UN-MCCD | 0.229 | 0.658 |
@@ -152,7 +172,7 @@ positions.
 
 | range | data sets | proposed wins |
 |---|---|---|
-| d ≤ 10 | 10 | 6 |
+| d ≤ 10 | 10 | 5 |
 | d ≥ 12 | 6 | 2 |
 
 WDBC (d = 30) is the weakest relative showing — F₂ 0.172 against iForest's
@@ -173,5 +193,10 @@ not a spatial-randomness-test problem.
   documented.
 - hepatitis n0 is 7, not the 6 recorded in earlier notes. Table 5 should be
   checked.
-- The published tables' LOF rows are retained unchanged; LOF was correctly
-  configured (MinPts 11–30, threshold 1.5, matching main text L1007).
+- LOF was initially retained from the published tables, on the correct grounds
+  that its *configuration* was never in doubt (MinPts 11–30, threshold 1.5,
+  matching main text L1007). That left it the only transcribed block in the
+  table, and transcription was the problem. `38_lof_original8.R` recomputes it
+  at the same configuration; 3 of 8 rows reproduce exactly, glass and ecoli
+  move for the mis-sort reason, and vertebral/vowels/wilt move slightly.
+  Nothing about how LOF is run changed — only how its output is counted.
