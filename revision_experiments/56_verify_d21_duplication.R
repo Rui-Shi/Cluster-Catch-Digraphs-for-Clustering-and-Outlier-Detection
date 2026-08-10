@@ -38,10 +38,16 @@
 #   B identical           -> generator conflates levels; systematic fault
 #   B differs, C identical-> would be bizarre; investigate before concluding
 #
-# Sizing: the shipped d=21 tables hold 5000-long vectors (n=5000). Regenerating
-# at that size costs roughly 13 s/iteration, i.e. hours per table, and buys
-# nothing for an identity question -- whether two reductions of the same draws
-# differ does not depend on n. This runs at n=1000, and says so.
+# Sizing, split by what each test needs:
+#   TEST B is generated at the shipped n=5000. That is more than the identity
+#   question strictly requires, but it makes the output a genuine drop-in
+#   replacement, which TEST E below depends on: waveform has n=3443, and a
+#   table built at n=1000 would trip nnccd.radi's silent clamp
+#   (pmin(1:n, len), harness.R:157-158), reusing the last table entry for two
+#   thirds of the points with no warning.
+#   TEST C is generated at n=1000. Its only job is to show that two
+#   independent runs differ, which does not depend on n, and at n=5000 it
+#   would cost another two full generations.
 #
 # Read-only with respect to every shipped table. Writes only under
 # R/NN-test_quantile_d21_regen/.
