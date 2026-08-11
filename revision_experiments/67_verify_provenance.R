@@ -85,7 +85,16 @@ targets <- rbind(
   data.frame(d =  8, tok = "95",  truth = NA),
   data.frame(d =  9, tok = "95",  truth = NA),
   data.frame(d = 18, tok = "99",  truth = NA),
-  data.frame(d = 19, tok = "99",  truth = NA)
+  data.frame(d = 19, tok = "99",  truth = NA),
+  data.frame(d = 12, tok = "99",  truth = NA),
+  data.frame(d = 16, tok = "99",  truth = NA),
+  data.frame(d = 21, tok = "99",  truth = NA),
+  # d = 30 (WDBC) is NOT a duplicated dimension -- it carries a single file, so
+  # nothing on disk could ever contradict its label. That makes it unverifiable
+  # by duplicate-hunting but NOT by this estimator, which reads a table's level
+  # directly and needs no sibling. It is the last of the sixteen data sets
+  # whose alpha has never been checked, so it is checked here.
+  data.frame(d = 30, tok = "999", truth = NA)
 )
 
 rows <- list()
@@ -138,6 +147,8 @@ cat(sprintf("  all %d control cells within a factor 2.5 of nominal: %s\n", nrow(
 cat("\n=== UNKNOWNS (duplicated pairs) ===\n")
 ub <- b[is.na(b$truth), ]
 cand <- function(d) if (d <= 9) c(0.05, 0.01) else c(0.01, 0.001)
+# d=30 has no sibling on disk, so its "candidates" are the claimed level and
+# the levels the estimator could plausibly reveal instead.
 ub$nearest <- vapply(seq_len(nrow(ub)), function(i) {
   cs <- cand(ub$d[i]); cs[which.min(abs(log10(ub$level_median[i]) - log10(cs)))] }, numeric(1))
 ub$ratio_to_nearest <- ub$level_median / ub$nearest
@@ -158,5 +169,31 @@ for (d in sort(unique(ub$d))) {
 }
 
 if (!ok) cat("\n*** CONTROLS FAILED -- the unknown verdicts above are VOID ***\n")
+
+# ---- d=21 cross-check against a completely separate Monte Carlo ------------
+# 57/58 left a raw draw matrix at n=5000 in R/NN-test_quantile_d21_regen/.
+# It came from a different script, different seeds and the `fast_stream`
+# engine rather than `orig_list`, and it reaches k=5000 instead of 555. If the
+# d=21 verdict is an artefact of this study's particular generator or of the
+# short k range, the two will disagree.
+cat("\n=== d=21 cross-check against the independent n=5000 draws ===\n")
+alt <- list.files(here::here("R/NN-test_quantile_d21_regen"),
+                  pattern = "^NN-draws.*\\.RData$", recursive = TRUE, full.names = TRUE)
+if (!length(alt)) {
+  cat("  no independent d=21 draw file found -- cross-check skipped\n")
+} else {
+  cat(sprintf("  using %d file(s), e.g. %s\n", length(alt), basename(alt[1])))
+  A <- do.call(rbind, lapply(alt, load1, obj = "NN.dist.ave.mat"))
+  s21 <- load1(file.path(SDIR, "NN-test-simul_21d_99%.RData"), "simul")
+  lv <- level_curve(s21$average, A, BEST)
+  cat(sprintf("  pooled draws = %d, k = %d\n", nrow(A), length(lv)))
+  cat(sprintf("  level median = %.5f  (mean %.5f, IQR %.4f-%.4f)\n",
+              median(lv), mean(lv), quantile(lv, .25), quantile(lv, .75)))
+  cat(sprintf("  ratio to 0.01 = %.2f ; ratio to 0.001 = %.2f\n",
+              median(lv) / 0.01, median(lv) / 0.001))
+  this <- b$level_median[b$d == 21 & b$statistic == "average"]
+  cat(sprintf("  this study (n=555, orig_list) said %.5f -> %s\n", this,
+              if (abs(log10(median(lv)) - log10(this)) < log10(2)) "AGREE" else "*** DISAGREE ***"))
+}
 write.csv(res, OUT, row.names = FALSE)
 cat(sprintf("\nwrote %s\ndone\n", OUT))
