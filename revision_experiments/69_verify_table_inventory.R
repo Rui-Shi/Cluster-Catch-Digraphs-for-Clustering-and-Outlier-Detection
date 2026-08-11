@@ -71,10 +71,18 @@ for (d in sort(c(EXPECT_DUP, EXPECT_DISTINCT))) {
     dup <- identical(a$average, b$average) && identical(a$median, b$median)
   }
   expect <- if (d %in% EXPECT_DUP) TRUE else FALSE
+  # After 70 ran, a duplicated dimension may legitimately hold ONE file: the
+  # redundant member was deleted. That is a pass, not a failure -- what would
+  # be a failure is a dimension that still has two files whose relationship
+  # has changed, or a DISTINCT dimension that has lost a file.
+  status <- if (length(fs) == 1 && expect) "duplicate removed"
+            else if (length(fs) == 1 && !expect) "*** FILE MISSING ***"
+            else if (isTRUE(dup) == expect) "as expected"
+            else "*** RELATIONSHIP CHANGED ***"
   chk[[length(chk) + 1]] <- data.frame(
     d = d, n_files = length(fs), tokens = paste(toks, collapse = "/"),
-    identical_pair = dup, expected = expect,
-    ok = isTRUE(dup) == expect, stringsAsFactors = FALSE)
+    identical_pair = dup, expected = expect, status = status,
+    ok = !grepl("\\*\\*\\*", status), stringsAsFactors = FALSE)
 }
 ck <- do.call(rbind, chk)
 bad <- ck[!ck$ok, ]
@@ -82,9 +90,11 @@ if (nrow(bad)) {
   cat("  *** duplicate structure CHANGED -- possible corruption or wrong file ***\n")
   print(bad, row.names = FALSE)
 } else {
-  cat(sprintf("  all %d dimensions match the pre-deletion pattern\n", nrow(ck)))
-  cat(sprintf("  (%d duplicated as expected, %d distinct as expected)\n",
-              sum(ck$identical_pair %in% TRUE), sum(ck$identical_pair %in% FALSE)))
+  cat(sprintf("  all %d dimensions consistent with the recorded pattern\n", nrow(ck)))
+  cat(sprintf("  (%d still duplicated, %d duplicate removed, %d distinct as expected)\n",
+              sum(ck$status == "as expected" & ck$identical_pair %in% TRUE),
+              sum(ck$status == "duplicate removed"),
+              sum(ck$status == "as expected" & ck$identical_pair %in% FALSE)))
 }
 
 cat("\n=== 3. d=20 specifically -- the one deletion that was not a duplicate ===\n")
