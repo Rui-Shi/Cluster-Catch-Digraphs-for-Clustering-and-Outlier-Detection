@@ -56,9 +56,12 @@ if (nrow(missing)) {
 }
 
 cat("\n=== 2. integrity: the duplicate structure must be unchanged ===\n")
-# ground truth established before the deletion (62, 63, 68)
-EXPECT_DUP <- c(6, 7, 8, 9, 11:19, 21:28)
-EXPECT_DISTINCT <- c(2, 3, 4, 5, 10, 20)
+# ground truth established before the deletion (62, 63, 68), then amended as
+# 75 installs genuine 0.1% tables: a repaired dimension's "999" is no longer a
+# copy of its "99", which is the whole point, so it moves to the distinct list.
+REPAIRED <- c(12, 18, 19)                       # extend as 75 installs more
+EXPECT_DUP <- setdiff(c(6, 7, 8, 9, 11:19, 21:28), REPAIRED)
+EXPECT_DISTINCT <- c(2, 3, 4, 5, 10, 20, REPAIRED)
 chk <- list()
 for (d in sort(c(EXPECT_DUP, EXPECT_DISTINCT))) {
   fs <- list.files(NNDIR, pattern = sprintf("^NN-test-simul_%dd_[0-9]+%%\\.RData$", d),
@@ -95,6 +98,40 @@ if (nrow(bad)) {
               sum(ck$status == "as expected" & ck$identical_pair %in% TRUE),
               sum(ck$status == "duplicate removed"),
               sum(ck$status == "as expected" & ck$identical_pair %in% FALSE)))
+}
+
+cat("\n=== 2b. table length vs the data it serves ===\n")
+# NEW FAILURE MODE, introduced by 75. The shipped tables all carry 5000
+# entries; the regenerated ones are only as long as their own data set,
+# because the cost is cubic in that length. UN_CCD.R:241 does
+# simul$average[1:n] with n = nrow(dx), the full data matrix, so a table
+# shorter than its data set yields NA past the end rather than clamping --
+# silent, and it would corrupt exactly the results this repair is for.
+len_rows <- list()
+for (i in seq_len(nrow(inv))) {
+  d <- inv$d[i]; nd <- inv$n[i]
+  for (meth in c("UN", "SUN")) {
+    tok <- if (meth == "UN") nn_quant_label_paper_UN(d) else nn_quant_label_paper_SUN(d)
+    f <- nnf(d, tok)
+    if (!file.exists(f)) next
+    L <- length(load1(f)$average)
+    len_rows[[length(len_rows) + 1]] <- data.frame(
+      dataset = inv$dataset[i], d = d, n = nd, method = meth, token = tok,
+      table_len = L, ok = L >= nd, stringsAsFactors = FALSE)
+  }
+}
+ln <- do.call(rbind, len_rows)
+short <- ln[!ln$ok, ]
+if (nrow(short)) {
+  cat("  *** TABLE SHORTER THAN ITS DATA SET -- would return NA ***\n")
+  print(short, row.names = FALSE)
+} else {
+  cat(sprintf("  all %d (data set, method) pairs have table_len >= n\n", nrow(ln)))
+  tight <- ln[ln$table_len == ln$n, ]
+  if (nrow(tight)) {
+    cat("  exactly-sized (no headroom -- fine for this data set, unusable for a larger one at the same d):\n")
+    print(tight[, c("dataset", "d", "n", "method", "token", "table_len")], row.names = FALSE)
+  }
 }
 
 cat("\n=== 3. d=20 specifically -- the one deletion that was not a duplicate ===\n")
