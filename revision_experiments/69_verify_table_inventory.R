@@ -59,7 +59,7 @@ cat("\n=== 2. integrity: the duplicate structure must be unchanged ===\n")
 # ground truth established before the deletion (62, 63, 68), then amended as
 # 75 installs genuine 0.1% tables: a repaired dimension's "999" is no longer a
 # copy of its "99", which is the whole point, so it moves to the distinct list.
-REPAIRED <- c(12, 18, 19)                       # extend as 75 installs more
+REPAIRED <- c(12, 18, 19, 21)                   # extend as 75 installs more
 EXPECT_DUP <- setdiff(c(6, 7, 8, 9, 11:19, 21:28), REPAIRED)
 EXPECT_DISTINCT <- c(2, 3, 4, 5, 10, 20, REPAIRED)
 chk <- list()

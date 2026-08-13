@@ -72,7 +72,19 @@ for (d in sort(ok_d)) {
     identical_to_twin <- identical(a$average, b$average) && identical(a$median, b$median)
     rm(a, b)
   }
-  action <- if (!file.exists(tgt)) "install (no existing file)"
+  # Already installed? Then the live file IS the staged one and there is
+  # nothing to protect or to do. Without this the run aborts on its own
+  # previous success: after installing, the live "999" is deliberately no
+  # longer a copy of its "99", which is exactly the pattern the HALT branch
+  # below treats as an unprotected overwrite.
+  already <- FALSE
+  if (file.exists(tgt)) {
+    a <- load1(tgt); b <- load1(src)
+    already <- identical(a$average, b$average) && identical(a$median, b$median)
+    rm(a, b)
+  }
+  action <- if (already) "already installed -- skip"
+            else if (!file.exists(tgt)) "install (no existing file)"
             else if (isTRUE(identical_to_twin)) "overwrite (content survives in the 99 twin)"
             else if (!have_twin) "rename existing 999 -> 99, then install"
             else "*** HALT: existing 999 differs from 99 and would be lost ***"
@@ -89,6 +101,8 @@ for (d in sort(ok_d)) {
 p <- do.call(rbind, plan)
 if (is.null(p)) { cat("nothing to install\n"); quit(status = 0) }
 if (any(grepl("HALT", p$action))) { cat("\n*** ABORT: an existing table would be destroyed ***\n"); quit(status = 1) }
+p <- p[p$action != "already installed -- skip", , drop = FALSE]
+if (!nrow(p)) { cat("\nall verified dimensions are already installed -- nothing to do\n"); quit(status = 0) }
 
 if (!APPLY) { cat("\nDRY RUN -- nothing written. Re-run with --apply.\n"); quit(status = 0) }
 
