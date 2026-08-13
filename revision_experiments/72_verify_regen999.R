@@ -38,8 +38,22 @@ PDIR  <- here::here("R/NN-test_quantile_provenance")
 OUT   <- here::here("revision_experiments/results/tr1/wp2c_regen999_verify.csv")
 
 load1 <- function(p, obj = "simul") { e <- new.env(); load(p, envir = e); get(obj, envir = e) }
-stagef <- function(d, tok) file.path(STAGE, sprintf("%dd", d), sprintf("NN-test-simul_%dd_%s%%.RData", d, tok))
 shipf  <- function(d, tok) file.path(SHIP, sprintf("NN-test-simul_%dd_%s%%.RData", d, tok))
+
+#' A completed 71 run writes straight into <d>d/; a partial pool from 74 writes
+#' into <d>d/pooled_n<niter>/. Prefer the deepest pool available, so a
+#' dimension still generating can be verified at the depth it has reached.
+stagef <- function(d, tok) {
+  direct <- file.path(STAGE, sprintf("%dd", d), sprintf("NN-test-simul_%dd_%s%%.RData", d, tok))
+  if (file.exists(direct)) return(direct)
+  pools <- list.files(file.path(STAGE, sprintf("%dd", d)), pattern = "^pooled_n[0-9]+$",
+                      full.names = TRUE)
+  if (!length(pools)) return(direct)
+  pools <- pools[order(-as.integer(sub(".*pooled_n", "", pools)))]
+  cands <- file.path(pools, sprintf("NN-test-simul_%dd_%s%%.RData", d, tok))
+  hit <- cands[file.exists(cands)]
+  if (length(hit)) hit[1] else direct
+}
 
 reps <- sort(list.files(PDIR, pattern = "^rep[0-9]+$"))
 pool_draws <- function(d) {
