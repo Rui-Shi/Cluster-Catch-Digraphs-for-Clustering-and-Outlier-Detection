@@ -12,3 +12,4 @@ gitignored, so this file is the only record in version control.
 | 2026-08-11 | 18 | 10000 | 148 | `NN-test-simul_18d_999%.RData` | overwritten; identical content retained as `NN-test-simul_18d_99%.RData` |
 | 2026-08-11 | 19 | 10000 | 74 | `NN-test-simul_19d_999%.RData` | overwritten; identical content retained as `NN-test-simul_19d_99%.RData` |
 | 2026-08-12 | 21 | 2500 | 3443 | `NN-test-simul_21d_999%.RData` | renamed to `NN-test-simul_21d_99%.RData` (its true level) |
+| 2026-08-13 | 16 | 2750 | 3200 | `NN-test-simul_16d_999%.RData` | overwritten; identical content retained as `NN-test-simul_16d_99%.RData` |
