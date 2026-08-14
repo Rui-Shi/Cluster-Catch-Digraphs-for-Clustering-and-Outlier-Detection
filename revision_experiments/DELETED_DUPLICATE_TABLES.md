@@ -46,3 +46,27 @@ These nine pairs are left intact:
 - d = 18: `NN-test-simul_18d_99%.RData` (UN) and `NN-test-simul_18d_999%.RData` (SUN) -- identical content, both loaded
 - d = 19: `NN-test-simul_19d_99%.RData` (UN) and `NN-test-simul_19d_999%.RData` (SUN) -- identical content, both loaded
 
+
+## Purged 2026-08-13 by `77_purge_wrong_tables.R`
+
+Tables whose level name their contents do not support. An identical pair
+holds the 1% run -- measured at d = 12, 16, 18, 19, 21, which all read
+0.0100-0.0105 against independent draws -- so the "999" member of such a
+pair is mislabelled. None of these is reachable by either resolver at any
+data set dimension or simulation grid point; that was re-checked here.
+
+| d | deleted | token | bytes | MD5 | group | reason |
+|---|---|---|---|---|---|---|
+| 11 | `NN-test-simul_11d_999%.RData` | 999 | 70,465 | `02142a3e5ddf8a79` | A: identical pair | byte-identical to NN-test-simul_11d_99%.RData, which is correctly named |
+| 13 | `NN-test-simul_13d_999%.RData` | 999 | 70,344 | `f4bc197dbcf38cc2` | A: identical pair | byte-identical to NN-test-simul_13d_99%.RData, which is correctly named |
+| 14 | `NN-test-simul_14d_999%.RData` | 999 | 70,321 | `b7f198e6c808656c` | A: identical pair | byte-identical to NN-test-simul_14d_99%.RData, which is correctly named |
+| 15 | `NN-test-simul_15d_999%.RData` | 999 | 70,331 | `03c7e345cba97040` | A: identical pair | byte-identical to NN-test-simul_15d_99%.RData, which is correctly named |
+| 17 | `NN-test-simul_17d_999%.RData` | 999 | 70,285 | `6a27030afca4a981` | A: identical pair | byte-identical to NN-test-simul_17d_99%.RData, which is correctly named |
+| 22 | `NN-test-simul_22d_999%.RData` | 999 | 70,083 | `786013b6037e64d4` | B: mislabelled singleton | was an identical pair until 70 removed its twin; holds the 1% run |
+| 23 | `NN-test-simul_23d_999%.RData` | 999 | 70,251 | `7168011aafb86435` | B: mislabelled singleton | was an identical pair until 70 removed its twin; holds the 1% run |
+| 24 | `NN-test-simul_24d_999%.RData` | 999 | 70,054 | `192cd7f1cd871965` | B: mislabelled singleton | was an identical pair until 70 removed its twin; holds the 1% run |
+| 25 | `NN-test-simul_25d_999%.RData` | 999 | 70,113 | `596b5e77f393312e` | B: mislabelled singleton | was an identical pair until 70 removed its twin; holds the 1% run |
+| 26 | `NN-test-simul_26d_999%.RData` | 999 | 70,053 | `12cf11c6feb43c46` | B: mislabelled singleton | was an identical pair until 70 removed its twin; holds the 1% run |
+| 27 | `NN-test-simul_27d_999%.RData` | 999 | 70,162 | `ba270693836676bf` | B: mislabelled singleton | was an identical pair until 70 removed its twin; holds the 1% run |
+| 28 | `NN-test-simul_28d_999%.RData` | 999 | 70,081 | `3070f0b2a2046313` | B: mislabelled singleton | was an identical pair until 70 removed its twin; holds the 1% run |
+

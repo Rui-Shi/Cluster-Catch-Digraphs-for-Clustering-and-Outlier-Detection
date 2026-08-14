@@ -60,6 +60,7 @@ cat("\n=== 2. integrity: the duplicate structure must be unchanged ===\n")
 # 75 installs genuine 0.1% tables: a repaired dimension's "999" is no longer a
 # copy of its "99", which is the whole point, so it moves to the distinct list.
 REPAIRED <- c(12, 16, 18, 19, 21)               # all five, complete 2026-08-13
+PURGED   <- 22:28                               # removed outright by 77
 EXPECT_DUP <- setdiff(c(6, 7, 8, 9, 11:19, 21:28), REPAIRED)
 EXPECT_DISTINCT <- c(2, 3, 4, 5, 10, 20, REPAIRED)
 chk <- list()
@@ -78,7 +79,12 @@ for (d in sort(c(EXPECT_DUP, EXPECT_DISTINCT))) {
   # redundant member was deleted. That is a pass, not a failure -- what would
   # be a failure is a dimension that still has two files whose relationship
   # has changed, or a DISTINCT dimension that has lost a file.
-  status <- if (length(fs) == 1 && expect) "duplicate removed"
+  # 77 purged d = 22-28 entirely: they were identical pairs whose surviving
+  # member carried a level name its 1% contents do not support, and no
+  # resolver can reach them. An empty dimension there is the intended state.
+  status <- if (length(fs) == 0 && d %in% PURGED) "purged (mislabelled, unreachable)"
+            else if (length(fs) == 0) "*** ALL FILES GONE ***"
+            else if (length(fs) == 1 && expect) "duplicate removed"
             else if (length(fs) == 1 && !expect) "*** FILE MISSING ***"
             else if (isTRUE(dup) == expect) "as expected"
             else "*** RELATIONSHIP CHANGED ***"
