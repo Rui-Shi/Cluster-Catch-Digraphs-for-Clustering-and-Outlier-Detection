@@ -239,7 +239,7 @@ nnccd.radi <- function(dx, quantile = "lower", method = "ascend", low.num, quant
 #
 #   RK-CCD (RKCCD_OOS_IOS/Simulation/Gaussian/{5,10}d/*.R and
 #   Uniform_cutoffs/RKCCD_OOS_IOS_cutoff.R, identical rule at every d block):
-#       if (d <= 5) quant = 0.99 else quant = 0.999
+#       if (d <= 10) quant = 0.99 else quant = 0.999
 #   This is a genuine two-bucket boolean rule (not merely enumerated cases),
 #   so it generalizes cleanly to untested d, including WBC's d = 9 -> 0.999.
 #
@@ -260,7 +260,7 @@ nnccd.radi <- function(dx, quantile = "lower", method = "ascend", low.num, quant
 RK_QUANT_TABLE_DIR <- here::here("R/RK-test_quantile")
 NN_QUANT_TABLE_DIR <- here::here("R/NN-test_quantile")
 
-rk_quant_for_d <- function(d) if (d <= 5) "99" else "999"
+rk_quant_for_d <- function(d) if (d <= 10) "99" else "999"
 
 nn_quant_for_d <- function(d) {
   if (d <= 2) "85"
