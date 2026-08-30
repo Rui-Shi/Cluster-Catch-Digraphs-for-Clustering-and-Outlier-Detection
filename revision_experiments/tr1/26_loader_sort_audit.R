@@ -26,7 +26,7 @@ DATASETS <- c("hepatitis", "glass", "vertebral", "ecoli",
               "stamps", "vowels", "waveform", "wilt")
 
 cat(sprintf("\n%-11s %6s %4s %5s %10s %10s %14s\n",
-            "dataset", "n", "d", "n0", "sorted?", "last-n0 TP", "positional TPR cap"))
+            "dataset", "n", "d", "n0", "sorted?", "last-n0 TP", "purity of tail"))
 cat(strrep("-", 74), "\n")
 
 for (ds in DATASETS) {
@@ -39,8 +39,15 @@ for (ds in DATASETS) {
   sorted_ok <- identical(as.numeric(Y), as.numeric(ideal))
 
   # Of the last n0 rows -- the ones count_scores2 CALLS outliers -- how many
-  # really are outliers? This is the ceiling on the TPR any positional count
-  # can report, no matter how good the detector is.
+  # really are outliers?
+  #
+  # NOTE: this is NOT a bound on the reported TPR. A positional count reports
+  # the flag rate over those last n0 positions, and a detector is perfectly
+  # able to flag them; the published glass and ecoli TPRs are 0.778 and 0.500,
+  # not 0. What a purity of 0 means is that the reported "TPR" is the flag
+  # rate on a set of REGULAR points, and the reported "TNR" is computed over a
+  # set that still holds every true outlier. Both numbers measure something
+  # other than what their column heading says.
   tail_true <- sum(Y[(n - n0 + 1):n] == 0)
 
   cat(sprintf("%-11s %6d %4d %5d %10s %10s %14.3f\n",
@@ -50,8 +57,9 @@ for (ds in DATASETS) {
               tail_true / n0))
 }
 
-cat("\n'positional TPR cap' is the largest TPR the published counting code\n",
-    "could report for that dataset even with a perfect detector.\n", sep = "")
+cat("\n'purity of tail' is the fraction of the last n0 rows -- the rows the\n",
+    "published counting code calls the outlier set -- that really are outliers.\n",
+    "At 0 the reported TPR and TNR are both measured over the wrong sets.\n", sep = "")
 
 # Where the outliers actually sit, for the mis-sorted ones.
 cat("\n--- outlier row positions on the mis-sorted datasets ---\n")

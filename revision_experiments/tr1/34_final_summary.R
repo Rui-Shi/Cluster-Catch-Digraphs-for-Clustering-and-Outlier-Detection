@@ -12,8 +12,15 @@
 #              new 8:      final_baselines.csv       (cont=0.02, thresh=1.2)
 #   ODIN       "default" / final_baselines.csv
 #   iForest    "seed1"   / final_baselines.csv
-#   LOF        original 8: PUBLISHED (not re-run, per user decision)
+#   LOF        original 8: lof_original8.csv    (38_lof_original8.R)
 #              new 8:      final_baselines.csv
+#              Same configuration throughout: MinPts 11..30, threshold 1.5.
+#              The original 8 were initially transcribed from the published
+#              table rather than computed; 37_arith_audit.R found two of those
+#              rows internally inconsistent, and glass and ecoli were scored
+#              positionally against the mis-sorted loader. 38_lof_original8.R
+#              recomputes them -- same LOF call, correct counting -- so that
+#              every cell of the 16x9 table now comes from this pipeline.
 #
 # Writes results/final_comparison.csv and prints the tables.
 
@@ -40,6 +47,7 @@ prop <- do.call(rbind, Filter(Negate(is.null), lapply(
 
 bo <- rd("regen_baselines.csv")            # original 8, variant-keyed
 bn <- rd("final_baselines.csv")            # new 8, frozen config
+lo <- rd("lof_original8.csv")              # original 8, LOF recomputed
 
 TRUTH <- read.csv(here::here("revision_experiments/tr1/published_realdata_truth.csv"),
                   stringsAsFactors = FALSE)
@@ -56,7 +64,11 @@ val <- function(ds, m, mt) {
     return(if (nrow(r)) round(as.numeric(r[[mt]][1]), 3) else NA_real_)
   }
   if (ds %in% ORIG) {
-    if (m == "LOF") return(pub(ds, m, mt))                    # not re-run
+    if (m == "LOF") {
+      if (is.null(lo)) return(NA_real_)
+      r <- lo[lo$dataset == ds, ]
+      return(if (nrow(r)) round(as.numeric(r[[mt]][1]), 3) else NA_real_)
+    }
     if (is.null(bo)) return(NA_real_)
     r <- bo[bo$dataset == ds & bo$method == m & bo$variant == VARIANT[[m]], ]
   } else {
