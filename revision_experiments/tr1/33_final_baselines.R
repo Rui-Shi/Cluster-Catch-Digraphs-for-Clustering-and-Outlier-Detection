@@ -20,7 +20,7 @@
 # Writes results/final_baselines.csv, checkpointed on (dataset, method).
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
 
 args <- commandArgs(trailingOnly = TRUE)
 DATASETS <- if (length(args) >= 1 && nzchar(args[1])) strsplit(args[1], ",")[[1]] else

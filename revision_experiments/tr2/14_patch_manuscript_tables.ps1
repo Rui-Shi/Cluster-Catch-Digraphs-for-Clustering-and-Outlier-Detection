@@ -1,4 +1,4 @@
-# 36_patch_tr2_tables.ps1
+# 14_patch_manuscript_tables.ps1
 #
 # Replaces the four MCCD rows in TR2's two real-data tables with the values
 # regenerated for TR1 in this session.

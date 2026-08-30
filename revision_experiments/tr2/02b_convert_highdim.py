@@ -1,5 +1,5 @@
 """
-convert_highdim.py
+02b_convert_highdim.py
 
 Task T1 (high-dimensional dataset acquisition) for the PR-D-26-05767 revision
 experiments pipeline.
@@ -33,7 +33,7 @@ except ImportError:
     sio = None
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-REPO_ROOT = os.path.dirname(SCRIPT_DIR)
+REPO_ROOT = os.path.dirname(os.path.dirname(SCRIPT_DIR))
 DATA_DIR = os.path.join(REPO_ROOT, "data", "outlier_detection")
 
 # (name, source filename, loader) -- loader returns (X, y) with y in {0,1}, 1=outlier
@@ -73,7 +73,7 @@ def load_mat(path):
 
 def main():
     os.makedirs(DATA_DIR, exist_ok=True)
-    print("=== convert_highdim.py ===")
+    print("=== 02b_convert_highdim.py ===")
     print("DATA_DIR:", DATA_DIR)
 
     all_ok = True

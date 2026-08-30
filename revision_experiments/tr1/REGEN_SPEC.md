@@ -17,7 +17,7 @@ are used as-is.
    **report it, do not fix it.**
 2. **Do not touch** any file in the manuscript repo root (`*.tex`, `*.bib`,
    `*.md`, `*.png`). Manuscript edits are the main session's job.
-3. Create **new numbered scripts only**, in `revision_experiments/`, using the
+3. Create **new numbered scripts only**, in `revision_experiments/tr1/`, using the
    number assigned to you in your brief. Never reuse another agent's number.
 4. Write results **only** to the CSV shard named in your brief. Two writers on
    one CSV interleave partial lines and destroy it.
@@ -57,7 +57,7 @@ path and will not match the published tables.
 
 ```r
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
 dat <- load_real_dataset("glass")   # list(X, Y, d, n)
 ```
 
@@ -116,7 +116,7 @@ Already implemented in `wp0_mccd_methods.R`; **do not re-derive them.** Drive
 them through `13_wp0_gate.R`, which is fully parameterized:
 
 ```
-Rscript 13_wp0_gate.R "<datasets>" "<methods>" "<min_cls_reading>"
+Rscript revision_experiments/tr1/13_wp0_gate.R "<datasets>" "<methods>" "<min_cls_reading>"
 ```
 
 with two environment variables:

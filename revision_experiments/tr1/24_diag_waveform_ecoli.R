@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# revision_experiments/24_diag_waveform_ecoli.R
+# revision_experiments/tr1/24_diag_waveform_ecoli.R
 #
 # Agent D diagnostic script for the NEUCOM-D-26-15191 real-data regeneration
 # (see REGEN_SPEC.md). DIAGNOSIS ONLY -- this script never modifies harness.R,
@@ -22,11 +22,11 @@
 #   Rscript 24_diag_waveform_ecoli.R ecoli_full
 
 suppressMessages(library(here))
-source(here::here("revision_experiments/harness.R"))
-source(here::here("revision_experiments/wp0_mccd_methods.R"))
+source(here::here("revision_experiments/shared/harness.R"))
+source(here::here("revision_experiments/tr1/wp0_mccd_methods.R"))
 
 OUT_CSV   <- here::here("revision_experiments/results/tr1/diag_waveform_ecoli.csv")
-TRUTH_CSV <- here::here("revision_experiments/published_realdata_truth.csv")
+TRUTH_CSV <- here::here("revision_experiments/tr1/published_realdata_truth.csv")
 truth <- read.csv(TRUTH_CSV, stringsAsFactors = FALSE)
 
 get_truth <- function(dataset, method) {

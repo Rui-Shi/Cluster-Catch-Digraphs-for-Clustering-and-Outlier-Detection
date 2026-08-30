@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# revision_experiments/07_wp5_subsample_ccd.R
+# revision_experiments/tr2/07_wp5_subsample_ccd.R
 #
 # WP5 follow-up (task #3 of the revision-experiment plan): UNCCD-OOS / UNCCD-IOS
 # on n=1000 subsamples of Musk and Speech.
@@ -19,7 +19,7 @@
 #
 # USAGE (one single-threaded process per (dataset, method) cell; this is the
 # unit the orchestrator launches as a detached job):
-#   Rscript "revision_experiments/07_wp5_subsample_ccd.R" <dataset> <method>
+#   Rscript "revision_experiments/tr2/07_wp5_subsample_ccd.R" <dataset> <method>
 #     <dataset>  Musk_sub1000 | Speech_sub1000
 #     <method>   UNCCD-OOS | UNCCD-IOS
 #
@@ -53,10 +53,10 @@
 # as 06). This is a NEW raw CSV -- 06's wp5_highdim_raw.csv is never touched.
 #
 # Run (from the CLONE root, via PowerShell -- Rscript under Bash segfaults):
-#   Rscript "revision_experiments/07_wp5_subsample_ccd.R" "Musk_sub1000" "UNCCD-OOS"
-#   Rscript "revision_experiments/07_wp5_subsample_ccd.R" "Musk_sub1000" "UNCCD-IOS"
-#   Rscript "revision_experiments/07_wp5_subsample_ccd.R" "Speech_sub1000" "UNCCD-OOS"
-#   Rscript "revision_experiments/07_wp5_subsample_ccd.R" "Speech_sub1000" "UNCCD-IOS"
+#   Rscript "revision_experiments/tr2/07_wp5_subsample_ccd.R" "Musk_sub1000" "UNCCD-OOS"
+#   Rscript "revision_experiments/tr2/07_wp5_subsample_ccd.R" "Musk_sub1000" "UNCCD-IOS"
+#   Rscript "revision_experiments/tr2/07_wp5_subsample_ccd.R" "Speech_sub1000" "UNCCD-OOS"
+#   Rscript "revision_experiments/tr2/07_wp5_subsample_ccd.R" "Speech_sub1000" "UNCCD-IOS"
 
 suppressPackageStartupMessages({
   library(here)
@@ -67,7 +67,7 @@ suppressPackageStartupMessages({
 # ---------------------------------------------------------------------------
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) < 2) {
-  stop("Usage: Rscript \"revision_experiments/07_wp5_subsample_ccd.R\" <dataset: Musk_sub1000|Speech_sub1000> <method: UNCCD-OOS|UNCCD-IOS>",
+  stop("Usage: Rscript \"revision_experiments/tr2/07_wp5_subsample_ccd.R\" <dataset: Musk_sub1000|Speech_sub1000> <method: UNCCD-OOS|UNCCD-IOS>",
        call. = FALSE)
 }
 DATASET <- args[[1]]
@@ -92,7 +92,7 @@ Sys.setenv(OMP_NUM_THREADS = "1", MKL_NUM_THREADS = "1",
 cat(sprintf("=== 07_wp5_subsample_ccd.R === dataset=%s method=%s pid=%d\n",
             DATASET, METHOD, Sys.getpid()))
 
-source(here::here("revision_experiments/harness.R"))
+source(here::here("revision_experiments/shared/harness.R"))
 
 SHARED_DIR       <- here::here("revision_experiments/results")       # shared infra: not project-specific
 RESULTS_DIR      <- file.path(SHARED_DIR, "tr2")

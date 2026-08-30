@@ -7,7 +7,7 @@ validation).
 To keep the expansion defensible, the inclusion rule is fixed **in advance** and
 depends only on structural properties. It was written and committed before any
 detector was run on any new data set. The structural inventory it draws on
-(`32_dataset_inventory.R` → `results/dataset_inventory.csv`) reports sample
+(`32_dataset_inventory.R` → `results/tr1/dataset_inventory.csv`) reports sample
 size, dimension, contamination and sort correctness, and nothing else — no
 method was executed to produce it.
 

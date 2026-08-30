@@ -3,7 +3,7 @@
 # as load_real_dataset() returns them. Writes nothing.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
 
 cat(sprintf("\n%-11s %6s %4s %6s %8s\n", "dataset", "n", "d", "n0", "pct"))
 for (ds in c("hepatitis", "glass", "vertebral", "ecoli", "stamps", "vowels", "waveform", "wilt")) {

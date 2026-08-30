@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# revision_experiments/04b_validate_par_radi.R -- bit-exactness check for the
+# revision_experiments/tr2/04b_validate_parallel_radii.R -- bit-exactness check for the
 # parallel nnccd.radi override ported into 04_wp4_runtime.R (task: redesign
 # WP4 grids to eliminate empty cells / add 22-core parallel UNCCD radius
 # search). Confirms the parallel port (arithmetic ported from
@@ -8,7 +8,7 @@
 # using 04_wp4_runtime.R's own generator: n=300, d=10.
 #
 # USAGE (PowerShell; Rscript under Bash segfaults):
-#   Rscript "revision_experiments/04b_validate_par_radi.R" [cores]
+#   Rscript "revision_experiments/tr2/04b_validate_parallel_radii.R" [cores]
 #   (cores defaults to 4 -- validation runs are capped at 4 cores so the
 #   concurrently-running 20-core full-data Musk/Speech chain is not starved)
 #
@@ -23,7 +23,7 @@ CORES <- { ci <- suppressWarnings(as.integer(args[[1]])); if (length(args) >= 1 
 Sys.setenv(OMP_NUM_THREADS = "1", MKL_NUM_THREADS = "1",
            OPENBLAS_NUM_THREADS = "1", NUMEXPR_NUM_THREADS = "1")
 
-source(here::here("revision_experiments/harness.R"))
+source(here::here("revision_experiments/shared/harness.R"))
 
 cat(sprintf("=== 04b validate === synthetic n=300,d=10, serial-vs-parallel, cores=%d\n", CORES))
 

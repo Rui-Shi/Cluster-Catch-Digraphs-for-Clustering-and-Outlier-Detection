@@ -8,7 +8,7 @@
 # acceptable iff they are comparable to this orig-vs-ORIG baseline --
 # i.e. indistinguishable from pure Monte-Carlo seed noise.
 #
-# Usage: Rscript "revision_experiments/01h_nn_mc_yardstick.R"
+# Usage: Rscript "revision_experiments/tr2/01h_nn_mc_yardstick.R"
 
 suppressPackageStartupMessages({
   library(here)

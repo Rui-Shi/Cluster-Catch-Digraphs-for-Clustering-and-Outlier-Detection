@@ -41,7 +41,7 @@ prop <- do.call(rbind, Filter(Negate(is.null), lapply(
 bo <- rd("regen_baselines.csv")            # original 8, variant-keyed
 bn <- rd("final_baselines.csv")            # new 8, frozen config
 
-TRUTH <- read.csv(here::here("revision_experiments/published_realdata_truth.csv"),
+TRUTH <- read.csv(here::here("revision_experiments/tr1/published_realdata_truth.csv"),
                   stringsAsFactors = FALSE)
 pub <- function(ds, m, mt) {
   v <- TRUTH$value[TRUTH$dataset == ds & TRUTH$method == m & TRUTH$metric == mt]

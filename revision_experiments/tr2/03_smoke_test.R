@@ -1,19 +1,19 @@
 #!/usr/bin/env Rscript
-# revision_experiments/03_smoke.R
+# revision_experiments/tr2/03_smoke_test.R
 #
 # Smoke test + reproduction gate for the 9-method registry defined in
-# revision_experiments/harness.R (Task T2).
+# revision_experiments/shared/harness.R (Task T2).
 #
 #   Part A: all 9 methods on WBC (real data)              -> smoke_wbc.csv
 #   Part B: all 9 methods on synthetic Gaussian d=20 data  -> smoke_synthetic.csv
 #   Part C: REPRODUCTION GATE -- compare Part-A WBC numbers against the
 #           published manuscript table.
 #
-# Run with:  Rscript "revision_experiments/03_smoke.R"
+# Run with:  Rscript "revision_experiments/tr2/03_smoke_test.R"
 
-source(here::here("revision_experiments/harness.R"))
+source(here::here("revision_experiments/shared/harness.R"))
 
-cat("\n================ 03_smoke.R : START ================\n")
+cat("\n================ 03_smoke_test.R : START ================\n")
 
 RESULTS_DIR   <- here::here("revision_experiments/results/tr2")
 WBC_CSV       <- file.path(RESULTS_DIR, "smoke_wbc.csv")
@@ -298,4 +298,4 @@ for (m in METHOD_NAMES) {
 cat(strrep("-", 60), "\n")
 cat(sprintf("\nOVERALL REPRODUCTION GATE: %s\n", if (all_pass) "PASS" else "FAIL"))
 
-cat("\n================ 03_smoke.R : DONE ================\n")
+cat("\n================ 03_smoke_test.R : DONE ================\n")

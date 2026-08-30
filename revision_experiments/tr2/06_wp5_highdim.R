@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# revision_experiments/06_wp5_highdim.R
+# revision_experiments/tr2/06_wp5_highdim.R
 #
 # WP5: high-dimensional real-data experiments (Task T5). Evaluates baseline
 # outlier detectors (LOF, DBSCAN, MST, ODIN, iForest) on all four new
@@ -12,7 +12,7 @@
 # the user decided (FINDINGS.md 3c) to drop RKCCD rows at d>=166 entirely.
 #
 # USAGE
-#   Rscript "revision_experiments/06_wp5_highdim.R" [methods: all|baselines|ccd]
+#   Rscript "revision_experiments/tr2/06_wp5_highdim.R" [methods: all|baselines|ccd]
 #     all        (default) baselines on every dataset + UN-CCD on its 3
 #                in-scope datasets
 #     baselines  LOF/DBSCAN/MST/ODIN/iForest on all 4 datasets (20 rows)
@@ -85,7 +85,7 @@
 # killing the run. A console NOTE is printed (not enforced) if any single
 # (dataset, method) exceeds 45 minutes of wall clock.
 #
-# SCORE SANITY: mirrors 03_smoke.R's assert_scores_sane/assert_metrics_sane
+# SCORE SANITY: mirrors 03_smoke_test.R's assert_scores_sane/assert_metrics_sane
 # convention -- NA/NaN scores are always an error; -Inf is always an error;
 # +Inf is allowed ONLY for UNCCD-OOS (the manuscript's documented convention
 # for a point with an empty outbound-neighbor set, OOS(x_i) := +infinity).
@@ -93,9 +93,9 @@
 # truncated to 200 chars) instead of crashing the run.
 #
 # Run (from the CLONE root, via PowerShell -- Rscript under Bash segfaults):
-#   Rscript "revision_experiments/06_wp5_highdim.R" baselines
-#   Rscript "revision_experiments/06_wp5_highdim.R" ccd
-#   Rscript "revision_experiments/06_wp5_highdim.R" all
+#   Rscript "revision_experiments/tr2/06_wp5_highdim.R" baselines
+#   Rscript "revision_experiments/tr2/06_wp5_highdim.R" ccd
+#   Rscript "revision_experiments/tr2/06_wp5_highdim.R" all
 
 suppressPackageStartupMessages({
   library(here)
@@ -107,7 +107,7 @@ suppressPackageStartupMessages({
 args <- commandArgs(trailingOnly = TRUE)
 MODE <- if (length(args) >= 1) args[[1]] else "all"
 if (!(MODE %in% c("all", "baselines", "ccd"))) {
-  stop("Usage: Rscript \"revision_experiments/06_wp5_highdim.R\" [methods: all|baselines|ccd]",
+  stop("Usage: Rscript \"revision_experiments/tr2/06_wp5_highdim.R\" [methods: all|baselines|ccd]",
        call. = FALSE)
 }
 
@@ -116,7 +116,7 @@ if (!(MODE %in% c("all", "baselines", "ccd"))) {
 Sys.setenv(OMP_NUM_THREADS = "1", MKL_NUM_THREADS = "1",
            OPENBLAS_NUM_THREADS = "1", NUMEXPR_NUM_THREADS = "1")
 
-source(here::here("revision_experiments/harness.R"))
+source(here::here("revision_experiments/shared/harness.R"))
 
 SHARED_DIR       <- here::here("revision_experiments/results")       # shared infra: not project-specific
 RESULTS_DIR      <- file.path(SHARED_DIR, "tr2")
@@ -233,7 +233,7 @@ make_row <- function(dataset, method, ds, t_construct, t_total, wall_seconds, me
 }
 
 # ---------------------------------------------------------------------------
-# Score sanity (mirrors 03_smoke.R's assert_scores_sane, made non-fatal --
+# Score sanity (mirrors 03_smoke_test.R's assert_scores_sane, made non-fatal --
 # returns a problem string instead of stop()-ing, so the caller can record an
 # ERROR row and continue)
 # ---------------------------------------------------------------------------

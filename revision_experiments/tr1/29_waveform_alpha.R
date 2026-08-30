@@ -26,12 +26,12 @@
 # Writes results/waveform_alpha.csv.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
-source(here::here("revision_experiments", "wp0_mccd_methods.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
+source(here::here("revision_experiments", "tr1", "wp0_mccd_methods.R"))
 
 OUT <- here::here("revision_experiments/results/tr1/waveform_alpha.csv")
 
-TRUTH <- read.csv(here::here("revision_experiments/published_realdata_truth.csv"),
+TRUTH <- read.csv(here::here("revision_experiments/tr1/published_realdata_truth.csv"),
                   stringsAsFactors = FALSE)
 published <- function(ds, meth) {
   s <- TRUTH[tolower(TRUTH$dataset) == tolower(ds) & TRUTH$method == meth, ]

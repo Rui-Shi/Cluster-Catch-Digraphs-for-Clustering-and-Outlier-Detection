@@ -10,7 +10,7 @@
 # Writes nothing.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
 
 TRUTH <- read.csv(here::here("revision_experiments", "published_realdata_truth.csv"),
                   stringsAsFactors = FALSE)

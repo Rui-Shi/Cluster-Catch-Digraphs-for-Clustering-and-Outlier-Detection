@@ -12,7 +12,7 @@
 # selected automatically there (see "Numerically stable RK override" below;
 # validated by 01c_validate_rk_stable.R). Original files are never touched.
 # Exception 2: for NN (every d), a performance override defined in
-# revision_experiments/01e_nn_fast.R is used in place of the original
+# revision_experiments/tr2/01e_nn_fast.R is used in place of the original
 # NNDestP.simpois.lower.quant -- distributionally identical output (proven,
 # not approximated; see that file's header), same statistical definition and
 # object shape, but avoids an O(d^3) eigendecomposition per draw and cuts
@@ -81,7 +81,7 @@ suppressPackageStartupMessages({
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) < 5) {
   stop(
-    "Usage: Rscript \"revision_experiments/01_gen_quantile_table.R\" ",
+    "Usage: Rscript \"revision_experiments/tr2/01_gen_quantile_table.R\" ",
     "<variant RK|NN> <d> <quant e.g. 0.999> <niter> <cores> [outdir]",
     call. = FALSE
   )
@@ -139,7 +139,7 @@ if (variant == "RK") {
   source(here::here("R/ccds/NN_Dist_Est.R"))
   # Optimized NN override (rnorm-equivalence + streaming) -- see file header
   # and "Exception 2" note above. Selected for every NN run, all d.
-  source(here::here("revision_experiments/01e_nn_fast.R"))
+  source(here::here("revision_experiments/tr2/01e_nn_fast.R"))
 }
 
 # ---- Numerically stable RK override for very high d -----------------------
@@ -160,7 +160,7 @@ if (variant == "RK") {
 #                 with b = acos(dist/2)   [exact factorization, no approximation]
 # and masks BEFORE multiplying, so Inf weights on masked (far) pairs never
 # meet a 0. Validated against the original at d where both work by
-# revision_experiments/01c_validate_rk_stable.R. Selected automatically for
+# revision_experiments/tr2/01c_validate_rk_stable.R. Selected automatically for
 # d >= RK_STABLE_MIN_D; the untouched original code path is used below that,
 # so regeneration at d = 166, 274 keeps the original behavior bit-for-bit.
 RK_STABLE_MIN_D <- 342L

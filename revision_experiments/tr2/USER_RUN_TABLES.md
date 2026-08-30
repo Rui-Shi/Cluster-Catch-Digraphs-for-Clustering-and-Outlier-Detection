@@ -4,16 +4,17 @@ T3 Phase B. Three NN tables, d ∈ {166, 274, 400}, q = 0.999, niter = 10000,
 n = 1000, cores = 20, canonical outdir `R/NN-test_quantile/`. You run these;
 nothing here is scheduled automatically.
 
-The generator (`revision_experiments/01_gen_quantile_table.R`) now routes every
+The generator (`revision_experiments/tr2/01_gen_quantile_table.R`) now routes every
 NN run through an optimized override (`01e_nn_fast.R`): `matrix(rnorm(n*d))` in
 place of `mvrnorm(n, 0, diag(d))` (distributionally identical — the mvrnorm
 rotation is orthogonal and the isotropic Gaussian is rotation-invariant; kills
 one O(d^3) eigendecomposition per draw call), and a streaming SimuOnce that
 never materializes the per-iteration dataset list (measured per-worker peak at
 d=400: ~2.2 GB original → ~0.2 GB fast, so cores=20 is safe at every d).
-Validation evidence: `revision_experiments/results/nn_fast_validation.log`
+Validation evidence: `revision_experiments/results/tr2/_logs/nn_fast_validation.log`
 (equivalence checks A/B), `nn_fast_validation_cd.log` (timing at d=166, RAM +
-timing at d=400), `nn_mc_yardstick.log` (Monte-Carlo-noise tolerance baseline).
+timing at d=400), `nn_mc_yardstick.log` (Monte-Carlo-noise tolerance baseline)
+-- all three archived under `results/tr2/_logs/`.
 Measured statistical agreement original-vs-fast is within (at d=10, better
 than) the original-vs-original different-seed baseline at the same scale.
 
@@ -31,15 +32,15 @@ One at a time — a single job at cores=20 finishes the set faster than two
 jobs splitting the same 24 cores, and keeps each log's timing clean.
 
 ```powershell
-& "C:\Program Files\R\R-4.6.1\bin\Rscript.exe" "revision_experiments/01_gen_quantile_table.R" NN 166 0.999 10000 20 | Tee-Object -FilePath "revision_experiments/results/table_gen_166.log"
+& "C:\Program Files\R\R-4.6.1\bin\Rscript.exe" "revision_experiments/tr2/01_gen_quantile_table.R" NN 166 0.999 10000 20 | Tee-Object -FilePath "revision_experiments/results/tr2/table_gen_166.log"
 ```
 
 ```powershell
-& "C:\Program Files\R\R-4.6.1\bin\Rscript.exe" "revision_experiments/01_gen_quantile_table.R" NN 274 0.999 10000 20 | Tee-Object -FilePath "revision_experiments/results/table_gen_274.log"
+& "C:\Program Files\R\R-4.6.1\bin\Rscript.exe" "revision_experiments/tr2/01_gen_quantile_table.R" NN 274 0.999 10000 20 | Tee-Object -FilePath "revision_experiments/results/tr2/table_gen_274.log"
 ```
 
 ```powershell
-& "C:\Program Files\R\R-4.6.1\bin\Rscript.exe" "revision_experiments/01_gen_quantile_table.R" NN 400 0.999 10000 20 | Tee-Object -FilePath "revision_experiments/results/table_gen_400.log"
+& "C:\Program Files\R\R-4.6.1\bin\Rscript.exe" "revision_experiments/tr2/01_gen_quantile_table.R" NN 400 0.999 10000 20 | Tee-Object -FilePath "revision_experiments/results/tr2/table_gen_400.log"
 ```
 
 No sixth argument = the generator's production default outdir, which is the
@@ -145,7 +146,7 @@ tier's iteration count; needs explicit sign-off before use since the high-d
 tier is niter=10000):
 
 ```powershell
-& "C:\Program Files\R\R-4.6.1\bin\Rscript.exe" "revision_experiments/01_gen_quantile_table.R" NN 1555 0.999 2000 20 | Tee-Object -FilePath "revision_experiments/results/table_gen_1555.log"
+& "C:\Program Files\R\R-4.6.1\bin\Rscript.exe" "revision_experiments/tr2/01_gen_quantile_table.R" NN 1555 0.999 2000 20 | Tee-Object -FilePath "revision_experiments/results/tr2/table_gen_1555.log"
 ```
 
 Rough estimate ~45 h (~2 days) wall clock at cores=20 with the fast path

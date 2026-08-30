@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# revision_experiments/09_wp3_synthetic.R
+# revision_experiments/tr2/09_wp3_synthetic.R
 #
 # WP3 threshold-sensitivity study, synthetic part (Task T7 Phase A).
 # Reviewers (R1 #3, R2 3rd comment) find the score-cutoff calibration "too
@@ -46,7 +46,7 @@
 # re-run. Aggregation at the end writes
 # results/wp3_sensitivity_synthetic.csv.
 #
-# CLI:  Rscript "revision_experiments/09_wp3_synthetic.R" <n_reps> <cores>
+# CLI:  Rscript "revision_experiments/tr2/09_wp3_synthetic.R" <n_reps> <cores>
 #       defaults: n_reps = 10, cores = 20
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -54,7 +54,7 @@ N_REPS <- if (length(args) >= 1) as.integer(args[1]) else 10L
 CORES  <- if (length(args) >= 2) as.integer(args[2]) else 20L
 stopifnot(!is.na(N_REPS), N_REPS >= 1, !is.na(CORES), CORES >= 1)
 
-suppressMessages(source(here::here("revision_experiments/harness.R")))
+suppressMessages(source(here::here("revision_experiments/shared/harness.R")))
 # Uni.Gau_cls (Matern/Thomas random-cluster generator) + the `ratio` vector
 # it is parameterized with, exactly as sourced by the original clx_cls scripts.
 source(here::here("R/general_functions/Uni-Gau_cls.R"))
@@ -323,7 +323,7 @@ registerDoParallel(cl)
 clusterExport(cl, "REPO_ROOT")
 invisible(clusterEvalQ(cl, {
   setwd(REPO_ROOT)
-  suppressMessages(source(file.path(REPO_ROOT, "revision_experiments/harness.R")))
+  suppressMessages(source(file.path(REPO_ROOT, "revision_experiments/shared/harness.R")))
   source(file.path(REPO_ROOT, "R/general_functions/Uni-Gau_cls.R"))
   source(file.path(REPO_ROOT, "R/general_functions/ratio1.R"))
   RK_TAB <- get_simul("RK", 10)

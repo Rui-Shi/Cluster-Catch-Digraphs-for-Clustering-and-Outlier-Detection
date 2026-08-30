@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# revision_experiments/21_regen_smin_grid.R
+# revision_experiments/tr1/21_regen_smin_grid.R
 #
 # Agent A / Task 2 (AE.2 parameter-sensitivity): sweeps S_min (the `min.cls`
 # argument, a PROPORTION of n) for the two shape-adaptive proposed detectors,
@@ -24,17 +24,17 @@
 # nn_quant_label_paper_SUN()) -- only min.cls is swept here.
 #
 # USAGE
-#   Rscript revision_experiments/21_regen_smin_grid.R
+#   Rscript revision_experiments/tr1/21_regen_smin_grid.R
 #
 # Resumable: checkpoints to results/regen_smin_grid.csv via has_result(),
 # keyed on (dataset, method, variant).
 
-source(here::here("revision_experiments/harness.R"))
-source(here::here("revision_experiments/wp0_mccd_methods.R"))
+source(here::here("revision_experiments/shared/harness.R"))
+source(here::here("revision_experiments/tr1/wp0_mccd_methods.R"))
 
 REPO_ROOT   <- here::here()
 OUT_CSV     <- file.path(REPO_ROOT, "revision_experiments/results/tr1/regen_smin_grid.csv")
-TRUTH_CSV   <- file.path(REPO_ROOT, "revision_experiments/published_realdata_truth.csv")
+TRUTH_CSV   <- file.path(REPO_ROOT, "revision_experiments/tr1/published_realdata_truth.csv")
 TIMEOUT_SEC <- 600
 
 DATASETS <- c("hepatitis", "glass", "vertebral", "ecoli", "stamps")

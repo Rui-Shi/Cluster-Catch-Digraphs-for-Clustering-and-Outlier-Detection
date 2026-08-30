@@ -4,7 +4,7 @@ Completed 2026-08-09. Sixteen data sets × nine methods, one pipeline, one
 documented configuration. Supersedes the published Section 6 tables.
 
 Configuration frozen in `BENCHMARK_EXPANSION_RULE.md`; assembled by
-`34_final_summary.R` into `results/final_comparison.csv`.
+`34_final_summary.R` into `results/tr1/final_comparison.csv`.
 
 ---
 

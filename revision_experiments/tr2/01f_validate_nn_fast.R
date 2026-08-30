@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 # 01f_validate_nn_fast.R  (T3 Phase B-prep)
 # Validates the two NN generator-side optimizations in
-# revision_experiments/01e_nn_fast.R against the ORIGINAL
+# revision_experiments/tr2/01e_nn_fast.R against the ORIGINAL
 # NNDestP.simpois.lower.quant (R/ccds/NN_Dist_Est.R, unmodified):
 #   (1) rpoisball.unit.fast(): matrix(rnorm(n*d),n,d) in place of
 #       mvrnorm(n, rep(0,d), diag(d))
@@ -26,7 +26,7 @@
 #      peak working set (ps::ps_memory_info 'peak_wset'; monotonic within a
 #      process) reflects that variant alone. (~2 x 2-6 min)
 #
-# Usage: Rscript "revision_experiments/01f_validate_nn_fast.R" [sections]
+# Usage: Rscript "revision_experiments/tr2/01f_validate_nn_fast.R" [sections]
 #   sections: subset of "abcd" (default "abcd"), e.g. "cd" reruns only the
 #   timing/RAM checks. (Internal child modes: "_d_orig", "_d_fast".)
 
@@ -45,7 +45,7 @@ SECTIONS <- if (length(cli) >= 1) tolower(cli[[1]]) else "abcd"
 run_sec <- function(s) grepl(s, SECTIONS, fixed = TRUE)
 
 source(here::here("R/ccds/NN_Dist_Est.R"))               # originals, unmodified
-source(here::here("revision_experiments/01e_nn_fast.R")) # fast overrides
+source(here::here("revision_experiments/tr2/01e_nn_fast.R")) # fast overrides
 
 # ---------------------------------------------------------------------
 # Child modes for section D (run in a fresh process so peak_wset is clean)
@@ -204,7 +204,7 @@ if (run_sec("c")) {
 # ---------------------------------------------------------------------
 if (run_sec("d")) {
   cat("\n=== D. Per-worker RAM + timing at d=400, n=1000 (one SimuOnce each, fresh child process each) ===\n")
-  me <- here::here("revision_experiments/01f_validate_nn_fast.R")
+  me <- here::here("revision_experiments/tr2/01f_validate_nn_fast.R")
   rscript <- file.path(R.home("bin"), "Rscript")
   for (mode in c("_d_orig", "_d_fast")) {
     cat(sprintf("--- child %s ---\n", mode))

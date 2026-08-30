@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# revision_experiments/12_highd_madn_recheck.R
+# revision_experiments/tr2/12_highd_madn_recheck.R
 #
 # WP8 audit follow-up (FINDINGS.md line 208, "OPEN QUESTION worth one cheap
 # experiment"). The std_MADN bug -- mad(x)==0 jumped straight to an all-zero

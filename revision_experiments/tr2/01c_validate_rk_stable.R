@@ -14,7 +14,7 @@
 # Also smoke-checks the stable path at d = 344 and d = 1555 (original is NaN
 # there): output must be finite, NaN-free, and quantile() must succeed.
 #
-# Usage: Rscript "revision_experiments/01c_validate_rk_stable.R"
+# Usage: Rscript "revision_experiments/tr2/01c_validate_rk_stable.R"
 
 suppressPackageStartupMessages({
   library(here)

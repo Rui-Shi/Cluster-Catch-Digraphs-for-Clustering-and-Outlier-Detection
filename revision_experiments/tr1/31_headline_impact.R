@@ -36,7 +36,7 @@ pick <- rbind(
   base[base$method == "ODIN"    & base$variant == "default", ],
   base[base$method == "iForest" & base$variant == "seed1", ])
 
-TRUTH <- read.csv(here::here("revision_experiments/published_realdata_truth.csv"),
+TRUTH <- read.csv(here::here("revision_experiments/tr1/published_realdata_truth.csv"),
                   stringsAsFactors = FALSE)
 pub <- function(ds, meth, metric) {
   v <- TRUTH$value[TRUTH$dataset == ds & TRUTH$method == meth & TRUTH$metric == metric]

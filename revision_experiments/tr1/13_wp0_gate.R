@@ -1,9 +1,9 @@
 #!/usr/bin/env Rscript
-# revision_experiments/13_wp0_gate.R
+# revision_experiments/tr1/13_wp0_gate.R
 #
 # WP0 reproduction gate: runs the 4 newly-wired MCCD detectors (U-MCCD,
 # SU-MCCD, UN-MCCD, SUN-MCCD; see wp0_mccd_methods.R) on real datasets and
-# compares TPR/TNR/BA/F2 against revision_experiments/published_realdata_
+# compares TPR/TNR/BA/F2 against revision_experiments/tr1/published_realdata_
 # truth.csv to 3 decimals. Does NOT tune anything to force a match -- a
 # mismatch is written to the output CSV as-is (match_3dp = FALSE) and
 # printed; it is a finding, not a bug to paper over here.
@@ -27,7 +27,7 @@
 # the record of what the pre-fix wiring produced).
 #
 # USAGE
-#   Rscript "revision_experiments/13_wp0_gate.R" [datasets] [methods] [min_cls_reading]
+#   Rscript "revision_experiments/tr1/13_wp0_gate.R" [datasets] [methods] [min_cls_reading]
 #
 #   [datasets]        comma-separated dataset names as accepted by
 #                      load_real_dataset(), e.g. "hepatitis,glass,ecoli".
@@ -54,8 +54,8 @@
 # timed-out cell is recorded with status columns left NA and is reported,
 # not silently dropped.
 
-source(here::here("revision_experiments/harness.R"))
-source(here::here("revision_experiments/wp0_mccd_methods.R"))
+source(here::here("revision_experiments/shared/harness.R"))
+source(here::here("revision_experiments/tr1/wp0_mccd_methods.R"))
 
 REPO_ROOT   <- here::here()
 # OUT_CSV: overridable via WP0_GATE_OUT_CSV so a concurrent gate run writing
@@ -63,7 +63,7 @@ REPO_ROOT   <- here::here()
 # on one CSV can interleave partial appended lines). Default unchanged for
 # any other caller that doesn't set the env var.
 OUT_CSV     <- Sys.getenv("WP0_GATE_OUT_CSV", file.path(REPO_ROOT, "revision_experiments/results/tr1/wp0_gate_v2.csv"))
-TRUTH_CSV   <- file.path(REPO_ROOT, "revision_experiments/published_realdata_truth.csv")
+TRUTH_CSV   <- file.path(REPO_ROOT, "revision_experiments/tr1/published_realdata_truth.csv")
 TIMEOUT_SEC <- as.numeric(Sys.getenv("WP0_GATE_TIMEOUT_SEC", "600"))
 
 args <- commandArgs(trailingOnly = TRUE)

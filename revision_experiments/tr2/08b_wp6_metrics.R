@@ -1,8 +1,8 @@
-# 08_wp6_metrics.R
+# 08b_wp6_metrics.R
 #
 # WP6 (task T6) metrics pass for the PR-D-26-05767 revision-experiments
 # pipeline. Reads the per-(dataset, method, seed) raw PyOD decision scores
-# produced by 07_wp6_pyod.py and computes TPR/TNR/BA/F2 via this repo's own
+# produced by 08_wp6_pyod_baselines.py and computes TPR/TNR/BA/F2 via this repo's own
 # R/general_functions/count.R::count_scores2(), for two label thresholds:
 #   (a) contamination = 0.1        (PyOD's own default)
 #   (b) contamination = true rate  (n_outliers / n, from the dataset itself)
@@ -44,7 +44,7 @@
 # reproducibility was measured across repeated seeds.
 #
 # Run from anywhere:
-#   Rscript "revision_experiments/08_wp6_metrics.R"
+#   Rscript "revision_experiments/tr2/08b_wp6_metrics.R"
 #
 # Output:
 #   revision_experiments/results/tr2/wp6_pyod_metrics.csv
@@ -65,7 +65,7 @@ this_file <- tryCatch({
 }, error = function(e) NA_character_)
 
 script_dir <- if (!is.na(this_file)) dirname(this_file) else getwd()
-repo_root <- normalizePath(file.path(script_dir, ".."))
+repo_root <- normalizePath(file.path(script_dir, "..", ".."))
 
 count_r_path <- file.path(repo_root, "R", "general_functions", "count.R")
 stopifnot("count.R not found" = file.exists(count_r_path))
@@ -77,7 +77,7 @@ scores_dir <- file.path(repo_root, "revision_experiments", "results", "tr2", "wp
 out_path <- file.path(repo_root, "revision_experiments", "results", "tr2", "wp6_pyod_metrics.csv")
 
 stopifnot("datasets_csv directory not found" = dir.exists(data_dir))
-stopifnot("wp6_scores directory not found (run 07_wp6_pyod.py first)" = dir.exists(scores_dir))
+stopifnot("wp6_scores directory not found (run 08_wp6_pyod_baselines.py first)" = dir.exists(scores_dir))
 
 # ---------------------------------------------------------------------------
 # 1. Manifest + dataset enumeration

@@ -20,7 +20,7 @@
 # Read-only. Writes nothing.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
 
 DATASETS <- c("hepatitis", "glass", "vertebral", "ecoli",
               "stamps", "vowels", "waveform", "wilt")

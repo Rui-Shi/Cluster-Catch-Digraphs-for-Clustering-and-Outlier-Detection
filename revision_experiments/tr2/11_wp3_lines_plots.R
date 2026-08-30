@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# revision_experiments/11_plots.R
+# revision_experiments/tr2/11_wp3_lines_plots.R
 #
 # WP3 threshold-sensitivity plots (Task T7 Phase A).
 # Reads whichever of the two sensitivity CSVs exist and renders 300-dpi PNG
@@ -21,7 +21,7 @@
 # contrast), plus linetype and point shape as secondary encoding so method
 # identity is never carried by color alone (also survives grayscale print).
 #
-# Run:  Rscript "revision_experiments/11_plots.R"
+# Run:  Rscript "revision_experiments/tr2/11_wp3_lines_plots.R"
 
 suppressPackageStartupMessages({
   library(here)
@@ -152,4 +152,4 @@ if (file.exists(REAL_CSV)) {
   cat(sprintf("[skip] %s not found -- no real-data figures.\n", basename(REAL_CSV)))
 }
 
-cat("11_plots.R done.\n")
+cat("11_wp3_lines_plots.R done.\n")

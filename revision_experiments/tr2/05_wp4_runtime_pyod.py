@@ -49,7 +49,7 @@ if present in the raw file).
 
 Usage (from the CLONE repo root, using the pinned venv):
   & "revision_experiments\\.venv\\Scripts\\python.exe" `
-      "revision_experiments/05_wp4_runtime_pyod.py" [--reps 10] [--include-micro]
+      "revision_experiments/tr2/05_wp4_runtime_pyod.py" [--reps 10] [--include-micro]
 
 Files whose names start with "micro_" (written by 04's hidden micro mode)
 are excluded unless --include-micro is given.
@@ -86,7 +86,7 @@ from pyod.models.auto_encoder import AutoEncoder
 from pyod.models.ecod import ECOD
 from pyod.models.lunar import LUNAR
 
-HERE = Path(__file__).resolve().parent
+HERE = Path(__file__).resolve().parent.parent
 DATA_DIR = HERE / "results" / "tr2" / "wp4_data2"
 RAW_PATH = HERE / "results" / "tr2" / "wp4_runtime2_pyod_raw.csv"
 AGG_PATH = HERE / "results" / "tr2" / "wp4_runtime2_pyod.csv"
@@ -112,7 +112,7 @@ def seed_everything(seed):
 
 def build_model(method, seed):
     # pyod defaults throughout (contamination only affects labels_, not the
-    # fit or decision_scores_ -- verified for these models in 07_wp6_pyod.py).
+    # fit or decision_scores_ -- verified for these models in 08_wp6_pyod_baselines.py).
     if method == "ECOD":
         return ECOD()
     if method == "LUNAR":

@@ -24,13 +24,13 @@
 suppressMessages({
   library(here); library(foreign); library(dplyr)
 })
-source(here::here("revision_experiments", "harness.R"))
-source(here::here("revision_experiments", "wp0_mccd_methods.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
+source(here::here("revision_experiments", "tr1", "wp0_mccd_methods.R"))
 
 OUT   <- here::here("revision_experiments/results/tr1/waveform_scaling.csv")
 S_MIN <- 0.0625
 
-TRUTH <- read.csv(here::here("revision_experiments/published_realdata_truth.csv"),
+TRUTH <- read.csv(here::here("revision_experiments/tr1/published_realdata_truth.csv"),
                   stringsAsFactors = FALSE)
 published <- function(meth) {
   s <- TRUTH[TRUTH$dataset == "waveform" & TRUTH$method == meth, ]

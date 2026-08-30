@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# revision_experiments/wp0_mccd_methods.R
+# revision_experiments/tr1/wp0_mccd_methods.R
 #
 # WP0: wires the paper's four MCCD detectors (U-MCCD, SU-MCCD, UN-MCCD,
 # SUN-MCCD) into the revision_experiments harness's METHOD_REGISTRY /
@@ -18,12 +18,12 @@
 # Material L655-677), and exposed as separately-callable, separately-named
 # functions so a reviewer can audit each one against the cited line.
 #
-# Assumes revision_experiments/harness.R has already been source()'d (for
+# Assumes revision_experiments/shared/harness.R has already been source()'d (for
 # get_simul(), evaluate(), METHOD_REGISTRY, REAL_DATA_THRESHOLDS, and the
 # `here` package already being attached). Source order matters:
 #
-#   source(here::here("revision_experiments/harness.R"))
-#   source(here::here("revision_experiments/wp0_mccd_methods.R"))
+#   source(here::here("revision_experiments/shared/harness.R"))
+#   source(here::here("revision_experiments/tr1/wp0_mccd_methods.R"))
 #
 # ---------------------------------------------------------------------------
 # Detector contract (verified by recon + a throwaway probe run against

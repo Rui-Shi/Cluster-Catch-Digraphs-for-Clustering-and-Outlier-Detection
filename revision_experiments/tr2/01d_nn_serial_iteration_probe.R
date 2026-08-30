@@ -11,7 +11,7 @@
 # evaluated at the same reduced n. Agreement validates the model, which is
 # then used to extrapolate the production (n=1000) per-iteration cost.
 #
-# Usage: Rscript "revision_experiments/01d_nn_serial_iteration_probe.R" <d> [n=100]
+# Usage: Rscript "revision_experiments/tr2/01d_nn_serial_iteration_probe.R" <d> [n=100]
 
 suppressPackageStartupMessages({
   library(here)

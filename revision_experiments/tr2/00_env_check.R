@@ -33,7 +33,7 @@ if (!is.na(this_file)) {
 } else {
   script_dir <- getwd()
 }
-repo_root <- normalizePath(file.path(script_dir, ".."))
+repo_root <- normalizePath(file.path(script_dir, "..", ".."))
 
 rk_path <- file.path(repo_root, "R", "RK-test_quantile", "RK-test-simul_10d_999%.RData")
 nn_path <- file.path(repo_root, "R", "NN-test_quantile", "NN-test-simul_10d_99%.RData")

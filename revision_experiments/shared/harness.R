@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# revision_experiments/harness.R
+# revision_experiments/shared/harness.R
 #
 # Sourceable experiment harness for the PR-D-26-05767 revision-experiments
 # pipeline (Task T2). Provides:
@@ -255,7 +255,7 @@ nnccd.radi <- function(dx, quantile = "lower", method = "ascend", low.num, quant
 #       d==2 -> 85%; d in [3,4] -> 90%; d in [5,9] -> 95%;
 #       d in [10,19] -> 99%; d>=20 -> 999%
 #   This puts WBC's d=9 at 95%. Both the RK and NN conventions are validated
-#   by the Part-C reproduction gate in 03_smoke.R.
+#   by the Part-C reproduction gate in 03_smoke_test.R.
 
 RK_QUANT_TABLE_DIR <- here::here("R/RK-test_quantile")
 NN_QUANT_TABLE_DIR <- here::here("R/NN-test_quantile")

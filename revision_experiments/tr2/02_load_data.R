@@ -16,7 +16,7 @@
 # outliers last (decreasing sort on the label column).
 #
 # Run from the CLONE root:
-#   Rscript "revision_experiments/02_load_data.R"
+#   Rscript "revision_experiments/tr2/02_load_data.R"
 #
 # Idempotent: re-running overwrites the same CSV outputs; no state persists
 # between runs other than those files.
@@ -94,12 +94,12 @@ existing_normalization <- list(
 
 # ---------------------------------------------------------------------------
 # 2. Load the 4 new high-dimensional datasets from the raw CSVs produced by
-#    revision_experiments/convert_highdim.py, then apply THE SAME
+#    revision_experiments/tr2/02b_convert_highdim.py, then apply THE SAME
 #    normalization philosophy, dedup, and row-ordering conventions as
 #    RealData_Collection.R -- with one necessary generalization, documented
 #    below.
 #
-#    LABEL POLARITY: convert_highdim.py writes `label` using the SOURCE
+#    LABEL POLARITY: 02b_convert_highdim.py writes `label` using the SOURCE
 #    (ODDS/ADBench) convention: 1 = outlier, 0 = regular. This repo's
 #    convention (and RealData_Collection.R's own output) is the OPPOSITE:
 #    1 = regular, 0 = outlier. We flip polarity below with the identical

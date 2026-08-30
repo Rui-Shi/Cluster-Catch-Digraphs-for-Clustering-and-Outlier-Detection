@@ -1,6 +1,6 @@
 #!/usr/bin/env Rscript
-# revision_experiments/01h_nn_d500_quant.R -- NN(UN-CCD) quantile table for
-# the new WP4 grid-2 cell d=500 (n=500). See revision_experiments/
+# revision_experiments/tr2/01i_nn_d500_quant.R -- NN(UN-CCD) quantile table for
+# the new WP4 grid-2 cell d=500 (n=500). See revision_experiments/tr2/
 # 04_wp4_runtime.R and its FLAGGED/SKIPPED_NO_TABLE docs: no
 # R/NN-test_quantile/NN-test-simul_500d_999%.RData table exists on disk
 # (confirmed by a throwaway inventory read on 2026-07-19 -- every other
@@ -55,8 +55,8 @@
 # production step, before any 04_wp4_runtime.R grid cells run.
 #
 # MODES (PowerShell; Rscript under Bash segfaults):
-#   Rscript "revision_experiments/01h_nn_d500_quant.R" smoke
-#   Rscript "revision_experiments/01h_nn_d500_quant.R" gen [niter] [cores]
+#   Rscript "revision_experiments/tr2/01i_nn_d500_quant.R" smoke
+#   Rscript "revision_experiments/tr2/01i_nn_d500_quant.R" gen [niter] [cores]
 #
 # gen writes R/NN-test_quantile/NN-test-simul_500d_999%.RData (object
 # `simul` = list(average, median), length 500 each -- the exact shape/name

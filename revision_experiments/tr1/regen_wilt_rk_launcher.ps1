@@ -17,12 +17,12 @@ $Log = "$Root\revision_experiments\results\tr1\regen_wilt_rk.log"
 
 "=== wilt RK half started $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') ===" | Out-File -FilePath $Log -Encoding utf8
 
-& $R "revision_experiments/13_wp0_gate.R" "wilt" "U-MCCD,SU-MCCD" "half_contam" *>&1 |
+& $R "revision_experiments/tr1/13_wp0_gate.R" "wilt" "U-MCCD,SU-MCCD" "half_contam" *>&1 |
     Out-File -FilePath $Log -Encoding utf8 -Append
 
 "=== full_contam reading for SU-MCCD $(Get-Date -Format 'HH:mm:ss') ===" | Out-File -FilePath $Log -Encoding utf8 -Append
 
-& $R "revision_experiments/13_wp0_gate.R" "wilt" "SU-MCCD" "full_contam" *>&1 |
+& $R "revision_experiments/tr1/13_wp0_gate.R" "wilt" "SU-MCCD" "full_contam" *>&1 |
     Out-File -FilePath $Log -Encoding utf8 -Append
 
 "=== wilt RK half finished $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') ===" | Out-File -FilePath $Log -Encoding utf8 -Append

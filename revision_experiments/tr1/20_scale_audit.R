@@ -9,7 +9,7 @@
 # Writes nothing.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
 
 cat(sprintf("\n%-11s %8s %9s %9s %9s %9s\n",
             "dataset", "d", "min", "max", "max|sd|", "sd ratio"))

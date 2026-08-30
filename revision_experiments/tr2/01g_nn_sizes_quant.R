@@ -18,9 +18,9 @@
 # NN_Dist_Est.R (no reimplementation -- zero distributional-drift risk).
 #
 # MODES (PowerShell; Rscript under Bash segfaults):
-#   Rscript "revision_experiments/01g_nn_sizes_quant.R" smoke
-#   Rscript "revision_experiments/01g_nn_sizes_quant.R" probe <musk|speech> [cores]
-#   Rscript "revision_experiments/01g_nn_sizes_quant.R" gen   <musk|speech> <niter> [cores]
+#   Rscript "revision_experiments/tr2/01g_nn_sizes_quant.R" smoke
+#   Rscript "revision_experiments/tr2/01g_nn_sizes_quant.R" probe <musk|speech> [cores]
+#   Rscript "revision_experiments/tr2/01g_nn_sizes_quant.R" gen   <musk|speech> <niter> [cores]
 #
 # gen writes:
 #   results/nn_sizes_knots_<dataset>.RData        (raw knot quantiles + meta)

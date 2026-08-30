@@ -12,7 +12,7 @@
 # Read-only. Writes results/dataset_inventory.csv.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
 
 # Every object RealData_Collection.R builds, in file order.
 CANDIDATES <- c("hepatitis", "glass", "vertebral", "ecoli", "stamps",

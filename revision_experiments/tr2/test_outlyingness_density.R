@@ -15,7 +15,7 @@
 # (b) numerical agreement with the old formula at low d where the old
 # formula is stable (guards the published low-d results).
 #
-# Run: Rscript "revision_experiments/test_outlyingness_density.R"
+# Run: Rscript "revision_experiments/tr2/test_outlyingness_density.R"
 
 source(here::here("methods/outlyingness_scores/Outlyingness_Score.R"))
 

@@ -18,7 +18,7 @@
 # This test pins all four branches. It FAILS on the pre-fix code at the
 # MADN=0 & SD>0 case (returns zeros; manuscript says SD-scale).
 #
-# Run: Rscript "revision_experiments/test_std_madn.R"
+# Run: Rscript "revision_experiments/tr2/test_std_madn.R"
 
 source(here::here("methods/outlyingness_scores/Outlyingness_Score.R"))
 

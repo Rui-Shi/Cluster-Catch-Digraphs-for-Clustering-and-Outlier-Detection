@@ -1,5 +1,5 @@
 """
-07_wp6_pyod.py -- WP6: three PyOD baselines (ECOD, LUNAR, AutoEncoder) on the
+08_wp6_pyod_baselines.py -- WP6: three PyOD baselines (ECOD, LUNAR, AutoEncoder) on the
 14 real datasets, for the PR-D-26-05767 revision-experiments pipeline (task T6).
 
 What this does
@@ -76,7 +76,7 @@ from pyod.models.auto_encoder import AutoEncoder
 from pyod.models.ecod import ECOD
 from pyod.models.lunar import LUNAR
 
-HERE = Path(__file__).resolve().parent
+HERE = Path(__file__).resolve().parent.parent
 DATA_DIR = HERE / "results" / "datasets_csv"
 SCORES_DIR = HERE / "results" / "tr2" / "wp6_scores"
 FIT_LOG_PATH = HERE / "results" / "tr2" / "wp6_fit_log.csv"

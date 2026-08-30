@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# revision_experiments/23_regen_baselines.R
+# revision_experiments/tr1/23_regen_baselines.R
 #
 # Agent C (parallel regen, 5-way split) -- BASELINES shard for
 # NEUCOM-D-26-15191. Regenerates label-free DBSCAN / MST / ODIN / iForest
@@ -24,7 +24,7 @@
 # going through the source DBSCAN() wrapper.
 #
 # Usage:
-#   Rscript revision_experiments/23_regen_baselines.R <dataset>
+#   Rscript revision_experiments/tr1/23_regen_baselines.R <dataset>
 #   <dataset> one of: hepatitis, glass, vertebral, ecoli, stamps, vowels,
 #   waveform, wilt. One dataset per invocation, run synchronously (never
 #   run_in_background) -- wilt in particular needs its own invocation, since
@@ -35,7 +35,7 @@
 # via has_result()/append_result() keyed on (dataset, method, variant).
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
 
 OUT_CSV   <- here::here("revision_experiments", "results", "tr1", "regen_baselines.csv")
 TRUTH_CSV <- here::here("revision_experiments", "published_realdata_truth.csv")

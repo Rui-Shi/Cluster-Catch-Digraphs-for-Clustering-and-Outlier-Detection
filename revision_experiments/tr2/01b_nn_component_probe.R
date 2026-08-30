@@ -13,7 +13,7 @@
 # Total dist work = sum_{x=2}^{n} x^2*d/2 ~ (n^3/6)*d, i.e. ~334x the cost
 # of the single largest (x=1000) dist call.
 #
-# Usage: Rscript "revision_experiments/01b_nn_component_probe.R" <d> [n=1000] [reps=3]
+# Usage: Rscript "revision_experiments/tr2/01b_nn_component_probe.R" <d> [n=1000] [reps=3]
 
 suppressPackageStartupMessages(library(MASS))
 

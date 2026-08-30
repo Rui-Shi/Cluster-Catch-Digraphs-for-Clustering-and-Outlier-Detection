@@ -16,8 +16,8 @@
 # IDENTICAL (bitwise) to the serial path on Arrhythmia (452x274).
 #
 # MODES (PowerShell; Rscript under Bash segfaults):
-#   Rscript "revision_experiments/07b_wp5_fulldata_ccd.R" validate [cores]
-#   Rscript "revision_experiments/07b_wp5_fulldata_ccd.R" run <musk|speech> [cores]
+#   Rscript "revision_experiments/tr2/07b_wp5_fulldata_ccd.R" validate [cores]
+#   Rscript "revision_experiments/tr2/07b_wp5_fulldata_ccd.R" run <musk|speech> [cores]
 #
 # run appends per-(dataset,method) rows to results/wp5_fulldata_raw.csv,
 # caches scores to results/scores_cache/<Dataset>_full_<method>.rds, prints
@@ -36,7 +36,7 @@ CORES <- {
 Sys.setenv(OMP_NUM_THREADS = "1", MKL_NUM_THREADS = "1",
            OPENBLAS_NUM_THREADS = "1", NUMEXPR_NUM_THREADS = "1")
 
-source(here::here("revision_experiments/harness.R"))
+source(here::here("revision_experiments/shared/harness.R"))
 
 SHARED_DIR       <- here::here("revision_experiments/results")       # shared infra: not project-specific
 RESULTS_DIR      <- file.path(SHARED_DIR, "tr2")
