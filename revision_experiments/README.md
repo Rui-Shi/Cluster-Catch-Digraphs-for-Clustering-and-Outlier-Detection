@@ -85,9 +85,10 @@ uses Python. Unmoved by this reorg (still `revision_experiments/.venv`).
 ## tr1/
 
 NEUCOM-D-26-15191 regeneration pipeline. Script names and numbering
-(`13_wp0_gate.R` .. `35_print_tables.R`, plus `wp0_mccd_methods.R` and the
-`regen_wilt_*_launcher.ps1` pair) are unchanged from before this reorg -- only
-their location moved, from `revision_experiments/` to `revision_experiments/tr1/`.
+(`13_wp0_gate.R` .. `39_verify_manuscript_tables.R`, plus `wp0_mccd_methods.R`
+and the `regen_wilt_*_launcher.ps1` pair) are unchanged from before this reorg
+-- only their location moved, from `revision_experiments/` to
+`revision_experiments/tr1/`.
 See `tr1/REGEN_SPEC.md`, `tr1/BENCHMARK_EXPANSION_RULE.md` and
 `tr1/REGENERATION_REPORT.md` for tr1's own documentation; this file does not
 duplicate it.

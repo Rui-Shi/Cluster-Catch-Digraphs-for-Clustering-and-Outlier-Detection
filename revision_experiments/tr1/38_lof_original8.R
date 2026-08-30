@@ -27,14 +27,14 @@
 # Writes results/tr1/lof_original8.csv. Touches no existing file.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
 
 ORIG <- c("hepatitis", "glass", "vertebral", "ecoli",
           "stamps", "vowels", "waveform", "wilt")
 
 OUT <- here::here("revision_experiments/results/tr1/lof_original8.csv")
 
-TRUTH <- read.csv(here::here("revision_experiments/published_realdata_truth.csv"),
+TRUTH <- read.csv(here::here("revision_experiments/tr1/published_realdata_truth.csv"),
                   stringsAsFactors = FALSE)
 pub <- function(ds, mt) {
   v <- TRUTH$value[TRUTH$dataset == ds & TRUTH$method == "LOF" & TRUTH$metric == mt]
