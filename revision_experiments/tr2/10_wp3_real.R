@@ -1,10 +1,10 @@
 #!/usr/bin/env Rscript
-# revision_experiments/10_wp3_real.R
+# revision_experiments/tr2/10_wp3_real.R
 #
 # WP3 threshold-sensitivity study, real-data part (Task T7 Phase A).
 # For each dataset x each of the 4 CCD-based OS methods: compute the score
 # vector ONCE via the harness METHOD_REGISTRY (the exact configuration whose
-# WBC row reproduced the manuscript table in 03_smoke.R: UNCCD
+# WBC row reproduced the manuscript table in 03_smoke_test.R: UNCCD
 # method="ascend", min.cls=0, RK/NN quantile tables resolved by get_simul),
 # cache it to results/scores_cache/<dataset>_<method>.rds, then sweep an
 # absolute cutoff grid and write results/wp3_sensitivity_real.csv.
@@ -30,9 +30,9 @@
 # Rerun-safe: expensive scores come from the RDS cache; the sensitivity CSV
 # is rewritten in full on every run (cheap).
 #
-# Run:  Rscript "revision_experiments/10_wp3_real.R"
+# Run:  Rscript "revision_experiments/tr2/10_wp3_real.R"
 
-suppressMessages(source(here::here("revision_experiments/harness.R")))
+suppressMessages(source(here::here("revision_experiments/shared/harness.R")))
 
 REPO_ROOT  <- here::here()
 CACHE_DIR  <- file.path(REPO_ROOT, "revision_experiments/results/scores_cache")
@@ -52,6 +52,15 @@ dir.create(dirname(OUT_CSV), recursive = TRUE, showWarnings = FALSE)
 DATASETS <- list(
   wbc        = list(label = "WBC",        robj = "WBC",     compute = TRUE),
   thyroid    = list(label = "Thyroid",    robj = "thyroid", compute = TRUE),
+  # vowels (n=1452, d=12) added 2026-08-16 as the manuscript's third real-data
+  # panel, replacing Arrhythmia (d=274, which RK-CCD cannot score at all).
+  # WDBC was tried first, being the highest-dimensional of the ten datasets
+  # that RK-CCD can score, and rejected: 15_os_repro_audit.R shows none of its
+  # four published OS values reproduce under the current harness. vowels is the
+  # highest-dimensional dataset whose published OS row reproduces in full
+  # (4/4), so a curve through cutoff 2 lands on the manuscript's own table.
+  # The Arrhythmia rows below stay in the CSV as the record behind Appendix D.
+  vowels     = list(label = "vowels",     robj = "vowels",  compute = TRUE),
   musk       = list(label = "Musk",       robj = NA,        compute = FALSE),
   # List name must match the cache filename prefix exactly (case-sensitive):
   # 06_wp5_highdim.R wrote Arrhythmia_UNCCD-{OOS,IOS}.rds with capital "A".
@@ -177,7 +186,7 @@ print(do.call(rbind, timing_rows), row.names = FALSE)
 
 # Reproduction check at the calibrated cutoff (2.0) against the manuscript's
 # published WBC values (Tables Real_Data_Result_OS1/OS2; identical numbers
-# reproduced by 03_smoke.R Part C).
+# reproduced by 03_smoke_test.R Part C).
 PUBLISHED_WBC <- list(
   "RKCCD-OOS" = c(TPR = 0.200, TNR = 0.850, BA = 0.525, F2 = 0.135),
   "RKCCD-IOS" = c(TPR = 1.000, TNR = 0.779, BA = 0.890, F2 = 0.515),
@@ -199,5 +208,32 @@ for (m in OS_METHODS) {
 }
 cat(sprintf("WBC reproduction gate at cutoff=2: %s\n", if (gate_ok) "PASS" else "FAIL"))
 if (!gate_ok) stop("WBC values at cutoff=2 do not match the manuscript -- investigate before using wp3_sensitivity_real.csv")
+
+# Same gate for vowels (manuscript Tables Real_Data_Result_OS1/OS2, vowels
+# column). vowels is the third panel of the Appendix C figure, so its curve
+# must pass through the published table at cutoff 2.
+PUBLISHED_VOWELS <- list(
+  "RKCCD-OOS" = c(TPR = 0.326, TNR = 0.900, BA = 0.613, F2 = 0.221),
+  "RKCCD-IOS" = c(TPR = 0.783, TNR = 0.898, BA = 0.840, F2 = 0.496),
+  "UNCCD-OOS" = c(TPR = 0.413, TNR = 0.927, BA = 0.670, F2 = 0.310),
+  "UNCCD-IOS" = c(TPR = 0.848, TNR = 0.903, BA = 0.875, F2 = 0.542)
+)
+if (any(res$dataset == "vowels")) {
+  cat("\nvowels @ cutoff = 2.0 vs manuscript:\n")
+  v2 <- res[res$dataset == "vowels" & abs(res$cutoff - 2) < 1e-9, ]
+  vow_ok <- TRUE
+  for (m in OS_METHODS) {
+    r <- v2[v2$method == m, ]
+    if (nrow(r) == 0) next
+    pub <- PUBLISHED_VOWELS[[m]]
+    ok <- all(abs(c(r$TPR, r$TNR, r$BA, r$F2) - pub) <= 0.005 + 1e-9)
+    if (!ok) vow_ok <- FALSE
+    cat(sprintf("  %-10s got TPR=%.3f TNR=%.3f BA=%.3f F2=%.3f | pub %.3f/%.3f/%.3f/%.3f | %s\n",
+                m, r$TPR, r$TNR, r$BA, r$F2, pub["TPR"], pub["TNR"], pub["BA"], pub["F2"],
+                if (ok) "MATCH" else "MISMATCH"))
+  }
+  cat(sprintf("vowels reproduction gate at cutoff=2: %s\n", if (vow_ok) "PASS" else "FAIL"))
+  if (!vow_ok) stop("vowels values at cutoff=2 do not match the manuscript -- investigate before using wp3_sensitivity_real.csv")
+}
 
 cat("\n10_wp3_real.R done.\n")

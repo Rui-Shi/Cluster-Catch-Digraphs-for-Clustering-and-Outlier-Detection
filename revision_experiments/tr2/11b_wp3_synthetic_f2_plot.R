@@ -1,18 +1,18 @@
 #!/usr/bin/env Rscript
-# revision_experiments/11b_wp3_f2_plot.R
+# revision_experiments/tr2/11b_wp3_synthetic_f2_plot.R
 #
 # Manuscript figure for Appendix C (WP3 cutoff sensitivity).
 #
-# 11_plots.R renders six figures: BA and F2 side by side, one file per
+# 11_wp3_lines_plots.R renders six figures: BA and F2 side by side, one file per
 # synthetic setting and one per real dataset. The appendix now shows only the
 # F2 curves for the three synthetic settings, in a single three-panel figure,
-# so this script writes that one file. 11_plots.R is left alone; its six
+# so this script writes that one file. 11_wp3_lines_plots.R is left alone; its six
 # figures remain the full record behind the appendix.
 #
-# Colors, linetypes and shapes are copied from 11_plots.R so the appendix
+# Colors, linetypes and shapes are copied from 11_wp3_lines_plots.R so the appendix
 # stays visually consistent with the rest of the WP3 material.
 #
-# Run:  Rscript "revision_experiments/11b_wp3_f2_plot.R"
+# Run:  Rscript "revision_experiments/tr2/11b_wp3_synthetic_f2_plot.R"
 
 suppressPackageStartupMessages({
   library(here)
@@ -54,7 +54,7 @@ p <- ggplot(syn, aes(x = multiplier, y = F2_mean, color = method,
   scale_linetype_manual(values = METHOD_LINETYPES, breaks = OS_METHODS) +
   scale_shape_manual(values = METHOD_SHAPES, breaks = OS_METHODS) +
   coord_cartesian(ylim = c(0, 1)) +
-  labs(x = "Cutoff multiplier (x calibrated value)", y = expression(F[2])) +
+  labs(x = "Cutoff multiplier (x adopted cutoff)", y = expression(F[2])) +
   theme_minimal(base_size = 11) +
   theme(
     panel.grid.minor = element_blank(),
