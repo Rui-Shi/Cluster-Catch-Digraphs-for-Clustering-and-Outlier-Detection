@@ -6,3 +6,4 @@ revision_experiments/.venv/
 .Rhistory
 *.DONE
 *.flag
+__pycache__/
