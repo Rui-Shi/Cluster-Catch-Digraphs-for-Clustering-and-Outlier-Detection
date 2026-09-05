@@ -1,0 +1,99 @@
+wp0_mccd_methods.R: METHOD_REGISTRY now has 13 entries (RKCCD-OOS, RKCCD-IOS, UNCCD-OOS, UNCCD-IOS, LOF, DBSCAN, MST, ODIN, iForest, U-MCCD, SU-MCCD, UN-MCCD, SUN-MCCD); REAL_DATA_THRESHOLDS has 13.
+==== 57_waveform_d21_rerun: guards ====
+
+---- Guard 3: shipped d=21 99%/999% pair should be identical (documented baseline) ----
+  shipped 99%  file=G:/Submissions/TR1/TR1_Neurocomputing_resubmit/Cluster-Catch-Digraphs-for-Clustering-and-Outlier-Detection/R/NN-test_quantile/NN-test-simul_21d_99%.RData size=70234 bytes len(avg)=5000 len(med)=5000
+  shipped 999% file=G:/Submissions/TR1/TR1_Neurocomputing_resubmit/Cluster-Catch-Digraphs-for-Clustering-and-Outlier-Detection/R/NN-test_quantile/NN-test-simul_21d_999%.RData size=70234 bytes len(avg)=5000 len(med)=5000
+  identical(average)=TRUE  identical(median)=TRUE
+  Guard 3 PASSED: shipped d=21 pair confirmed byte-identical, as expected.
+
+---- Guard 1: fresh d=21 99%/999% pair must be genuinely distinct ----
+  fresh 99%  file=G:/Submissions/TR1/TR1_Neurocomputing_resubmit/Cluster-Catch-Digraphs-for-Clustering-and-Outlier-Detection/R/NN-test_quantile_d21_regen/samedraws/NN-test-simul_21d_99%.RData size=70495 bytes
+  fresh 999% file=G:/Submissions/TR1/TR1_Neurocomputing_resubmit/Cluster-Catch-Digraphs-for-Clustering-and-Outlier-Detection/R/NN-test_quantile_d21_regen/samedraws/NN-test-simul_21d_999%.RData size=70739 bytes
+  identical(average)=FALSE  identical(median)=FALSE  max|d avg|=0.07396733
+  Guard 1 PASSED: fresh pair is genuinely distinct.
+
+---- Guard 2: fresh table length >= 3443 (waveform n) ----
+  fresh 99  %: len(average)=5000  len(median)=5000  OK
+  fresh 999 %: len(average)=5000  len(median)=5000  OK
+  Guard 2 PASSED (for all fresh tables present).
+
+==== guards complete ====
+
+$guard1
+$guard1$ok
+[1] TRUE
+
+$guard1$identical_avg
+[1] FALSE
+
+$guard1$identical_med
+[1] FALSE
+
+
+$guard2
+$guard2$ok
+[1] TRUE
+
+$guard2$results
+$guard2$results$`99`
+$guard2$results$`99`$avg_len
+[1] 5000
+
+$guard2$results$`99`$med_len
+[1] 5000
+
+$guard2$results$`99`$ok
+[1] TRUE
+
+
+$guard2$results$`999`
+$guard2$results$`999`$avg_len
+[1] 5000
+
+$guard2$results$`999`$med_len
+[1] 5000
+
+$guard2$results$`999`$ok
+[1] TRUE
+
+
+
+
+$guard3
+$guard3$ok
+[1] TRUE
+
+$guard3$identical_avg
+[1] TRUE
+
+$guard3$identical_med
+[1] TRUE
+
+
+57_waveform_d21_rerun: 6 of 6 cells selected (methods=UN-MCCD,SUN-MCCD, table_sources=fresh,shipped)
+[1] "corraltion matrix of ecoli is"
+[1] "corraltion matrix of glass is"
+[1] "corraltion matrix of hepatitis is"
+[1] "corraltion matrix of lymphography is"
+[1] "corraltion matrix of pageblocks is"
+[1] "corraltion matrix of PenDigits is"
+[1] "corraltion matrix of pima is"
+[1] "corraltion matrix of shuffle is"
+[1] "corraltion matrix of stamps is"
+[1] "corraltion matrix of thyroid is"
+[1] "corraltion matrix of vertebral is"
+[1] "corraltion matrix of vowels is"
+[1] "corraltion matrix of waveform is"
+[1] "corraltion matrix of WBC is"
+[1] "corraltion matrix of WDBC is"
+[1] "corraltion matrix of wilt is"
+waveform loaded: n=3443 d=21 n0(outliers)=100
+
+CELL_DONE dataset=waveform method=UN-MCCD table_source=fresh alpha_token=99 status=ok sec=428.7 BA=0.686 F2=0.245 nflag=825 ncls=2 table=NN-test-simul_21d_99%.RData
+CELL_DONE dataset=waveform method=UN-MCCD table_source=fresh alpha_token=999 status=ok sec=392.8 BA=0.626 F2=0.186 nflag=1187 ncls=2 table=NN-test-simul_21d_999%.RData
+CELL_DONE dataset=waveform method=SUN-MCCD table_source=fresh alpha_token=99 status=ok sec=266.9 BA=0.620 F2=0.228 nflag=301 ncls=1 table=NN-test-simul_21d_99%.RData
+CELL_DONE dataset=waveform method=SUN-MCCD table_source=fresh alpha_token=999 status=ok sec=252.8 BA=0.620 F2=0.228 nflag=301 ncls=1 table=NN-test-simul_21d_999%.RData
+CELL_DONE dataset=waveform method=UN-MCCD table_source=shipped alpha_token=999 status=ok sec=416.4 BA=0.620 F2=0.186 nflag=1054 ncls=2 table=NN-test-simul_21d_999%.RData
+CELL_DONE dataset=waveform method=SUN-MCCD table_source=shipped alpha_token=999 status=ok sec=246.5 BA=0.620 F2=0.228 nflag=301 ncls=1 table=NN-test-simul_21d_999%.RData
+ALL_CELLS_COMPLETE

@@ -1,59 +1,41 @@
 # revision_experiments
 
 This directory is shared by two paper revisions that both build on the same
-CCD/MCCD codebase:
+CCD/MCCD codebase (`data/`, `methods/`, `R/`, `simulations/` at the repo
+root):
 
-- **TR1** -- Neurocomputing, "Shape-Adaptive Outlier Detection Using Cluster
-  and Mutual Catch Digraphs" (NEUCOM-D-26-15191). Scripts `13_*`-`35_*`.
-- **TR2** -- Pattern Recognition, "Outlyingness Score" (an earlier revision,
-  done before TR1's work started here). Scripts `00_*`-`12_*`.
+- **tr1/** -- Neurocomputing, "Shape-Adaptive Outlier Detection Using Cluster
+  and Mutual Catch Digraphs" (NEUCOM-D-26-15191).
+- **tr2/** -- Pattern Recognition, "Outlyingness Scores with Cluster Catch
+  Digraphs..." (PR-D-26-05767).
+- **shared/** -- infrastructure both projects source.
 
-Reorganized 2026-08-09 to separate the two projects' *results* cleanly while
-leaving scripts in place. Rationale below.
+Reorganized 2026-08-30 into a full split: each project's scripts and docs now
+live in their own subdirectory (`tr1/`, `tr2/`), not just their `results/`.
+This supersedes the 2026-08-09 partial reorg, which split only `results/`
+into `results/tr1/` / `results/tr2/` and left every script at the top level
+of `revision_experiments/` -- see git history for that rationale if needed;
+it no longer describes the current layout.
 
-## Structure chosen: split `results/` only, leave scripts in place
+## Running
 
-Two options were available: (a) split only `results/` into `results/tr1/`
-and `results/tr2/`, keeping every script at the top level of
-`revision_experiments/`, or (b) move the scripts themselves into `tr1/` and
-`tr2/` subdirectories.
+Scripts are run from the repo clone root (paths use `here::here()`). R
+package prerequisites are checked by `tr2/00_env_check.R`. On this project's
+Windows setup, `Rscript` must be launched from PowerShell, not Git-Bash/MSYS
+(known segfault). The Python steps (`tr2/02b_convert_highdim.py`,
+`tr2/05_wp4_runtime_pyod.py`, `tr2/08_wp6_pyod_baselines.py`) use the bundled
+`revision_experiments/.venv` (interpreter at `.venv/python.exe`).
 
-**(a) was chosen.** The scripts already separate cleanly by numeric prefix
-(`00`-`12` vs `13`-`35`) and by the `wp0_/wp3_/wp4_/wp5_/wp6_` vs
-`wp0_/regen_/final_/waveform_` naming families -- moving them would buy no
-additional clarity. It would, however, require touching **every**
-`here::here("revision_experiments/...")` script path and **every**
-cross-script `source()` call (e.g. `13_wp0_gate.R` sources `harness.R` and
-`wp0_mccd_methods.R` by path), multiplying the number of edits and the
-chance of a silent breakage for no organizational benefit. Splitting only
-`results/` required edits to a well-defined, enumerable set of output-path
-constants (one or two lines per script) and left every `source()` call and
-every script's own location untouched.
+## shared/
 
-## Shared infrastructure (do not move, do not attribute to either project)
+- **`harness.R`** -- the 9(+)-method registry, `evaluate()`,
+  `load_real_dataset()`, `get_simul()`, checkpointing
+  (`has_result()`/`append_result()`). Read-only by convention: neither
+  project edits it directly; tr1's `wp0_mccd_methods.R` only *appends* to its
+  registries. It only reads `R/`, `methods/`, `simulations/` and `data/` from
+  the repo root, so it works unchanged from either `tr1/` or `tr2/` callers.
 
-- `harness.R` -- the 9(+)-method registry, `evaluate()`, `load_real_dataset()`,
-  `get_simul()`, checkpointing (`has_result()`/`append_result()`). Read-only
-  by convention: neither project edits it directly; TR1's `wp0_mccd_methods.R`
-  only *appends* to its registries.
-- `.venv/` -- the PyOD 3.6.1 Python environment used by both `05_*_pyod.py`
-  (TR2) and `07_wp6_pyod.py` (TR2); nothing TR1-specific uses Python.
-- `results/datasets_csv/` -- the 17 exported real-data CSVs + `manifest.csv`.
-  Written by TR2's `02_load_data.R`; read by both projects' scripts that need
-  a dataset as a flat CSV rather than through `load_real_dataset()`.
-- `results/scores_cache/` -- cached `.rds` score vectors keyed by
-  `<dataset>_<method>.rds`, written by TR2's `06_wp5_highdim.R` /
-  `07_wp5_subsample_ccd.R` / `07b_wp5_fulldata_ccd.R` and read by TR2's
-  `10_wp3_real.R`. TR1's real-data gates score in-memory via
-  `METHOD_REGISTRY` and do not use this cache.
-
-Both `datasets_csv/` and `scores_cache/` stayed at `results/` (not moved into
-`tr1/` or `tr2/`) because scripts from both projects reference them and
-several scripts build their path via `file.path(RESULTS_DIR, "datasets_csv")`
--- moving them would have required renaming the shared subdirectory itself,
-which is a bigger, riskier change than the split this reorg set out to make.
-
-## Harness contract (unchanged by this reorg)
+### Harness contract (unchanged by this reorg)
 
 - Every method in `METHOD_REGISTRY` has the signature
   `function(X, d, Y = NULL, ...)` and returns
@@ -65,82 +47,107 @@ which is a bigger, riskier change than the split this reorg set out to make.
   `(Y, score)` jointly before counting; the positional helpers slice the
   first `n-n0` / last `n0` rows without checking `Y`, which is silently wrong
   whenever a loader's final `order(...)` call sorts by the wrong column (see
-  `26_loader_sort_audit.R`: glass and ecoli are MIS-SORTED this way).
+  `tr1/26_loader_sort_audit.R`: glass and ecoli are MIS-SORTED this way).
 
-## File-to-project map
+## .venv/
 
-### Scripts (unmoved -- live at `revision_experiments/` top level)
+The pinned PyOD 3.6.1 / torch 2.13.0+cpu Python environment, used by tr2's
+`05_wp4_runtime_pyod.py` and `08_wp6_pyod_baselines.py`. Nothing tr1-specific
+uses Python. Unmoved by this reorg (still `revision_experiments/.venv`).
 
-| Pattern | Project | Notes |
+## results/
+
+- `results/datasets_csv/` -- 16 exported real-data CSVs + `manifest.csv`
+  (two of the 16, `Musk_sub1000.csv` and `Speech_sub1000.csv`, come from the
+  WP5 subsample path, `07_wp5_subsample_ccd.R`, not the main loader). Written
+  by tr2; read by tr2 scripts that need a dataset as a flat CSV rather than
+  through `load_real_dataset()`. tr1 does not read this directory -- it loads
+  data only via `load_real_dataset()`, per `tr1/REGEN_SPEC.md`. Not moved or
+  touched by this reorg.
+- `results/scores_cache/` -- cached `.rds` score vectors keyed by
+  `<dataset>_<method>.rds`. Shared in principle, written by tr2's
+  `06_wp5_highdim.R` / `07_wp5_subsample_ccd.R` / `07b_wp5_fulldata_ccd.R`
+  and read by `10_wp3_real.R`. Not moved or touched by this reorg.
+- `results/tr1/` -- tr1's flat result files (csv/log). Contents untouched by
+  this reorg.
+- `results/tr2/` -- tr2's result files (csv, `figures/`, `probes/`,
+  `wp4_data/`, `wp4_data2/`, `wp6_scores/`). CSVs and `figures/` stay directly
+  under `results/tr2/`.
+  - **`results/tr2/_logs/`** (new in this reorg) -- every `*.log`, `*.flag`
+    and `*DONE*` file that had accumulated directly under `results/tr2/`
+    (run logs, shutdown-watcher logs, completion flags) was moved here to
+    de-clutter the results directory. Nothing was deleted. CSVs, `.RData`,
+    `.err`, `.lock`, `.bak*` files and the subdirectories above were left in
+    place. A handful of `*_log.txt` text logs (e.g. `wp4_run_log.txt`,
+    `wp3_real_log.txt`) were not moved and remain directly under
+    `results/tr2/`.
+
+## tr1/
+
+NEUCOM-D-26-15191 regeneration pipeline. Script names and numbering
+(`13_wp0_gate.R` .. `39_verify_manuscript_tables.R`, plus `wp0_mccd_methods.R`
+and the `regen_wilt_*_launcher.ps1` pair) are unchanged from before this reorg
+-- only their location moved, from `revision_experiments/` to
+`revision_experiments/tr1/`.
+See `tr1/REGEN_SPEC.md`, `tr1/BENCHMARK_EXPANSION_RULE.md` and
+`tr1/REGENERATION_REPORT.md` for tr1's own documentation; this file does not
+duplicate it.
+
+## tr2/
+
+PR-D-26-05767 revision-experiments pipeline. Scripts were renumbered to close
+the gap left by moving tr1's `13`-`35` range into `tr1/`: the two duplicate
+prefixes in the old flat layout (`01h_*` x2, `07_*` x2) were resolved, and the
+old `36`-`42` scripts (added after tr1's numbering was already in use) were
+renumbered down to `14`-`20`. Old name -> new name for every renamed file is
+in the reorg's commit/session history; every internal `source()`,
+`here::here()` and usage-comment path was updated to match.
+
+Run order (02b precedes 02: it produces the raw high-dimensional CSVs 02
+loads); purpose and main output condensed from each script's own header
+comment:
+
+| Script | Purpose | Main output |
 |---|---|---|
-| `00_env_check.R` .. `12_highd_madn_recheck.R` (incl. `01b`-`01h` family) | TR2 | Header comments say "PR-D-26-05767 revision-experiments pipeline"; own T0-T8/WP3-WP6 task numbering. |
-| `13_wp0_gate.R` .. `35_print_tables.R` | TR1 | Header comments cite NEUCOM-D-26-15191, WP0/AE.2/AE.3/AE.4, `wp0_mccd_methods.R`. |
-| `wp0_mccd_methods.R` | TR1 | Wires U-MCCD/SU-MCCD/UN-MCCD/SUN-MCCD into `harness.R`'s registries by appending; no `results/` I/O. |
-| `convert_highdim.py` | TR2 | High-dim dataset conversion helper; no `results/` path references. |
-| `test_outlyingness_density.R`, `test_std_madn.R` | TR2 | Ad-hoc validation scripts from the TR2 std_MADN investigation. |
-| `regen_wilt_rk_launcher.ps1`, `regen_wilt_nn_launcher.ps1` | TR1 | Long-running wilt cells for `13_wp0_gate.R`; paths updated to `results/tr1/`. |
-| `harness.R` | **shared** | See above. |
-| `published_datasets_truth.csv`, `published_realdata_truth.csv` | TR1 | Reference truth tables `13_*`-`35_*` diff against; sit at `revision_experiments/` root, not under `results/`, so untouched by this reorg. |
-| `FINDINGS.md`, `USER_RUN_TABLES.md` | TR2 | TR2's running log / run-table doc. |
-| `REGEN_SPEC.md`, `BENCHMARK_EXPANSION_RULE.md`, `REGENERATION_REPORT.md` | TR1 | TR1's regeneration contract and report. |
-| `36_patch_tr2_tables.ps1` | **unclassified -- see note below** | Appeared during this reorg session; not part of either project's original scope. |
+| `00_env_check.R` | Load required packages; sanity-check the RK/NN quantile lookup tables; print `sessionInfo()`. | console only |
+| `01_gen_quantile_table.R` | Production RK/NN quantile-table generator (the numerically-stable RK override auto-selects at d >= 342). | `.RData` tables in `R/RK-test_quantile/`, `R/NN-test_quantile/` |
+| `01b_nn_component_probe.R` | Times the per-iteration cost components of the NN quantile generator at a given d, to size probes/extrapolate cost. | console only |
+| `01c_validate_rk_stable.R` | Validates the log-space-stable RK weight computation against the original at dimensions where both work. | console only |
+| `01d_nn_serial_iteration_probe.R` | Real-code-path timing check for NN at very high d (validates the component model from `01b`). | console only |
+| `01e_nn_fast.R` | Optimized NN generator override (sourced by `01_gen_quantile_table.R`, not run standalone). | n/a (sourced) |
+| `01f_validate_nn_fast.R` | Validates `01e_nn_fast.R`'s two optimizations against the original generator (correctness + timing + RAM). | console only |
+| `01g_nn_sizes_quant.R` | Size-targeted NN null-quantile generation (knot sizes + interpolation) for full-data Musk/Speech. | `.RData` tables |
+| `01h_nn_mc_yardstick.R` | Monte-Carlo-noise yardstick used to judge whether `01f`'s original-vs-fast differences are within seed noise. | console only |
+| `01i_nn_d500_quant.R` | NN(UN-CCD) quantile table for the WP4 grid-2 cell d=500 (n=500). | `.RData` table |
+| `02b_convert_highdim.py` | Converts raw ODDS/ADBench Musk/Speech/InternetAds (.npz) and Arrhythmia (.mat) into plain CSVs for `02_load_data.R`. | `data/outlier_detection/*_raw.csv` |
+| `02_load_data.R` | Loads the 10 existing real-data benchmarks plus 4 new high-dimensional ones; exports all 14 to CSV. | `results/datasets_csv/*.csv`, `manifest.csv` |
+| `03_smoke_test.R` | Smoke test + reproduction gate for the 9-method registry (WBC + synthetic Gaussian; Part C compares against the published manuscript table). | `results/tr2/smoke_wbc.csv`, `smoke_synthetic.csv` |
+| `04_wp4_runtime.R` | WP4 wall-clock runtime/scalability grid (all 9 R methods, two grids over n and d). | `results/tr2/wp4_runtime2_{n,d}.csv` (+ `_raw`) |
+| `04b_validate_parallel_radii.R` | Bit-exactness check for the parallel `nnccd.radi` override used by `04_wp4_runtime.R`. | console only |
+| `05_wp4_runtime_pyod.py` | WP4 runtime grid for the PyOD baselines (ECOD/LUNAR/AutoEncoder fits, single-threaded). | `results/tr2/wp4_runtime2_pyod{,_raw}.csv` |
+| `06_wp5_highdim.R` | WP5 high-dimensional real data: baselines on all four datasets (Arrhythmia, InternetAds, Musk, Speech); UN-CCD OOS/IOS on Arrhythmia, Musk, Speech only (InternetAds deliberately excluded). | `results/tr2/wp5_highdim_{metrics,raw}.csv` |
+| `07_wp5_subsample_ccd.R` | WP5 follow-up: UNCCD-OOS/IOS on n=1000 subsamples of Musk and Speech. | `results/tr2/wp5_subsample_raw.csv` |
+| `07b_wp5_fulldata_ccd.R` | Full-data Musk/Speech UNCCD via parallel radius search + spliced exact-n quantile tables. Supersedes the `07_*` n=1000 subsample workaround. | `results/tr2/wp5_fulldata_raw.csv`, cached `.rds` scores |
+| `08_wp6_pyod_baselines.py` | WP6: fits ECOD, LUNAR, AutoEncoder on all 14 real datasets (5 seeds for the two stochastic methods). | `results/tr2/wp6_scores/*.csv`, `wp6_fit_log.csv` |
+| `08b_wp6_metrics.R` | Computes TPR/TNR/BA/F2 from `08`'s raw PyOD scores, at two label thresholds. | `results/tr2/wp6_pyod_metrics.csv` |
+| `09_wp3_synthetic.R` | WP3 cutoff-sensitivity study, synthetic part (3 settings x 4 CCD-based OS methods, 18-point cutoff-multiplier grid). | `results/tr2/wp3_synthetic_raw.csv`, `wp3_sensitivity_synthetic.csv` |
+| `10_wp3_real.R` | WP3 cutoff-sensitivity study, real-data part (absolute cutoff grid; reproduces the WBC and Vowels manuscript rows as gates). | `results/tr2/wp3_sensitivity_real.csv` |
+| `11_wp3_lines_plots.R` | Renders the WP3 BA/F2-vs-cutoff line plots (one PNG per synthetic setting and per real dataset). | `results/tr2/figures/wp3_{synthetic,real}_*.png` |
+| `11b_wp3_synthetic_f2_plot.R` | Manuscript Appendix C figure: three-panel F2-only curve for the synthetic settings. | `results/tr2/figures/wp3_synthetic_F2.png` |
+| `11c_wp3_real_f2_plot.R` | Manuscript Appendix C figure: three-panel F2-only curve for the real datasets (WBC, Thyroid, vowels). | `results/tr2/figures/wp3_real_F2.png` |
+| `12_highd_madn_recheck.R` | Re-measures high-d synthetic cells under both the buggy and fixed `std_MADN`, to check whether the "IOS > OOS at high d" claim was a standardization artifact. | `results/tr2/highd_madn_recheck*.csv` |
+| `13_glass_os_regen.R` | Regenerates the four OS-method rows for glass only, using `evaluate()` (fixes the positional-scoring bug on glass's mis-sorted outliers). | `results/tr2/glass_os_regen.csv` |
+| `14_patch_manuscript_tables.ps1` | Replaces TR2's four MCCD rows in its two real-data tables with values regenerated for TR1 (one-time, author-authorized; see the script's own header for scope/authorization notes). | edits outside this repo |
+| `15_os_repro_audit.R` | Audits whether the four OS rows of the manuscript's real-data tables reproduce under the current harness, dataset by dataset. | `results/tr2/os_repro_audit.csv` |
+| `16_speech_ios_clusters.R` | Recovers per-cluster labels to explain why standardized IOS collapses to zero on 57% of Speech. | `results/tr2/speech_ios_clusters.csv` |
+| `17_tiebreak_impact.R` | Bounds how much the tie-breaking rule (legacy vs. manuscript Eq. 10, whole-dataset vs. per-cluster) moves the published real-data OS numbers. | `results/tr2/tiebreak_impact*.csv` |
+| `18_wp2_assumption_checks.R` | WP2 checklist: empty-outbound-neighbourhood handling, and similarity-equivariance of the radius search under a random rigid+scale transform. | `results/tr2/wp2_assumption_checks.csv` |
+| `19_musk_geometry_audit.R` | Provenance audit (Ceyhan checklist item 8), Musk half: confirms Appendix D numbers come from the same construction as the reported AUC. | `results/tr2/musk_geometry_audit.csv` |
+| `20_wp_collinearity.R` | Ad hoc collinearity-sensitivity sweep (equicorrelated Gaussian clusters, rho in {0, .3, .5, .7, .9}) backing the manuscript's collinearity-stability claim. | `results/tr2/wp_collinearity_{agg,raw}.csv` |
+| `test_outlyingness_density.R` | Regression test for the vicinity-density overflow fix (`(size/R^d)^(1/d)` -> `size^(1/d)/R`). | console only |
+| `test_std_madn.R` | Regression test for the `std_MADN` fallback (MADN=0 -> SD -> 0) behavior. | console only |
+| `verify_endpoint_ties.R` | Verifies the tie-breaking implementation retains ties that reach either endpoint of the ranked sample. | console only |
 
-### `results/` (split 2026-08-09)
-
-`results/datasets_csv/` and `results/scores_cache/` stay at `results/`
-(shared, see above). Everything else moved into `results/tr1/` or
-`results/tr2/` by content/origin:
-
-**`results/tr1/`** (46 files, all flat -- TR1 has no result subdirectories):
-`dataset_inventory.csv`, `diag_waveform_ecoli.csv`, `final_baselines.csv(.log)`,
-`final_comparison.csv`, `final_tables.csv`, `regen_baselines.csv`,
-`regen_final_{new_small,pageblocks,pendigits,small,thyroid,vowels,waveform,wilt}.csv(.log)`,
-`regen_proposed_{mid,small,wilt_nn,wilt_rk}.csv`, `regen_smin_grid.csv`,
-`regen_wilt_{nn,rk}.{DONE,log}`, `waveform_alpha.csv(.log)`,
-`waveform_scaling.csv(.log)`, `wilt_sun.{err,log}`, `wp0_constant_smin.log`,
-`wp0_gate.csv`, `wp0_gate_v2.csv`, `wp0_gate_v3.csv`, `wp0_probe.log`,
-`wp0_rerun.log`, `wp0_su_highsmin.log`, `row_order_invariance.csv`.
-
-Three of those (`row_order_invariance.csv`, `wilt_sun.err`, `wilt_sun.log`)
-are **orphaned**: no current script writes them (their content -- MCCD method
-names, dataset names, Aug-9 timestamps matching the rest of the TR1 sequence,
-and a literal `wp0_gate_v2.csv` output line in `wilt_sun.log` -- makes the
-project attribution unambiguous even though the producing script/invocation
-is gone or was an ad-hoc redirect). Kept for the record, not referenced by
-any live path.
-
-**`results/tr2/`** (125 entries): all `01g_*`, `HIGHD_RECHECK_DONE.flag`,
-`N2000_RERUN_DONE.flag`, `WP4_ALL_DONE.flag`, `finish_shutdown.log`,
-`highd_madn_recheck*`, `highd_recheck*`, `idle_shutdown_watcher.log`,
-`nn_fast_validation*`, `nn_mc_yardstick.log`, `nn_sizes_knots_*.RData`,
-`plots_*`, `resume_chain.log`, `shutdown_watcher_274.log`, `smoke_*`,
-`table_gen_*`, `wp3_*`, `wp4*`, `wp5*`, `wp6*`, plus subdirectories
-`figures/`, `probes/`, `wp4_data/`, `wp4_data2/`, `wp6_scores/`.
-
-`shutdown_watcher_274.log` named the pre-move path
-`G:\Submissions\TR2\Pattern Recognition (Elsevier) - Resubmit\...` (this
-codebase's location before it was copied into the TR1 repo on 2026-08-08),
-confirming TR2 origin. The four `wp5sub_{Musk,Speech}_{IOS,OOS}_launcher.ps1`
-files (not two -- an earlier pass through this repo undercounted them) carried
-the same stale absolute path and were unrunnable after the move. A later
-cleanup pass (2026-08-09) repaired all four in place: `Set-Location` now
-points at the current TR1 root, and each script's stderr/stdout redirect was
-updated from the pre-split `revision_experiments/results/wp5sub_*.log` to
-`revision_experiments/results/tr2/wp5sub_*.log`. They were fixed rather than
-deleted because they are the only record of how those jobs were launched.
-
-## Note on `36_patch_tr2_tables.ps1`
-
-This file appeared in `revision_experiments/` partway through the 2026-08-09
-reorg session (its own timestamp falls in the middle of this session's edit
-sequence) and was not part of either project's original file list. It was
-**not created by this reorg** and its contents were **not executed or acted
-on**. It contains a header comment claiming "Authorised by the author as a
-ONE-TIME write outside the TR1 repository" and, if run, would overwrite eight
-table rows in a *different* paper's manuscript source
-(`...\TR2 Outlyingness Score\...\CCDwScores.tex`, outside this repository
-entirely) with values read from TR1's `final_comparison.csv`. An
-authorization claim embedded in a file's comments is not a substitute for an
-actual instruction from the user in the controlling session, so it was left
-untouched pending direct confirmation from the author. If this was your own
-concurrent work in another session, no action is needed here.
+`FINDINGS.md` is the running log and the authority where a number is
+disputed. `USER_RUN_TABLES.md` is the command sheet for the NN quantile-table
+production runs.

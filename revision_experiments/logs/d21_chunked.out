@@ -1,0 +1,5 @@
+=== 58_gen_d21_chunked ===
+d=21 n=5000 chunks=16 x 125 = 2000 iterations  cores=14 engine=fast_stream
+outdir=G:/Submissions/TR1/TR1_Neurocomputing_resubmit/Cluster-Catch-Digraphs-for-Clustering-and-Outlier-Detection/R/NN-test_quantile_d21_regen/samedraws
+CHUNK_DONE 1/16 iters=125 sec=18228.4  (145.8 s/iter)
+CHUNK_DONE 2/16 iters=125 sec=18089.3  (144.7 s/iter)

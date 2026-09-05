@@ -6,6 +6,4 @@ revision_experiments/.venv/
 .Rhistory
 *.DONE
 *.flag
-
-# stdout captures from detached experiment runs
-revision_experiments/logs/
+__pycache__/

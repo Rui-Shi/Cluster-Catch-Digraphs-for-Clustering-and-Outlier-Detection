@@ -64,6 +64,10 @@ a fresh clone after `install.packages("here")`.
 │   ├── clustering/                 datasets used for clustering benchmarks
 │   └── outlier_detection/          datasets used for outlier-detection benchmarks
 │
+├── revision_experiments/           revision-cycle experiment pipelines: shared/ harness,
+│                                   tr1/ (NEUCOM-D-26-15191), tr2/ (PR-D-26-05767);
+│                                   see revision_experiments/README.md
+│
 ├── rewrite_paths.py                one-shot path rewriter used during reorganization
 │                                   (kept for reviewer audit; not used at runtime)
 └── README.md                       this file

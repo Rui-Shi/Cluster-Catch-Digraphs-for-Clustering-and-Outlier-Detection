@@ -1,0 +1,90 @@
+wp0_mccd_methods.R: METHOD_REGISTRY now has 13 entries (RKCCD-OOS, RKCCD-IOS, UNCCD-OOS, UNCCD-IOS, LOF, DBSCAN, MST, ODIN, iForest, U-MCCD, SU-MCCD, UN-MCCD, SUN-MCCD); REAL_DATA_THRESHOLDS has 13.
+51_wp2a_smin_bigfour: datasets = pageblocks, thyroid, waveform, wilt, PenDigits
+51_wp2a_smin_bigfour: methods  = SU-MCCD, SUN-MCCD
+51_wp2a_smin_bigfour: smins arg = AUTO ; out = G:/Submissions/TR1/TR1_Neurocomputing_resubmit/Cluster-Catch-Digraphs-for-Clustering-and-Outlier-Detection/revision_experiments/results/tr1/wp2a_smin_bigfour.csv
+
+== pageblocks x SU-MCCD : s_min grid = 0.01, 0.0625, 0.15, 0.3 ==
+[1] "corraltion matrix of ecoli is"
+[1] "corraltion matrix of glass is"
+[1] "corraltion matrix of hepatitis is"
+[1] "corraltion matrix of lymphography is"
+[1] "corraltion matrix of pageblocks is"
+[1] "corraltion matrix of PenDigits is"
+[1] "corraltion matrix of pima is"
+[1] "corraltion matrix of shuffle is"
+[1] "corraltion matrix of stamps is"
+[1] "corraltion matrix of thyroid is"
+[1] "corraltion matrix of vertebral is"
+[1] "corraltion matrix of vowels is"
+[1] "corraltion matrix of waveform is"
+[1] "corraltion matrix of WBC is"
+[1] "corraltion matrix of WDBC is"
+[1] "corraltion matrix of wilt is"
+CELL_DONE dataset=pageblocks method=SU-MCCD param=s_min:0.0100 status=ok sec=1001.6 BA=0.730 F2=0.525 nflag=2755 ncls=1
+CELL_DONE dataset=pageblocks method=SU-MCCD param=s_min:0.0625 status=ok sec=1018.0 BA=0.730 F2=0.525 nflag=2755 ncls=1
+CELL_DONE dataset=pageblocks method=SU-MCCD param=s_min:0.1500 status=ok sec=1100.6 BA=0.730 F2=0.525 nflag=2755 ncls=1
+CELL_DONE dataset=pageblocks method=SU-MCCD param=s_min:0.3000 status=ok sec=1352.5 BA=0.730 F2=0.525 nflag=2755 ncls=1
+
+== pageblocks x SUN-MCCD : s_min grid = 0.01, 0.0625, 0.15, 0.3 ==
+CELL_DONE dataset=pageblocks method=SUN-MCCD param=s_min:0.0100 status=ok sec=1603.7 BA=0.732 F2=0.526 nflag=2738 ncls=1
+CELL_DONE dataset=pageblocks method=SUN-MCCD param=s_min:0.0625 status=ok sec=1516.5 BA=0.732 F2=0.526 nflag=2738 ncls=1
+CELL_DONE dataset=pageblocks method=SUN-MCCD param=s_min:0.1500 status=ok sec=1524.2 BA=0.732 F2=0.526 nflag=2738 ncls=1
+CELL_DONE dataset=pageblocks method=SUN-MCCD param=s_min:0.3000 status=ok sec=1530.0 BA=0.732 F2=0.526 nflag=2738 ncls=1
+
+== thyroid x SU-MCCD : s_min grid = 0.01, 0.0625, 0.15, 0.3 ==
+CELL_DONE dataset=thyroid method=SU-MCCD param=s_min:0.0100 status=ok sec=372.7 BA=0.844 F2=0.295 nflag=1204 ncls=2
+CELL_DONE dataset=thyroid method=SU-MCCD param=s_min:0.0625 status=ok sec=373.3 BA=0.866 F2=0.327 nflag=1049 ncls=1
+CELL_DONE dataset=thyroid method=SU-MCCD param=s_min:0.1500 status=ok sec=375.5 BA=0.866 F2=0.327 nflag=1049 ncls=1
+CELL_DONE dataset=thyroid method=SU-MCCD param=s_min:0.3000 status=ok sec=375.5 BA=0.866 F2=0.327 nflag=1049 ncls=1
+
+== thyroid x SUN-MCCD : s_min grid = 0.01, 0.0625, 0.15, 0.3 ==
+CELL_DONE dataset=thyroid method=SUN-MCCD param=s_min:0.0100 status=ok sec=356.7 BA=0.884 F2=0.368 nflag=877 ncls=2
+CELL_DONE dataset=thyroid method=SUN-MCCD param=s_min:0.0625 status=ok sec=353.6 BA=0.894 F2=0.389 nflag=812 ncls=1
+CELL_DONE dataset=thyroid method=SUN-MCCD param=s_min:0.1500 status=ok sec=350.1 BA=0.894 F2=0.389 nflag=812 ncls=1
+CELL_DONE dataset=thyroid method=SUN-MCCD param=s_min:0.3000 status=ok sec=348.1 BA=0.894 F2=0.389 nflag=812 ncls=1
+
+== waveform x SU-MCCD : s_min grid = 0.01, 0.0625, 0.15, 0.3 ==
+CELL_DONE dataset=waveform method=SU-MCCD param=s_min:0.0100 status=ok sec=369.2 BA=0.641 F2=0.219 nflag=674 ncls=1
+CELL_DONE dataset=waveform method=SU-MCCD param=s_min:0.0625 status=ok sec=366.1 BA=0.641 F2=0.219 nflag=674 ncls=1
+CELL_DONE dataset=waveform method=SU-MCCD param=s_min:0.1500 status=ok sec=369.3 BA=0.641 F2=0.219 nflag=674 ncls=1
+CELL_DONE dataset=waveform method=SU-MCCD param=s_min:0.3000 status=ok sec=362.6 BA=0.641 F2=0.219 nflag=674 ncls=1
+
+== waveform x SUN-MCCD : s_min grid = 0.01, 0.0625, 0.15, 0.3 ==
+CELL_DONE dataset=waveform method=SUN-MCCD param=s_min:0.0100 status=ok sec=357.7 BA=0.620 F2=0.228 nflag=301 ncls=1
+CELL_DONE dataset=waveform method=SUN-MCCD param=s_min:0.0625 status=ok sec=358.9 BA=0.620 F2=0.228 nflag=301 ncls=1
+CELL_DONE dataset=waveform method=SUN-MCCD param=s_min:0.1500 status=ok sec=360.0 BA=0.620 F2=0.228 nflag=301 ncls=1
+CELL_DONE dataset=waveform method=SUN-MCCD param=s_min:0.3000 status=ok sec=361.1 BA=0.620 F2=0.228 nflag=301 ncls=1
+
+== wilt x SU-MCCD : s_min grid = 0.01, 0.0625, 0.15, 0.3 ==
+CELL_DONE dataset=wilt method=SU-MCCD param=s_min:0.0100 status=ok sec=1532.2 BA=0.558 F2=0.205 nflag=1139 ncls=2
+CELL_DONE dataset=wilt method=SU-MCCD param=s_min:0.0625 status=ok sec=1603.5 BA=0.540 F2=0.182 nflag=1056 ncls=1
+CELL_DONE dataset=wilt method=SU-MCCD param=s_min:0.1500 status=ok sec=1597.8 BA=0.540 F2=0.182 nflag=1056 ncls=1
+CELL_DONE dataset=wilt method=SU-MCCD param=s_min:0.3000 status=ok sec=1575.4 BA=0.540 F2=0.182 nflag=1056 ncls=1
+
+== wilt x SUN-MCCD : s_min grid = 0.01, 0.0625, 0.15, 0.3 ==
+CELL_DONE dataset=wilt method=SUN-MCCD param=s_min:0.0100 status=ok sec=1380.6 BA=0.473 F2=0.056 nflag=588 ncls=8
+CELL_DONE dataset=wilt method=SUN-MCCD param=s_min:0.0625 status=ok sec=1330.0 BA=0.555 F2=0.206 nflag=1257 ncls=1
+CELL_DONE dataset=wilt method=SUN-MCCD param=s_min:0.1500 status=ok sec=1296.9 BA=0.555 F2=0.206 nflag=1257 ncls=1
+CELL_DONE dataset=wilt method=SUN-MCCD param=s_min:0.3000 status=ok sec=1280.8 BA=0.555 F2=0.206 nflag=1257 ncls=1
+
+== PenDigits x SU-MCCD : s_min grid = 0.01, 0.03, 0.05, 0.1, 0.15, 0.2 ==
+CELL_DONE dataset=PenDigits method=SU-MCCD param=s_min:0.0100 status=ok sec=242.4 BA=0.540 F2=0.033 nflag=2948 ncls=1
+CELL_DONE dataset=PenDigits method=SU-MCCD param=s_min:0.0300 status=ok sec=235.8 BA=0.540 F2=0.033 nflag=2948 ncls=1
+CELL_DONE dataset=PenDigits method=SU-MCCD param=s_min:0.0500 status=ok sec=238.0 BA=0.540 F2=0.033 nflag=2948 ncls=1
+CELL_DONE dataset=PenDigits method=SU-MCCD param=s_min:0.1000 status=ok sec=240.7 BA=0.540 F2=0.033 nflag=2948 ncls=1
+CELL_DONE dataset=PenDigits method=SU-MCCD param=s_min:0.1500 status=ok sec=244.1 BA=0.540 F2=0.033 nflag=2948 ncls=1
+CELL_DONE dataset=PenDigits method=SU-MCCD param=s_min:0.2000 status=ok sec=242.0 BA=0.540 F2=0.033 nflag=2948 ncls=1
+
+== PenDigits x SUN-MCCD : s_min grid = 0.01, 0.03, 0.05, 0.1, 0.15, 0.2, 0.3 ==
+CELL_DONE dataset=PenDigits method=SUN-MCCD param=s_min:0.0100 status=ok sec=241.4 BA=0.540 F2=0.033 nflag=2948 ncls=1
+CELL_DONE dataset=PenDigits method=SUN-MCCD param=s_min:0.0300 status=ok sec=236.6 BA=0.540 F2=0.033 nflag=2948 ncls=1
+CELL_DONE dataset=PenDigits method=SUN-MCCD param=s_min:0.0500 status=ok sec=230.2 BA=0.540 F2=0.033 nflag=2948 ncls=1
+CELL_DONE dataset=PenDigits method=SUN-MCCD param=s_min:0.1000 status=ok sec=228.1 BA=0.540 F2=0.033 nflag=2948 ncls=1
+CELL_DONE dataset=PenDigits method=SUN-MCCD param=s_min:0.1500 status=ok sec=230.6 BA=0.540 F2=0.033 nflag=2948 ncls=1
+CELL_DONE dataset=PenDigits method=SUN-MCCD param=s_min:0.2000 status=ok sec=239.9 BA=0.540 F2=0.033 nflag=2948 ncls=1
+CELL_DONE dataset=PenDigits method=SUN-MCCD param=s_min:0.3000 status=ok sec=241.2 BA=0.540 F2=0.033 nflag=2948 ncls=1
+
+51_wp2a_smin_bigfour: run done.
+G:/Submissions/TR1/TR1_Neurocomputing_resubmit/Cluster-Catch-Digraphs-for-Clustering-and-Outlier-Detection/revision_experiments/results/tr1/wp2a_smin_bigfour.csv now has 45 rows.
+status counts: ok=45
+ALL_CELLS_COMPLETE

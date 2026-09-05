@@ -4,7 +4,7 @@ source(here::here("R/ccds/RK_CCD_New.R"))
 # calculate the Outbound Outlyingness Scores of RKCCD
 # niter is the number of simulated data set for CSR test if simul is not provided
 # d: dimensionality
-RKCCD_OOS = function(datax, simul=NULL, d, quant=0.99){
+RKCCD_OOS = function(datax, simul=NULL, d, quant=0.99, tiebreak=getOption("ccd.tiebreak","eq10"), parts=FALSE){
   # The digraph based on RKCCD
   graph = RKCCD_correct_quant(datax,r.seq=10, dom.method="greedy2", 
                                   quan=quant, simul=simul, niter=1000, scores=T)
@@ -17,40 +17,10 @@ RKCCD_OOS = function(datax, simul=NULL, d, quant=0.99){
   vd = Vic_Den(datax,R,d) # the vicinity density
   
   # break ties
-  score_vd = cbind(scores,vd)
-  order_index = order(scores)
-  score_vd = score_vd[order_index,]
-  frequency = table(scores)
-  repeated_values = as.numeric(names(frequency[frequency > 1]))
-  for(x in repeated_values){
-    if(x==0){
-      index = which(score_vd[,1]==x)
-    } else {
-      index = which(abs(score_vd[,1]-x)/x<0.0001)
-    }
-    if(length(index)<2) break
-    index_max = max(index)
-    index_min = min(index)
-    if(index_min==1){
-      s = score_vd[,1][1]
-      e = score_vd[,1][index_max+1]
-      diff = e - s
-    } else if(index_max==length(datax[,1])){
-      s = score_vd[,1][index_min-1]
-      e = score_vd[,1][index_max]
-      diff = e - s
-    } else {
-      s = score_vd[,1][index_min-1]
-      e = score_vd[,1][index_max+1]
-      diff = e - s
-    }
-    if(is.na(diff)) break
-    den_sum = sum(score_vd[,2][index])
-    score_vd[,1][index] = sapply(index, function(x){
-      new_s = s + diff*score_vd[,2][x]/den_sum
-      return(new_s)
-    })
-    scores = score_vd[order(order_index),1]
+  raw_scores = scores
+  scores = break_ties(scores, vd, mode = tiebreak)
+  if(parts){
+    return(list(score=scores, raw=raw_scores, vd=vd, label=NULL))
   }
   return(scores)
 }
@@ -58,7 +28,7 @@ RKCCD_OOS = function(datax, simul=NULL, d, quant=0.99){
 # calculate the Inbound Outlyingness Scores of RKCCD
 # niter is the number of simulated data set for CSR test if simul is not provided
 # d: dimensionality
-RKCCD_IOS = function(datax, simul=NULL, d, quant=0.99, min.cls=0){
+RKCCD_IOS = function(datax, simul=NULL, d, quant=0.99, min.cls=0, tiebreak=getOption("ccd.tiebreak","eq10"), parts=FALSE){
   # The digraph based on RKCCD
   RK_cluster = RKCCD_correct_quant(datax,r.seq=10, dom.method="greedy2", 
                               quan=quant, simul=simul, niter=1000, scores=T, min.cls=min.cls)
@@ -83,40 +53,10 @@ RKCCD_IOS = function(datax, simul=NULL, d, quant=0.99, min.cls=0){
   }
   
   # break ties
-  score_vd = cbind(scores_whole,vd)
-  order_index = order(scores_whole)
-  score_vd = score_vd[order_index,]
-  frequency = table(scores_whole)
-  repeated_values = as.numeric(names(frequency[frequency > 1]))
-  for(x in repeated_values){
-    if(x==0){
-      index = which(score_vd[,1]==x)
-    } else {
-      index = which(abs(score_vd[,1]-x)/x<0.0001)
-    }
-    if(length(index)<2) break
-    index_max = max(index)
-    index_min = min(index)
-    if(index_min==1){
-      s = score_vd[,1][1]
-      e = score_vd[,1][index_max+1]
-      diff = e - s
-    } else if(index_max==length(datax[,1])){
-      s = score_vd[,1][index_min-1]
-      e = score_vd[,1][index_max]
-      diff = e - s
-    } else {
-      s = score_vd[,1][index_min-1]
-      e = score_vd[,1][index_max+1]
-      diff = e - s
-    }
-    if(is.na(diff)) break
-    den_sum = sum(score_vd[,2][index])
-    score_vd[,1][index] = sapply(index, function(x){
-      new_s = s + diff*score_vd[,2][x]/den_sum
-      return(new_s)
-    })
-    scores_whole = score_vd[order(order_index),1]
+  raw_scores = scores_whole
+  scores_whole = break_ties(scores_whole, vd, mode = tiebreak)
+  if(parts){
+    return(list(score=scores_whole, raw=raw_scores, vd=vd, label=RK_cluster$label))
   }
   return(scores_whole)
 }

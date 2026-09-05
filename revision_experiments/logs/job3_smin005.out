@@ -1,0 +1,55 @@
+wp0_mccd_methods.R: METHOD_REGISTRY now has 13 entries (RKCCD-OOS, RKCCD-IOS, UNCCD-OOS, UNCCD-IOS, LOF, DBSCAN, MST, ODIN, iForest, U-MCCD, SU-MCCD, UN-MCCD, SUN-MCCD); REAL_DATA_THRESHOLDS has 13.
+51_wp2a_smin_bigfour: datasets = pageblocks, thyroid, waveform, wilt, PenDigits
+51_wp2a_smin_bigfour: methods  = SU-MCCD, SUN-MCCD
+51_wp2a_smin_bigfour: smins arg = 0.05 ; out = G:/Submissions/TR1/TR1_Neurocomputing_resubmit/Cluster-Catch-Digraphs-for-Clustering-and-Outlier-Detection/revision_experiments/results/tr1/wp2a_smin_bigfour.csv
+
+== pageblocks x SU-MCCD : s_min grid = 0.05 ==
+[1] "corraltion matrix of ecoli is"
+[1] "corraltion matrix of glass is"
+[1] "corraltion matrix of hepatitis is"
+[1] "corraltion matrix of lymphography is"
+[1] "corraltion matrix of pageblocks is"
+[1] "corraltion matrix of PenDigits is"
+[1] "corraltion matrix of pima is"
+[1] "corraltion matrix of shuffle is"
+[1] "corraltion matrix of stamps is"
+[1] "corraltion matrix of thyroid is"
+[1] "corraltion matrix of vertebral is"
+[1] "corraltion matrix of vowels is"
+[1] "corraltion matrix of waveform is"
+[1] "corraltion matrix of WBC is"
+[1] "corraltion matrix of WDBC is"
+[1] "corraltion matrix of wilt is"
+CELL_DONE dataset=pageblocks method=SU-MCCD param=s_min:0.0500 status=ok sec=1390.4 BA=0.730 F2=0.525 nflag=2755 ncls=1
+
+== pageblocks x SUN-MCCD : s_min grid = 0.05 ==
+CELL_DONE dataset=pageblocks method=SUN-MCCD param=s_min:0.0500 status=ok sec=1422.7 BA=0.732 F2=0.526 nflag=2738 ncls=1
+
+== thyroid x SU-MCCD : s_min grid = 0.05 ==
+CELL_DONE dataset=thyroid method=SU-MCCD param=s_min:0.0500 status=ok sec=375.9 BA=0.866 F2=0.327 nflag=1049 ncls=1
+
+== thyroid x SUN-MCCD : s_min grid = 0.05 ==
+CELL_DONE dataset=thyroid method=SUN-MCCD param=s_min:0.0500 status=ok sec=360.4 BA=0.894 F2=0.389 nflag=812 ncls=1
+
+== waveform x SU-MCCD : s_min grid = 0.05 ==
+CELL_DONE dataset=waveform method=SU-MCCD param=s_min:0.0500 status=ok sec=366.7 BA=0.641 F2=0.219 nflag=674 ncls=1
+
+== waveform x SUN-MCCD : s_min grid = 0.05 ==
+CELL_DONE dataset=waveform method=SUN-MCCD param=s_min:0.0500 status=ok sec=357.3 BA=0.620 F2=0.228 nflag=301 ncls=1
+
+== wilt x SU-MCCD : s_min grid = 0.05 ==
+CELL_DONE dataset=wilt method=SU-MCCD param=s_min:0.0500 status=ok sec=1569.2 BA=0.540 F2=0.182 nflag=1056 ncls=1
+
+== wilt x SUN-MCCD : s_min grid = 0.05 ==
+CELL_DONE dataset=wilt method=SUN-MCCD param=s_min:0.0500 status=ok sec=1437.1 BA=0.555 F2=0.206 nflag=1257 ncls=1
+
+== PenDigits x SU-MCCD : s_min grid = 0.05 ==
+[skip, already recorded] PenDigits    x SU-MCCD   s_min=0.0500
+
+== PenDigits x SUN-MCCD : s_min grid = 0.05 ==
+[skip, already recorded] PenDigits    x SUN-MCCD  s_min=0.0500
+
+51_wp2a_smin_bigfour: run done.
+G:/Submissions/TR1/TR1_Neurocomputing_resubmit/Cluster-Catch-Digraphs-for-Clustering-and-Outlier-Detection/revision_experiments/results/tr1/wp2a_smin_bigfour.csv now has 53 rows.
+status counts: ok=53
+ALL_CELLS_COMPLETE

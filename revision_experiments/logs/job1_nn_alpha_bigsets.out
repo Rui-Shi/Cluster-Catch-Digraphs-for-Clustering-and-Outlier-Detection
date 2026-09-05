@@ -1,0 +1,40 @@
+wp0_mccd_methods.R: METHOD_REGISTRY now has 13 entries (RKCCD-OOS, RKCCD-IOS, UNCCD-OOS, UNCCD-IOS, LOF, DBSCAN, MST, ODIN, iForest, U-MCCD, SU-MCCD, UN-MCCD, SUN-MCCD); REAL_DATA_THRESHOLDS has 13.
+50_wp2a_nn_alpha_bigsets: datasets = wilt, pageblocks
+50_wp2a_nn_alpha_bigsets: methods  = UN-MCCD, SUN-MCCD
+50_wp2a_nn_alpha_bigsets: alpha_tokens arg = ALL ; min_cls = 0.0625 ; out = G:/Submissions/TR1/TR1_Neurocomputing_resubmit/Cluster-Catch-Digraphs-for-Clustering-and-Outlier-Detection/revision_experiments/results/tr1/wp2a_nn_alpha_bigsets.csv
+==== 50_wp2a: distinct-table guard ====
+  wilt         d=5   tokens on disk: 90, 95
+    90 (71,473) vs 95 (71,467): identical(average)=FALSE identical(median)=FALSE max|d avg|=0.07622
+  pageblocks   d=10  tokens on disk: 99, 999
+    99 (70,717) vs 999 (70,940): identical(average)=FALSE identical(median)=FALSE max|d avg|=0.1321
+==== 50_wp2a: distinct-table guard PASSED (all on-disk token pairs are genuinely different) ====
+
+
+== wilt  d=5  alpha tokens = 90, 95 ==
+[1] "corraltion matrix of ecoli is"
+[1] "corraltion matrix of glass is"
+[1] "corraltion matrix of hepatitis is"
+[1] "corraltion matrix of lymphography is"
+[1] "corraltion matrix of pageblocks is"
+[1] "corraltion matrix of PenDigits is"
+[1] "corraltion matrix of pima is"
+[1] "corraltion matrix of shuffle is"
+[1] "corraltion matrix of stamps is"
+[1] "corraltion matrix of thyroid is"
+[1] "corraltion matrix of vertebral is"
+[1] "corraltion matrix of vowels is"
+[1] "corraltion matrix of waveform is"
+[1] "corraltion matrix of WBC is"
+[1] "corraltion matrix of WDBC is"
+[1] "corraltion matrix of wilt is"
+CELL_DONE dataset=wilt method=UN-MCCD param=alpha_token:90 status=ok sec=1217.9 BA=0.662 F2=0.310 nflag=1765 ncls=2 table=NN-test-simul_5d_90%.RData
+CELL_DONE dataset=wilt method=UN-MCCD param=alpha_token:95 status=ok sec=1145.2 BA=0.519 F2=0.118 nflag=503 ncls=38 table=NN-test-simul_5d_95%.RData
+CELL_DONE dataset=wilt method=SUN-MCCD param=alpha_token:90 status=ok sec=979.5 BA=0.619 F2=0.273 nflag=1629 ncls=1 table=NN-test-simul_5d_90%.RData
+CELL_DONE dataset=wilt method=SUN-MCCD param=alpha_token:95 status=ok sec=989.1 BA=0.555 F2=0.206 nflag=1257 ncls=1 table=NN-test-simul_5d_95%.RData
+
+== pageblocks  d=10  alpha tokens = 99, 999 ==
+CELL_DONE dataset=pageblocks method=UN-MCCD param=alpha_token:99 status=ok sec=1447.7 BA=0.511 F2=0.100 nflag=354 ncls=592 table=NN-test-simul_10d_99%.RData
+CELL_DONE dataset=pageblocks method=UN-MCCD param=alpha_token:999 status=ok sec=1445.5 BA=0.741 F2=0.534 nflag=2667 ncls=2 table=NN-test-simul_10d_999%.RData
+CELL_DONE dataset=pageblocks method=SUN-MCCD param=alpha_token:99 status=ok sec=1410.0 BA=0.726 F2=0.521 nflag=2791 ncls=1 table=NN-test-simul_10d_99%.RData
+CELL_DONE dataset=pageblocks method=SUN-MCCD param=alpha_token:999 status=ok sec=1584.3 BA=0.732 F2=0.526 nflag=2738 ncls=1 table=NN-test-simul_10d_999%.RData
+ALL_CELLS_COMPLETE
