@@ -49,8 +49,8 @@
 # PowerShell 600s timeout.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
-source(here::here("revision_experiments", "wp0_mccd_methods.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
+source(here::here("revision_experiments", "tr1", "wp0_mccd_methods.R"))
 
 # --- only now is it safe to define and install the get_simul shadow --------
 
@@ -243,7 +243,7 @@ rk_base_table <- function(d) {
   WP2A$cache_simul
 }
 
-get_simul_shadow <- function(variant = c("RK", "NN"), d, quant = NULL) {
+get_simul_shadow <- function(variant = c("RK", "NN"), d, quant = NULL, n = NULL) {
   variant <- match.arg(variant)
   if (variant == "RK" && !is.null(quant) && is.numeric(quant)) {
     # quant is a bare probability (e.g. 0.95) rather than a file-label token
@@ -254,10 +254,11 @@ get_simul_shadow <- function(variant = c("RK", "NN"), d, quant = NULL) {
       s$quan[[key]] <- matrix(rk_derive_quan_vec(s$Kest.m, quant), nrow = WP2A$cache_m)
       WP2A$cache_simul <- s
     }
+    check_simul_extent(s, "RK", d, n, WP2A$cache_file)   # same guard as get_simul()
     return(list(simul = s, quant = quant, quant_label = sub("^0\\.", "", format(quant, trim = TRUE, scientific = FALSE)),
                 file = WP2A$cache_file))
   }
-  orig_get_simul(variant, d, quant)
+  orig_get_simul(variant, d, quant, n)
 }
 assign("get_simul", get_simul_shadow, envir = globalenv())
 

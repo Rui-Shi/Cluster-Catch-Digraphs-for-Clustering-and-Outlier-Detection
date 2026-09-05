@@ -60,7 +60,7 @@
 #
 # gen writes R/NN-test_quantile/NN-test-simul_500d_999%.RData (object
 # `simul` = list(average, median), length 500 each -- the exact shape/name
-# harness.R's get_simul("NN", 500) and nn_quant_for_d(500) == "999" expect).
+# harness.R's get_simul("NN", 500) and nn_quant_label_paper_UN(500) == "999" expect).
 
 suppressPackageStartupMessages({ library(parallel); library(here) })
 

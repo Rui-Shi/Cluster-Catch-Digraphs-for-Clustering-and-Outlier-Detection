@@ -24,8 +24,8 @@
 # Read-only apart from its own CSV.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments/harness.R"))
-source(here::here("revision_experiments/wp0_mccd_methods.R"))
+source(here::here("revision_experiments/shared/harness.R"))
+source(here::here("revision_experiments/tr1/wp0_mccd_methods.R"))
 
 RKDIR <- here::here("R/RK-test_quantile")
 NNDIR <- here::here("R/NN-test_quantile")
@@ -52,7 +52,7 @@ cat("=== 1. RK tables at the dimensions the real data sets use ===\n")
 rk_rows <- list()
 for (d in sort(unique(inv$d))) {
   fs <- sibs(RKDIR, "RK-test-simul", d)
-  tok_claimed <- rk_quant_for_d(d)
+  tok_claimed <- rk_quant_label_paper(d)
   f_used <- file.path(RKDIR, sprintf("RK-test-simul_%dd_%s%%.RData", d, tok_claimed))
   dup <- NA
   if (length(fs) >= 2) {

@@ -40,8 +40,8 @@
 # floats whose printed form drops trailing zeros, e.g. 0.10 -> "0.1").
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
-source(here::here("revision_experiments", "wp0_mccd_methods.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
+source(here::here("revision_experiments", "tr1", "wp0_mccd_methods.R"))
 
 REPO_ROOT <- here::here()
 OUT_CSV   <- file.path(REPO_ROOT, "revision_experiments/results/tr1/wp2a_smin_sweep16.csv")

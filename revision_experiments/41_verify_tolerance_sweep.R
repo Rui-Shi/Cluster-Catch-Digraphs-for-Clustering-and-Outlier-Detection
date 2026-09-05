@@ -139,8 +139,8 @@ cat("\n=== (C) live control: pristine connected.ksccd.m, no override ===\n")
 if (!RUN_LIVE) {
   cat("  skipped (pass --live to run)\n")
 } else {
-  source(here::here("revision_experiments/harness.R"))
-  source(here::here("revision_experiments/wp0_mccd_methods.R"))
+  source(here::here("revision_experiments/shared/harness.R"))
+  source(here::here("revision_experiments/tr1/wp0_mccd_methods.R"))
   # deliberately install NOTHING: connected.ksccd.m is the shipped one.
   stopifnot("connected.ksccd.m must be the pristine 1-arg version" =
               length(formals(connected.ksccd.m)) == 1)

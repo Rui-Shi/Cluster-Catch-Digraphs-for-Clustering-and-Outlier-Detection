@@ -31,8 +31,8 @@
 #   Rscript 70_remove_duplicate_tables.R --apply   # performs the deletions
 
 suppressMessages(library(here))
-source(here::here("revision_experiments/harness.R"))
-source(here::here("revision_experiments/wp0_mccd_methods.R"))
+source(here::here("revision_experiments/shared/harness.R"))
+source(here::here("revision_experiments/tr1/wp0_mccd_methods.R"))
 
 APPLY  <- "--apply" %in% commandArgs(trailingOnly = TRUE)
 NNDIR  <- here::here("R/NN-test_quantile")

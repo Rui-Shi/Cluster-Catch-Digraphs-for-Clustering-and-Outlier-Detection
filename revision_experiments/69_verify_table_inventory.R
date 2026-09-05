@@ -22,8 +22,8 @@
 # Read-only.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments/harness.R"))
-source(here::here("revision_experiments/wp0_mccd_methods.R"))
+source(here::here("revision_experiments/shared/harness.R"))
+source(here::here("revision_experiments/tr1/wp0_mccd_methods.R"))
 
 NNDIR <- here::here("R/NN-test_quantile")
 load1 <- function(p) { e <- new.env(); load(p, envir = e); get("simul", envir = e) }

@@ -188,8 +188,8 @@ stopifnot(identical(unname(CUTOFFS), c(3.5, 6.5, 3.5, 6.5)))
 cat("Calibrated cutoffs (d=10, gaussian setting):",
     paste(sprintf("%s=%.1f", names(CUTOFFS), CUTOFFS), collapse = "  "), "\n")
 
-# NOTE: harness.R's default rk_quant_for_d(10) currently resolves to "99",
-# but 09_wp3_synthetic.R (the closest existing precedent for this exact
+# NOTE: harness.R's former rk_quant_for_d(10) default resolved to "99" (the
+# default is gone as of 2026-09-05), but 09_wp3_synthetic.R (the closest existing precedent for this exact
 # gaussian/d=10 setting, whose calibrated cutoffs we reuse below) explicitly
 # documents "RKCCD: quant = 0.999 (table RK-test-simul_10d_999%.RData),
 # matched to the original scripts" and asserts quant_label == "999" for its

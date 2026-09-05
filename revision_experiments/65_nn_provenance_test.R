@@ -430,25 +430,26 @@ DATASET_D <- c(hepatitis = 19, lymphography = 18, glass = 9, WBC = 9, vertebral 
 #'   "consistent with both" on 63 of 72 tier-1 cells. Four replicates still
 #'   give a range; the verdict does not rest on this test in any case.
 run_test2 <- function(which_datasets, reps = REPS) {
-  source(here::here("revision_experiments", "harness.R"))
-  source(here::here("revision_experiments", "wp0_mccd_methods.R"))
+  source(here::here("revision_experiments", "shared", "harness.R"))
+  source(here::here("revision_experiments", "tr1", "wp0_mccd_methods.R"))
 
   orig_get_simul <- get_simul                       # capture BEFORE shadowing
   TABLE_STATE <- new.env(parent = emptyenv())
   TABLE_STATE$path <- NA_character_; TABLE_STATE$truncate_to <- NA_integer_
   PROV <- new.env(parent = emptyenv()); PROV$file <- NA_character_; PROV$len <- NA_integer_
 
-  get_simul_shadow <- function(variant = c("RK", "NN"), d, quant = NULL) {
+  get_simul_shadow <- function(variant = c("RK", "NN"), d, quant = NULL, n = NULL) {
     p <- TABLE_STATE$path
     if (identical(variant, "NN") && !is.na(p)) {
       if (!file.exists(p)) stop("get_simul_shadow(): table missing: ", p)
       e <- new.env(); load(p, envir = e)
       if (!exists("simul", envir = e)) stop("get_simul_shadow(): no 'simul' in ", p)
+      check_simul_extent(get("simul", envir = e), "NN", d, n, p)   # same guard as get_simul()
       res <- list(simul = get("simul", envir = e),
                   quant = as.numeric(paste0("0.", sub(".*_([0-9]+)%\\.RData$", "\\1", basename(p)))),
                   quant_label = sub(".*_([0-9]+)%\\.RData$", "\\1", basename(p)), file = p)
     } else {
-      res <- orig_get_simul(variant, d, quant)
+      res <- orig_get_simul(variant, d, quant, n)
     }
     tr <- TABLE_STATE$truncate_to
     if (!is.na(tr) && length(res$simul$average) > tr) {

@@ -21,8 +21,8 @@
 # Read-only with respect to every existing result file.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
-source(here::here("revision_experiments", "wp0_mccd_methods.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
+source(here::here("revision_experiments", "tr1", "wp0_mccd_methods.R"))
 
 OUT <- here::here("revision_experiments/results/tr1/wp2c_smin_zero_real.csv")
 

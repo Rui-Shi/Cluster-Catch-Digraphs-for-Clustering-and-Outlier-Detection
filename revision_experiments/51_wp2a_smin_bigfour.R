@@ -80,8 +80,8 @@
 # flight.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
-source(here::here("revision_experiments", "wp0_mccd_methods.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
+source(here::here("revision_experiments", "tr1", "wp0_mccd_methods.R"))
 
 SWEEP16_CSV <- here::here("revision_experiments/results/tr1/wp2a_smin_sweep16.csv")  # READ-ONLY, never written
 OUT_CSV     <- here::here("revision_experiments/results/tr1/wp2a_smin_bigfour.csv")  # NEW file, ours

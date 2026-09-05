@@ -52,8 +52,8 @@
 # capped at 8.
 
 suppressMessages(library(here))
-suppressMessages(source(here::here("revision_experiments", "harness.R")))
-source(here::here("revision_experiments", "wp0_mccd_methods.R"))
+suppressMessages(source(here::here("revision_experiments", "shared", "harness.R")))
+source(here::here("revision_experiments", "tr1", "wp0_mccd_methods.R"))
 source(here::here("revision_experiments", "01i_nn_multiquant_table.R"))
 
 suppressPackageStartupMessages({
@@ -162,18 +162,19 @@ SETTINGS <- list(uniform  = list(gen = "gen_uniform",  base_seed = 123L),
 # ---------------------------------------------------------------------------
 make_nn_shadow <- function(newdir, orig) {
   force(newdir); force(orig)
-  function(variant = c("RK", "NN"), d, quant = NULL) {
+  function(variant = c("RK", "NN"), d, quant = NULL, n = NULL) {
     variant <- match.arg(variant)
     if (variant == "NN") {
       if (is.null(quant)) stop("48: NN quantile token must be given explicitly under the shadow")
       path <- file.path(newdir, sprintf("NN-test-simul_%dd_%s%%.RData", d, quant))
       if (!file.exists(path)) stop("48: generated NN table missing: ", path)
       e <- new.env(); load(path, envir = e)
+      check_simul_extent(get("simul", envir = e), "NN", d, n, path)   # same guard as get_simul()
       return(list(simul = get("simul", envir = e),
                   quant = as.numeric(paste0("0.", quant)),
                   quant_label = quant, file = path))
     }
-    orig(variant, d, quant)
+    orig(variant, d, quant, n)
   }
 }
 
@@ -520,23 +521,24 @@ mode_crosscheck <- function(reps = 10L, cores = MAX_CORES) {
 # ===========================================================================
 worker_init <- function(repo, newdir) {
   setwd(repo)
-  suppressMessages(source(file.path(repo, "revision_experiments/harness.R")))
-  source(file.path(repo, "revision_experiments/wp0_mccd_methods.R"))
+  suppressMessages(source(file.path(repo, "revision_experiments/shared/harness.R")))
+  source(file.path(repo, "revision_experiments/tr1/wp0_mccd_methods.R"))
   o <- get("get_simul", envir = globalenv())
   assign("orig_get_simul48", o, envir = globalenv())
   assign("NN48_DIR", newdir, envir = globalenv())
-  shadow <- function(variant = c("RK", "NN"), d, quant = NULL) {
+  shadow <- function(variant = c("RK", "NN"), d, quant = NULL, n = NULL) {
     variant <- match.arg(variant)
     if (variant == "NN") {
       if (is.null(quant)) stop("48 worker: NN token must be explicit")
       path <- file.path(NN48_DIR, sprintf("NN-test-simul_%dd_%s%%.RData", d, quant))
       if (!file.exists(path)) stop("48 worker: missing table ", path)
       e <- new.env(); load(path, envir = e)
+      check_simul_extent(get("simul", envir = e), "NN", d, n, path)   # same guard as get_simul()
       return(list(simul = get("simul", envir = e),
                   quant = as.numeric(paste0("0.", quant)),
                   quant_label = quant, file = path))
     }
-    orig_get_simul48(variant, d, quant)
+    orig_get_simul48(variant, d, quant, n)
   }
   assign("get_simul", shadow, envir = globalenv())
   TRUE

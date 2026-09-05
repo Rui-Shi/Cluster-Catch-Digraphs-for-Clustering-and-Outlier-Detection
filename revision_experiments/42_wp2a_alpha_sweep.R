@@ -54,8 +54,8 @@
 # skips completed cells, so a PowerShell 600 s timeout costs at most one cell.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
-source(here::here("revision_experiments", "wp0_mccd_methods.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
+source(here::here("revision_experiments", "tr1", "wp0_mccd_methods.R"))
 
 # --- only now is it safe to define and install the get_simul shadow ---------
 
@@ -230,7 +230,7 @@ rk_base_table <- function(d, base_label) {
   WP2A$rk_cache
 }
 
-get_simul_shadow <- function(variant = c("RK", "NN"), d, quant = NULL) {
+get_simul_shadow <- function(variant = c("RK", "NN"), d, quant = NULL, n = NULL) {
   variant <- match.arg(variant)
   if (variant == "RK" && isTRUE(WP2A$rk_derive)) {
     s   <- rk_base_table(d, WP2A$rk_base_label)
@@ -244,10 +244,11 @@ get_simul_shadow <- function(variant = c("RK", "NN"), d, quant = NULL) {
                   basename(WP2A$rk_cache_file),
                   as.numeric(difftime(Sys.time(), t0, units = "secs"))))
     }
+    check_simul_extent(s, "RK", d, n, WP2A$rk_cache_file)   # same guard as get_simul()
     return(list(simul = s, quant = q, quant_label = token_of_q(q),
                 file = WP2A$rk_cache_file))
   }
-  orig_get_simul(variant, d, quant)
+  orig_get_simul(variant, d, quant, n)
 }
 assign("get_simul", get_simul_shadow, envir = globalenv())
 

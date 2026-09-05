@@ -57,14 +57,19 @@ OUT_CSV <- here::here("revision_experiments/results/tr1/wp2a_alpha_claim_audit.c
 #    the R session on this machine with a segfault, confirmed separately).
 # ---------------------------------------------------------------------------
 
-# revision_experiments/wp0_mccd_methods.R:177
-#   rk_quant_label_paper <- function(d) if (d < 10) "99" else "999"
-# (main text line ~880: alpha=1% for d<10, alpha=0.1% for d>=10.)
+# Transcribed from revision_experiments/shared/harness.R, section 2, which
+# since 2026-09-05 holds the only definitions of these three. (Before that
+# date they lived in wp0_mccd_methods.R and were built on a harness-local
+# nn_quant_for_d() step function that has since been deleted; the values are
+# unchanged, so this audit's conclusions stand as recorded.)
+
+# RK-based methods (U-MCCD, SU-MCCD): main text alpha = 1% for d < 10,
+# alpha = 0.1% for d >= 10.
 rk_quant_label_paper <- function(d) if (d < 10) "99" else "999"
 
-# revision_experiments/harness.R:265-271 (nn_quant_for_d), the shared step
-# function both NN wrappers below build on.
-nn_quant_for_d <- function(d) {
+# NND-based UN-MCCD: alpha = 15/10/5/1/0.1% at d = 2, 3, 5, 10, {20,50,100},
+# applied as a step function.
+nn_quant_label_paper_UN <- function(d) {
   if (d <= 2) "85"
   else if (d <= 4) "90"
   else if (d <= 9) "95"
@@ -72,13 +77,8 @@ nn_quant_for_d <- function(d) {
   else "999"
 }
 
-# revision_experiments/wp0_mccd_methods.R:185
-#   nn_quant_label_paper_UN <- function(d) nn_quant_for_d(d)
-nn_quant_label_paper_UN <- function(d) nn_quant_for_d(d)
-
-# revision_experiments/wp0_mccd_methods.R:190
-#   nn_quant_label_paper_SUN <- function(d) if (d < 10) nn_quant_for_d(d) else "999"
-nn_quant_label_paper_SUN <- function(d) if (d < 10) nn_quant_for_d(d) else "999"
+# NND-based SUN-MCCD: as UN-MCCD below d = 10, then 0.1% from d = 10.
+nn_quant_label_paper_SUN <- function(d) if (d < 10) nn_quant_label_paper_UN(d) else "999"
 
 tok_to_pct <- function(tok) {
   # Filename tokens are the QUANTILE level with the decimal point removed:

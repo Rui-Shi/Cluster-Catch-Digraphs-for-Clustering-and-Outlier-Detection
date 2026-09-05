@@ -52,8 +52,8 @@
 # so this is floating-point sensitivity, not run-to-run noise.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
-source(here::here("revision_experiments", "wp0_mccd_methods.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
+source(here::here("revision_experiments", "tr1", "wp0_mccd_methods.R"))
 
 # --- only now is it safe to define and install the override -----------------
 

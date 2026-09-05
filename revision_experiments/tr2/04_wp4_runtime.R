@@ -450,10 +450,10 @@ ccd_variant_for_method <- function(m) {
 has_quant_table <- function(variant, d) {
   if (variant == "RK") {
     file.exists(file.path(RK_QUANT_TABLE_DIR,
-                          sprintf("RK-test-simul_%dd_%s%%.RData", d, rk_quant_for_d(d))))
+                          sprintf("RK-test-simul_%dd_%s%%.RData", d, rk_quant_label_paper(d))))
   } else {
     file.exists(file.path(NN_QUANT_TABLE_DIR,
-                          sprintf("NN-test-simul_%dd_%s%%.RData", d, nn_quant_for_d(d))))
+                          sprintf("NN-test-simul_%dd_%s%%.RData", d, nn_quant_label_paper_UN(d))))
   }
 }
 

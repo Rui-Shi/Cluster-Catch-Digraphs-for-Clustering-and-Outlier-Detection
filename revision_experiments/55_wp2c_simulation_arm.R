@@ -81,8 +81,8 @@
 #   Rscript 55_wp2c_simulation_arm.R status
 
 suppressMessages(library(here))
-suppressMessages(source(here::here("revision_experiments", "harness.R")))
-suppressMessages(source(here::here("revision_experiments", "wp0_mccd_methods.R")))
+suppressMessages(source(here::here("revision_experiments", "shared", "harness.R")))
+suppressMessages(source(here::here("revision_experiments", "tr1", "wp0_mccd_methods.R")))
 suppressPackageStartupMessages({ library(parallel); library(doParallel); library(foreach) })
 
 REPO   <- here::here()
@@ -292,8 +292,8 @@ do_run <- function(sel, n_reps, budget, cores) {
   clusterExport(cl, "REPO", envir = environment())
   invisible(clusterEvalQ(cl, {
     setwd(REPO)
-    suppressMessages(source(file.path(REPO, "revision_experiments/harness.R")))
-    suppressMessages(source(file.path(REPO, "revision_experiments/wp0_mccd_methods.R")))
+    suppressMessages(source(file.path(REPO, "revision_experiments/shared/harness.R")))
+    suppressMessages(source(file.path(REPO, "revision_experiments/tr1/wp0_mccd_methods.R")))
     TRUE
   }))
   clusterExport(cl, c("BASE_SEED", "METHODS", "RULES",

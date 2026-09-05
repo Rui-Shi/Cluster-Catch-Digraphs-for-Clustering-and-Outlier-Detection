@@ -19,8 +19,8 @@
 # Read-only. Emits results/tr1/wp2a_provenance_targets.csv.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments/harness.R"))
-source(here::here("revision_experiments/wp0_mccd_methods.R"))
+source(here::here("revision_experiments/shared/harness.R"))
+source(here::here("revision_experiments/tr1/wp0_mccd_methods.R"))
 
 inv <- read.csv(here::here("revision_experiments/results/tr1/dataset_inventory.csv"),
                 stringsAsFactors = FALSE)

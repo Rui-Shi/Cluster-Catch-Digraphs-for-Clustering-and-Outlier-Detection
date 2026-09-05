@@ -174,7 +174,7 @@ unccd_dir_for_d <- function(d) if (d <= 5) "ascend" else "descend"
 
 has_nn_table <- function(d) {
   file.exists(file.path(NN_QUANT_TABLE_DIR,
-                        sprintf("NN-test-simul_%dd_%s%%.RData", d, nn_quant_for_d(d))))
+                        sprintf("NN-test-simul_%dd_%s%%.RData", d, nn_quant_label_paper_UN(d))))
 }
 
 # ---------------------------------------------------------------------------

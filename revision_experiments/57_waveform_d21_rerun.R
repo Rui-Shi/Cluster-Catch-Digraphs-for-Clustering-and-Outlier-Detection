@@ -52,7 +52,7 @@
 # after (on.exit). When active and variant=="NN", the shadow builds the
 # path directly from FRESH_NN_DIR or NN_QUANT_TABLE_DIR (whichever the
 # active state names) and the caller's own `quant` token -- it does NOT
-# fall through to nn_quant_for_d()/nn_quant_label_paper_*() bucketing,
+# fall through to nn_quant_label_paper_UN()/nn_quant_label_paper_SUN() bucketing,
 # because both fresh and shipped requests here always pass an explicit
 # alpha_token. When TABLE_SOURCE_STATE$active is NA (not set), the shadow
 # defers unconditionally to the captured original get_simul(), so nothing
@@ -107,8 +107,8 @@
 #              this fixes the grid at exactly the 6 cells specified.)
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
-source(here::here("revision_experiments", "wp0_mccd_methods.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
+source(here::here("revision_experiments", "tr1", "wp0_mccd_methods.R"))
 
 # ---------------------------------------------------------------------------
 # get_simul shadow: table-source-aware, installed AFTER every source().
@@ -143,7 +143,7 @@ load_nn_table_or_null <- function(dir, d, tok) {
 #' "shipped" AND variant=="NN", resolve the path directly from FRESH_NN_DIR
 #' or NN_QUANT_TABLE_DIR using the caller's explicit `quant` token (no
 #' bucketing). Otherwise defer unconditionally to the captured original.
-get_simul_shadow <- function(variant = c("RK", "NN"), d, quant = NULL) {
+get_simul_shadow <- function(variant = c("RK", "NN"), d, quant = NULL, n = NULL) {
   active <- TABLE_SOURCE_STATE$active
   if (identical(variant, "NN") && !is.na(active)) {
     if (is.null(quant)) stop("get_simul_shadow(): TABLE_SOURCE_STATE active but quant is NULL -- every cell in this script must pass an explicit alpha_token")
@@ -157,10 +157,11 @@ get_simul_shadow <- function(variant = c("RK", "NN"), d, quant = NULL) {
     e <- new.env()
     load(path, envir = e)
     if (!exists("simul", envir = e)) stop(sprintf("get_simul_shadow(): file %s does not contain an object named 'simul'", path))
+    check_simul_extent(get("simul", envir = e), variant, d, n, path)   # same guard as get_simul()
     res <- list(simul = get("simul", envir = e), quant = as.numeric(paste0("0.", quant)),
                 quant_label = quant, file = path)
   } else {
-    res <- orig_get_simul(variant, d, quant)
+    res <- orig_get_simul(variant, d, quant, n)
   }
   PROV$last_file    <- res$file
   PROV$last_size    <- suppressWarnings(file.size(res$file))

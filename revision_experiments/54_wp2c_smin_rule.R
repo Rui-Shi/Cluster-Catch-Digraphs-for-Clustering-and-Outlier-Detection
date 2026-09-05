@@ -76,8 +76,8 @@
 #       Ranks the candidate rules; writes wp2c_rule_candidates.csv.
 
 suppressMessages(library(here))
-suppressMessages(source(here::here("revision_experiments", "harness.R")))
-suppressMessages(source(here::here("revision_experiments", "wp0_mccd_methods.R")))
+suppressMessages(source(here::here("revision_experiments", "shared", "harness.R")))
+suppressMessages(source(here::here("revision_experiments", "tr1", "wp0_mccd_methods.R")))
 
 REPO   <- here::here()
 RESDIR <- file.path(REPO, "revision_experiments/results/tr1")

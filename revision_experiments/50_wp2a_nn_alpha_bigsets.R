@@ -83,8 +83,8 @@
 # cell in flight.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "harness.R"))
-source(here::here("revision_experiments", "wp0_mccd_methods.R"))
+source(here::here("revision_experiments", "shared", "harness.R"))
+source(here::here("revision_experiments", "tr1", "wp0_mccd_methods.R"))
 
 # --- get_simul provenance shadow: installed AFTER every source() -----------
 orig_get_simul <- get_simul   # capture BEFORE shadowing
@@ -94,8 +94,8 @@ PROV$last_file  <- NA_character_
 PROV$last_size  <- NA_real_
 PROV$last_quant <- NA_character_
 
-get_simul_shadow <- function(variant = c("RK", "NN"), d, quant = NULL) {
-  res <- orig_get_simul(variant, d, quant)
+get_simul_shadow <- function(variant = c("RK", "NN"), d, quant = NULL, n = NULL) {
+  res <- orig_get_simul(variant, d, quant, n)
   PROV$last_file  <- res$file
   PROV$last_size  <- suppressWarnings(file.size(res$file))
   PROV$last_quant <- res$quant_label
