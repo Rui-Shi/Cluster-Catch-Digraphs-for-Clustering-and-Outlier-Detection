@@ -1,0 +1,54 @@
+2026-08-11T08:50:59	RUNSTART	cores=22	niter=10000	engine=fast_stream	dims=19,18,12
+2026-08-11T08:50:59	ESTIMATE	total_wall_hours=4.3
+2026-08-11T08:50:59	DIMSTART	d=19	n=74	dataset=hepatitis	chunks=1x10000	est_wall_h=0.02
+2026-08-11T08:51:11	CHUNK	d=19	chunk=1/1	iter=10000	secs=11.5	eta_h=0.00
+2026-08-11T08:51:11	POOL	d=19	loading 1 chunks
+2026-08-11T08:51:12	DIMDONE	d=19	n=74	files=4	zero_frac_999=0.0000
+2026-08-11T08:51:12	DIMSTART	d=18	n=148	dataset=lymphography	chunks=1x10000	est_wall_h=0.09
+2026-08-11T08:51:55	CHUNK	d=18	chunk=1/1	iter=10000	secs=43.2	eta_h=0.00
+2026-08-11T08:51:55	POOL	d=18	loading 1 chunks
+2026-08-11T08:51:56	DIMDONE	d=18	n=148	files=4	zero_frac_999=0.0000
+2026-08-11T08:51:56	DIMSTART	d=12	n=1452	dataset=vowels	chunks=12x834	est_wall_h=4.17
+2026-08-11T09:30:30	CHUNK	d=12	chunk=1/12	iter=834	secs=2313.8	eta_h=7.07
+2026-08-11T10:08:59	CHUNK	d=12	chunk=2/12	iter=834	secs=2309.3	eta_h=6.41
+2026-08-11T10:47:30	CHUNK	d=12	chunk=3/12	iter=834	secs=2310.8	eta_h=5.78
+2026-08-11T11:26:01	CHUNK	d=12	chunk=4/12	iter=834	secs=2311.0	eta_h=5.14
+2026-08-11T12:04:31	CHUNK	d=12	chunk=5/12	iter=834	secs=2310.0	eta_h=4.49
+2026-08-11T12:43:01	CHUNK	d=12	chunk=6/12	iter=834	secs=2309.9	eta_h=3.85
+2026-08-11T13:21:31	CHUNK	d=12	chunk=7/12	iter=834	secs=2309.4	eta_h=3.21
+2026-08-11T14:00:02	CHUNK	d=12	chunk=8/12	iter=834	secs=2311.1	eta_h=2.57
+2026-08-11T14:38:33	CHUNK	d=12	chunk=9/12	iter=834	secs=2311.5	eta_h=1.93
+2026-08-11T15:17:06	CHUNK	d=12	chunk=10/12	iter=834	secs=2313.1	eta_h=1.29
+2026-08-11T15:55:37	CHUNK	d=12	chunk=11/12	iter=834	secs=2311.0	eta_h=0.64
+2026-08-11T16:33:56	CHUNK	d=12	chunk=12/12	iter=826	secs=2298.7	eta_h=0.00
+2026-08-11T16:33:56	POOL	d=12	loading 12 chunks
+2026-08-11T16:34:09	DIMDONE	d=12	n=1452	files=4	zero_frac_999=0.0000
+2026-08-11T16:34:09	ALLDONE	staging=G:/Submissions/TR1/TR1_Neurocomputing_resubmit/Cluster-Catch-Digraphs-for-Clustering-and-Outlier-Detection/R/NN-test_quantile_regen999
+2026-08-11T16:34:09	NEXT	Rscript revision_experiments/72_verify_regen999.R  (verify before installing)
+2026-08-11T16:34:50	RUNSTART	cores=22	niter=10000	engine=fast_stream	dims=21
+2026-08-11T16:34:50	ESTIMATE	total_wall_hours=81.7
+2026-08-11T16:34:50	DIMSTART	d=21	n=3443	dataset=waveform	chunks=40x250	est_wall_h=81.74
+2026-08-11T19:20:10	CHUNK	d=21	chunk=1/40	iter=250	secs=9920.1	eta_h=107.47
+2026-08-11T22:04:11	CHUNK	d=21	chunk=2/40	iter=250	secs=9841.7	eta_h=103.88
+2026-08-12T00:47:51	CHUNK	d=21	chunk=3/40	iter=250	secs=9819.8	eta_h=100.93
+2026-08-12T03:31:50	CHUNK	d=21	chunk=4/40	iter=250	secs=9839.2	eta_h=98.39
+2026-08-12T06:15:34	CHUNK	d=21	chunk=5/40	iter=250	secs=9824.1	eta_h=95.51
+2026-08-12T08:59:05	CHUNK	d=21	chunk=6/40	iter=250	secs=9810.7	eta_h=92.66
+2026-08-12T11:42:21	CHUNK	d=21	chunk=7/40	iter=250	secs=9796.1	eta_h=89.80
+2026-08-12T14:25:34	CHUNK	d=21	chunk=8/40	iter=250	secs=9792.3	eta_h=87.04
+2026-08-12T17:08:59	CHUNK	d=21	chunk=9/40	iter=250	secs=9805.7	eta_h=84.44
+2026-08-12T19:53:17	CHUNK	d=21	chunk=10/40	iter=250	secs=9857.3	eta_h=82.14
+2026-08-12T20:13:08	RUNSTART	cores=22	niter=10000	engine=fast_stream	dims=16
+2026-08-12T20:13:08	ESTIMATE	total_wall_hours=50.0
+2026-08-12T20:13:08	DIMSTART	d=16	n=3200	dataset=PenDigits	chunks=40x250	est_wall_h=50.00
+2026-08-12T22:17:56	CHUNK	d=16	chunk=1/40	iter=250	secs=7488.3	eta_h=81.12
+2026-08-13T00:22:42	CHUNK	d=16	chunk=2/40	iter=250	secs=7485.3	eta_h=79.01
+2026-08-13T02:27:16	CHUNK	d=16	chunk=3/40	iter=250	secs=7474.1	eta_h=76.82
+2026-08-13T04:31:53	CHUNK	d=16	chunk=4/40	iter=250	secs=7477.5	eta_h=74.78
+2026-08-13T06:36:34	CHUNK	d=16	chunk=5/40	iter=250	secs=7480.5	eta_h=72.73
+2026-08-13T08:41:04	CHUNK	d=16	chunk=6/40	iter=250	secs=7470.6	eta_h=70.56
+2026-08-13T10:45:31	CHUNK	d=16	chunk=7/40	iter=250	secs=7467.1	eta_h=68.45
+2026-08-13T12:49:44	CHUNK	d=16	chunk=8/40	iter=250	secs=7452.3	eta_h=66.24
+2026-08-13T14:53:56	CHUNK	d=16	chunk=9/40	iter=250	secs=7452.7	eta_h=64.18
+2026-08-13T16:58:15	CHUNK	d=16	chunk=10/40	iter=250	secs=7458.7	eta_h=62.16
+2026-08-13T19:02:32	CHUNK	d=16	chunk=11/40	iter=250	secs=7457.3	eta_h=60.07
