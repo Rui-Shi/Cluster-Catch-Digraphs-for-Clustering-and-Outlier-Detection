@@ -316,10 +316,39 @@ all 6 canonical settings (both d, all three types), one rep, all 9 default
 methods -- confirmed non-zero TPR for LOF on `local` (TPR=1.0 at both d=3
 and d=10) and done-skip on re-invocation.
 
-**85, 87, 88 cross-cutting and per-script fixes.** See the further dated
-notes below (appended as each script was fixed) for the equal-mass binning
-(85), density-matched third cluster and RK/NND rep-count split (87), and
-`gauss_equal`/DBSCAN-note/MST-sweep additions (88).
+**85 fixes.** Seed canonicalisation and `run [settings] [reps] [budget]
+[methods]` mode as in 86, against the fixed `generator x d in {3,10}` CANON.
+Added `stopifnot(length(res$score) == dat$n, !anyNA(res$score))` after the
+detector call (85 was the only WP8 script without this guard). Added
+equal-mass binning: main CSV gained a `bin_type` column (`"width"` = the
+original `ceiling(10*r/r_max)`; `"mass"` =
+`ceiling(10*rank(r,ties.method="first")/length(r))`, computed per cluster
+like `"width"`) and now writes 20 bin-rows per cell instead of 10. Both the
+20 bin-rows and (for MCCD methods) the up-to-189 cluster-rows are written as
+ONE `append_result()` block each. `unassigned_rows` (from
+`res$unassigned_rows`, sentinel `-1L` for the five baselines, which have no
+such field -- never `NA_integer_`, which would trip `has_result()`'s
+partial-row guard on the done file) is added as a payload column on the
+done row. Added `--summarize` (per `setting_id x d x method x bin_type x
+bin`: `pooled_ratio = sum(n_flagged)/sum(n_regular)` as the point estimate,
+plus `mean_per_rep_ratio`/`se_per_rep_ratio` over reps with a non-empty
+bin, joined against the done file so a cell that errored out is excluded).
+**Bug found and fixed while smoke-testing `--summarize`:** the de-dup key
+used to drop retried-cell duplicates was `(setting_id,d,rep,method)` --
+correct for the other three scripts' one-row-per-cell files, but 85 writes
+20 rows per cell, so that key collapsed all 20 legitimate bin rows down to
+1 (whichever bin happened to be written last), turning a 180-row smoke
+summary into 9 rows. Fixed by extending the key to
+`(setting_id,d,rep,method,bin_type,bin)`; the done file's own de-dup key
+correctly stays `(setting_id,d,rep,method)` (one row per cell there).
+Smoke-verified: 180-row summary from a single-cell (9-method) smoke run,
+mass bins visibly near-equal-count (18-20 of ~189 points each) vs width
+bins piling into bin 10, done-file skip confirmed on re-invocation.
+
+**87, 88 per-script fixes.** See the further dated notes below (appended as
+each script was fixed) for the density-matched third cluster and RK/NND
+rep-count split (87), and the `gauss_equal`/DBSCAN-note/MST-sweep additions
+(88).
 
 ## Open questions / choices not fully specified by the revision plan
 
