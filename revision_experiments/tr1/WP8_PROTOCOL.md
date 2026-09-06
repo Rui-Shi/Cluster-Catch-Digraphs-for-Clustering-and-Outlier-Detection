@@ -256,6 +256,71 @@ results/tr1/wp8/88_csr_violation_clusters.csv     WP7
 results/tr1/wp8/smoke/<script-basename>.csv       --smoke output, same schema as the main file it stands in for
 ```
 
+## Dated appended notes (2026-09-05, post Opus verification WP8_VERIFICATION.md)
+
+**86 FAIL fix -- `local` and `bridge` generators rewritten; mandatory
+acceptance check.** The originally declared `local` (fixed 0.4 interior
+offset / 0.3 clearance) and `bridge` (plain centre-to-centre chain)
+constructions did not produce the named phenomena: measured local
+outlier-NN/regular-NN ratio was 1.28 (d=3) and 0.61 (d=10); measured bridge
+had 5.2-6.2 of 10 points per rep landing inside a realised cluster ball.
+Replacement constructions (implemented in `86_wp8_outlier_types.R`,
+`draw_cluster()`/`gen_local()`/`gen_bridge()`/`gen_collective()`):
+
+- `local`: host cluster regular points confined to a dense core of radius
+  `core_frac * scale` with `scale` the cluster's own realised jitter draw
+  (`runif(1, R_MIN, R_MAX)`); each outlier placed at a uniformly random
+  direction from its host centre at radius `runif(1, shell_lo, shell_hi) *
+  scale`. First attempt (`core_frac = 0.5`, `shell = (0.75, 1.0)`) measured
+  ratio (mean of 20 reps, `mean(outlier NN dist)/median(host regular NN
+  dist)`, seeds = the production `BASE_SEED + 100000*s_i + rep` scheme for
+  `rep in 1:20`): **d=3 mean 4.122 (min 3.477, max 4.944) -- PASS**; **d=10
+  mean 1.892 (min 1.740, max 2.178) -- FAIL (< 2)**. Second attempt
+  (`core_frac = 0.4`, `shell = (0.8, 1.0)`, both within the "e.g." bracket
+  named in WP8_VERIFICATION.md): **d=3 mean 6.032 (min 4.802, max
+  7.523)**; **d=10 mean 2.540 (min 2.360, max 2.874) -- PASS at both d**.
+  Adopted.
+- `bridge`: `draw_cluster()` now exposes `attr(pts, "scale")`, the realised
+  jitter draw; bridge points are placed only in the gap between the two
+  clusters' realised surfaces, `t_lo = (s1+clearance)/CLS_DIS`,
+  `t_hi = 1-(s2+clearance)/CLS_DIS`, `t_i = t_lo + (i-0.5)/n0*(t_hi-t_lo)`.
+  First attempt (`clearance = 0.25`, as literally specified in
+  WP8_VERIFICATION.md): 20-rep check gave **0 violations at d=10** but **1
+  of 200 points (1 rep of 20) inside a realised ball at d=3**. Root cause:
+  the per-point `rnorm(d, 0, 0.15)` jitter, added AFTER placing the point at
+  the clearance-satisfying `t_i`, occasionally erodes the margin on its own.
+  Second attempt (`clearance = 0.45`, no redraw): 20-rep check now **0/20 at
+  both d=3 and d=10**, but a larger, more sensitive 100-rep check (not part
+  of the mandatory bar, run for due diligence) found 6/1000 points (d=3) and
+  3/1000 points (d=10) still inside. Third attempt (kept `clearance = 0.45`,
+  added a bounded redraw of the jitter alone, up to 50 attempts, whenever the
+  candidate lands inside either realised ball -- the mean position `t_i` is
+  never moved): 100-rep check **0/1000 at both d=3 and d=10**. Adopted. The
+  `n_inside` column (sentinel `-1` for `local`/`collective`, where it does
+  not apply) is retained in the main CSV as a per-row diagnostic in case a
+  future, larger run still exhibits a rare residual case.
+- `collective`: standoff corrected to `mu1 + u * (s1 + 0.5)` with `s1` the
+  realised jitter draw (was the fixed nominal `r_max = 1.3`); this replaces
+  the protocol's original "just past the cluster's typical edge" language
+  above with the measured, realised-radius-relative stand-off.
+
+**86 cross-cutting.** Seed canonicalisation (`CANON` built from the fixed
+`type x d in {3,10}` grid, `s_i <- match(setting_id, CANON$setting_id)`,
+independent of any settings/dims subset passed on the command line); a
+`run [settings] [reps] [budget] [methods]` mode (settings: comma list of
+`CANON$setting_id` or `ALL`); cluster rows written as one block per cell via
+`append_result()`'s multi-row-list form; a `--summarize` mode (means and SEs
+of TPR/TNR/BA/F2 per `type x d x method`, `status=="ok"` filter, de-dup on
+`(setting_id, d, rep, method)` keeping the last row). `--smoke` now covers
+all 6 canonical settings (both d, all three types), one rep, all 9 default
+methods -- confirmed non-zero TPR for LOF on `local` (TPR=1.0 at both d=3
+and d=10) and done-skip on re-invocation.
+
+**85, 87, 88 cross-cutting and per-script fixes.** See the further dated
+notes below (appended as each script was fixed) for the equal-mass binning
+(85), density-matched third cluster and RK/NND rep-count split (87), and
+`gauss_equal`/DBSCAN-note/MST-sweep additions (88).
+
 ## Open questions / choices not fully specified by the revision plan
 
 Recorded here rather than silently decided, per the declare-before-look
