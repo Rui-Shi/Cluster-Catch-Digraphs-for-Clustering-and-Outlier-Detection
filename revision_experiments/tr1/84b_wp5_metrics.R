@@ -152,6 +152,13 @@ for (ds in ORDER) {
 }
 long <- do.call(rbind, rows)
 
+# Recommended (verifier pass, 2026-09-05): keep the per-seed/per-k long frame
+# on disk, not just in memory -- it is what the seed-stability and oracle-k
+# read-offs below are computed from, and it should be inspectable independent
+# of this script's console/markdown summary.
+OUT_LONG <- file.path(WP5, "wp5_metrics_long.csv")
+write.csv(long, OUT_LONG, row.names = FALSE)
+
 # seeded methods: mean over 5 seeds (82_wp4_metrics.R's own convention)
 seed_summary <- do.call(rbind, lapply(c("DIF", "LUNAR"), function(m) {
   g <- long[long$method == m, ]
@@ -219,6 +226,17 @@ wp4_slim <- data.frame(
 
 main <- rbind(highd_slim, wp4_slim)
 main <- main[order(match(main$dataset, ORDER), main$method), ]
+
+# Recommended (verifier pass, 2026-09-05): the merge above combines two
+# independently-built tables (84's own MCCD+baseline output and the WP4
+# competitor summary); assert the merge did not silently duplicate a
+# (dataset, method) cell before writing it out as the study's table.
+dup <- duplicated(main[, c("dataset", "method")])
+if (any(dup)) {
+  stop(sprintf("84b_wp5_metrics.R: %d duplicated (dataset, method) row(s) after merge: %s",
+               sum(dup), paste(sprintf("%s/%s", main$dataset[dup], main$method[dup]), collapse = "; ")))
+}
+
 write.csv(main, OUT_MAIN, row.names = FALSE)
 
 say("=== WP5: real data above d = 21 -- merged per-(dataset, method) table ===\n")
@@ -234,6 +252,38 @@ if (nrow(na_rows) > 0) {
   say("\n=== n/a rows (RK envelope degenerate at this dimension) ===\n")
   saydf(na_rows[, c("dataset", "method", "reason")])
 }
+
+# ---------------------------------------------------------------------------
+# 3 (recommended, verifier pass 2026-09-05). R3.3 and R1.3 read-offs on the
+# four WP5 data sets, same comparisons as 82_wp4_metrics.R's sections 6-7,
+# extended above d = 21 (WP5_PROTOCOL.md S9's last bullet).
+# ---------------------------------------------------------------------------
+gv <- function(ds, m, col) {
+  v <- main[[col]][main$dataset == ds & main$method == m]
+  if (length(v) == 0) NA else v[1]
+}
+
+say("\n=== R3.3 read-off: oracle-k mutual-kNN vs SUN-MCCD / UN-MCCD (T1) ===\n")
+mk_oracle <- oracle_k[oracle_k$method == "MutualKNN", ]
+r33 <- do.call(rbind, lapply(ORDER, function(ds) data.frame(
+  dataset = ds,
+  k_star = mk_oracle$k[mk_oracle$dataset == ds],
+  mkNN_F2 = r3(mk_oracle$F2[mk_oracle$dataset == ds]),
+  mkNN_BA = r3(mk_oracle$BA[mk_oracle$dataset == ds]),
+  SUN_F2 = gv(ds, "SUN-MCCD", "F2"), SUN_BA = gv(ds, "SUN-MCCD", "BA"),
+  UN_F2 = gv(ds, "UN-MCCD", "F2"), UN_BA = gv(ds, "UN-MCCD", "BA"),
+  stringsAsFactors = FALSE)))
+saydf(r33)
+
+say("\n=== R1.3 read-off: GLOSH (HDBSCAN) vs SU-MCCD / SUN-MCCD (T1) ===\n")
+gl <- plain[plain$method == "GLOSH", ]
+r13 <- do.call(rbind, lapply(ORDER, function(ds) data.frame(
+  dataset = ds,
+  GLOSH_F2 = r3(gl$F2[gl$dataset == ds]), GLOSH_BA = r3(gl$BA[gl$dataset == ds]),
+  SU_F2 = gv(ds, "SU-MCCD", "F2"), SU_BA = gv(ds, "SU-MCCD", "BA"),
+  SUN_F2 = gv(ds, "SUN-MCCD", "F2"), SUN_BA = gv(ds, "SUN-MCCD", "BA"),
+  stringsAsFactors = FALSE)))
+saydf(r13)
 
 close(CON)
 md <- c("# WP5 findings -- real data above d = 21",

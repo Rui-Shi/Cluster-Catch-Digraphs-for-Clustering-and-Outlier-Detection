@@ -138,6 +138,29 @@ def scale_R_safe_matrix(X, name):
 
 
 # ---------------------------------------------------------------------------
+# manifest degeneracy columns (WP5 R4, verifier pass, 2026-09-05) -- measured
+# on the CSV actually written to results/tr1/wp5/data/, not on the raw source
+# matrix, since that is the data every downstream script (84, 84b) reads.
+# n_cols_zero_madn: columns whose robust MAD collapses to zero (the
+# scale_R_safe SD/constant-fallback trigger, WP5_PROTOCOL.md S3).
+# n_cols_constant: columns that are literally constant (zero variance),
+# which is a stricter subset of n_cols_zero_madn's constant_fallback branch.
+# ---------------------------------------------------------------------------
+
+def degeneracy_counts(X):
+    n, d = X.shape
+    n_zero_madn = 0
+    n_constant = 0
+    for j in range(d):
+        col = X[:, j]
+        if r_mad(col) == 0:
+            n_zero_madn += 1
+        if np.all(col == col[0]):
+            n_constant += 1
+    return n_zero_madn, n_constant
+
+
+# ---------------------------------------------------------------------------
 # label polarity: source (1=outlier, 0=regular) -> repo (1=regular, 0=outlier)
 # ---------------------------------------------------------------------------
 
@@ -223,12 +246,17 @@ def handle_letter(skip_download):
     y_repo = flip_to_repo_polarity(y_source)
     X_scaled = scale_R_safe_matrix(X, "letter")
     write_csv(X_scaled, y_repo, DATA_DIR / "letter.csv")
+    n_zero_madn, n_constant = degeneracy_counts(X_scaled)
+    log(f"  [letter] on written CSV: {n_zero_madn}/{dd} columns zero-MADN, "
+        f"{n_constant}/{dd} columns constant")
 
     return dict(
         dataset="letter", n=n, d=dd, n_outliers=n_outliers,
         contamination=n_outliers / n,
         preprocessing="robust median/MADN per column (scale_R_safe, SD/constant fallback)",
         source=LETTER_URL, subsample_seed="",
+        n_cols_zero_madn=n_zero_madn, n_cols_constant=n_constant,
+        scaling_reference="self",
     )
 
 
@@ -262,6 +290,9 @@ def handle_mnist(skip_download):
 
     X_scaled = scale_R_safe_matrix(X_sub, "mnist")
     write_csv(X_scaled, y_sub, DATA_DIR / "mnist.csv")
+    n_zero_madn, n_constant = degeneracy_counts(X_scaled)
+    log(f"  [mnist] on written CSV: {n_zero_madn}/{dd} columns zero-MADN, "
+        f"{n_constant}/{dd} columns constant")
 
     return dict(
         dataset="mnist", n=MNIST_SUBSAMPLE_N, d=dd, n_outliers=n_outliers_sub,
@@ -269,6 +300,8 @@ def handle_mnist(skip_download):
         preprocessing="robust median/MADN per column (scale_R_safe, SD/constant fallback), "
                       "computed on the n=1000 subsample",
         source=MNIST_URL, subsample_seed=MNIST_SUBSAMPLE_SEED,
+        n_cols_zero_madn=n_zero_madn, n_cols_constant=n_constant,
+        scaling_reference="n=1000 subsample",
     )
 
 
@@ -289,12 +322,21 @@ def handle_reused(name, src_csv, out_name, expected):
     df.to_csv(out_path, index=False)
     log(f"  copied {src_path} -> {out_path} unchanged ({n} rows x {d+1} cols incl. label)")
 
+    X_written = df.iloc[:, :-1].to_numpy(dtype=float)
+    n_zero_madn, n_constant = degeneracy_counts(X_written)
+    log(f"  [{name}] on written CSV: {n_zero_madn}/{d} columns zero-MADN, "
+        f"{n_constant}/{d} columns constant")
+    scaling_reference = ("full n=3062 before subsampling" if name == "musk"
+                          else "self")
+
     return dict(
         dataset=name, n=n, d=d, n_outliers=n_outliers, contamination=n_outliers / n,
         preprocessing=f"unchanged from results/datasets_csv/{src_csv} "
                       "(robust median/MADN per column, existing SD/constant fallback)",
         source=f"results/datasets_csv/{src_csv} (see that folder's own manifest.csv for provenance)",
         subsample_seed=20260716 if name == "musk" else "",
+        n_cols_zero_madn=n_zero_madn, n_cols_constant=n_constant,
+        scaling_reference=scaling_reference,
     )
 
 
@@ -317,6 +359,7 @@ def main():
     manifest = pd.DataFrame(rows, columns=[
         "dataset", "n", "d", "n_outliers", "contamination", "preprocessing",
         "source", "subsample_seed",
+        "n_cols_zero_madn", "n_cols_constant", "scaling_reference",
     ])
     manifest_path = DATA_DIR / "manifest.csv"
     manifest.to_csv(manifest_path, index=False)

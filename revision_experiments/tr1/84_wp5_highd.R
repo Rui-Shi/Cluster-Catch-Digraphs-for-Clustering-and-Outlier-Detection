@@ -99,6 +99,7 @@ if (SMOKE) {
   DATASETS <- "arrhythmia"
   METHODS  <- "LOF"
   OUT_CSV  <- file.path(WP5_DIR, "smoke", "wp5_highd_smoke.csv")
+  DONE_CSV <- file.path(WP5_DIR, "smoke", "wp5_highd_smoke_done.csv")
   cat("84_wp5_highd.R: --smoke set -- forcing datasets=arrhythmia, methods=LOF, ",
       "output redirected to results/tr1/wp5/smoke/\n", sep = "")
 } else {
@@ -107,6 +108,7 @@ if (SMOKE) {
   DATASETS <- strsplit(ds_arg, ",")[[1]]
   METHODS  <- strsplit(me_arg, ",")[[1]]
   OUT_CSV  <- file.path(WP5_DIR, "wp5_highd_results.csv")
+  DONE_CSV <- file.path(WP5_DIR, "wp5_highd_done.csv")
 }
 
 stopifnot(all(DATASETS %in% ALL_DATASETS))
@@ -208,7 +210,7 @@ TIMEOUT_SEC <- as.numeric(Sys.getenv("WP5_HIGHD_TIMEOUT_SEC", "540"))
 
 run_cell <- function(dataset, method) {
   keys <- c(dataset = dataset, method = method)
-  if (has_result(OUT_CSV, keys)) {
+  if (isTRUE(has_result(DONE_CSV, keys))) {
     cat(sprintf("[skip, already recorded] %s x %s\n", dataset, method))
     return(invisible(NULL))
   }
@@ -226,6 +228,7 @@ run_cell <- function(dataset, method) {
                      d))
     stopifnot(identical(names(row), ROW_COLS))
     append_result(OUT_CSV, row)
+    append_result(DONE_CSV, as.list(keys))
     cat(sprintf("  %-11s x %-9s d=%-3d | n/a: %s\n", dataset, method, d, row$reason))
     return(invisible(row))
   }
@@ -277,6 +280,7 @@ run_cell <- function(dataset, method) {
 
   stopifnot(identical(names(cell_result), ROW_COLS))
   append_result(OUT_CSV, cell_result)
+  append_result(DONE_CSV, as.list(keys))
   invisible(cell_result)
 }
 

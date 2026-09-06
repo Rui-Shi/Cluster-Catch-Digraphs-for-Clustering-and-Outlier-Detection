@@ -122,6 +122,17 @@ SD/constant fallback, already applied before the CSVs were written. Nothing
 in `84a_wp5_fetch_convert.py` re-scales them; it only re-verifies (n, d,
 n_outliers) against §1's table and renames the file.
 
+> **Appended note, 2026-09-05 (WP5 R6, verifier pass):** "copied byte-for-byte"
+> above overstates it. `handle_reused()` loads each source CSV with
+> `pandas.read_csv` and writes it back out with `DataFrame.to_csv` — the
+> feature and label *values* are unchanged, but the bytes on disk are not
+> guaranteed identical (pandas' float formatting/serialization can differ
+> from whatever produced the original file, and line endings are not
+> verified either). The correct description is **value-identical,
+> re-serialized by pandas**, not byte-for-byte. Nothing about the gate logic
+> or the (n, d, n_outliers) verification changes; only this sentence's
+> precision does.
+
 ## 4. Methods and settings
 
 ### 4.1 The four proposed detectors
@@ -207,6 +218,30 @@ probe table), and the table file path — this is the number the n/a rows and
 the caveated rows both cite, and it is what answers R1.2 with a measurement
 rather than an assertion.
 
+> **Appended note, 2026-09-05 (deviation forced by an implementation
+> failure, discovered during the run).** letter (d=32) does not, in fact,
+> produce a caveated U-MCCD/SU-MCCD row as declared above. Both cells error
+> deterministically: `Error in integrate(integrand, 0, acos(t/2)) : a limit
+> is NA or NaN`, raised from `Kest.f.edge()`'s Ripley's-K edge-correction
+> integral, reached via
+> `RUMCCD_outlier -> RKCCD_correct_quant -> rccd.clustering_correct_quantile
+> -> ccd.Kest.edge.quantile -> Kest.f.edge -> sapply/lapply -> integrate`
+> (full traceback captured, not merely observed as a crash). mnist (d=100)
+> does not hit this failure — both of its RK-based rows complete and carry
+> the declared caveat. The mechanism is consistent with §5's own explanation
+> (51.276% zero quantiles at d=32 is enough to produce a degenerate geometry
+> feeding the edge-correction integral a `t` outside `acos`'s domain), but
+> it manifests as a hard error rather than a caveated number at this
+> dimension specifically. This script does not attempt-then-catch-and-round
+> the failure into a caveated result — the run's own `84_wp5_highd.R`
+> `tryCatch` records it faithfully as `status = "error"`. No fix is applied
+> here: `Kest.f.edge()` lives under `R/` and `RUMCCD_outlier()` under
+> `methods/`, both out of scope for this WP. See `WP5_FINDINGS.md` for the
+> reported consequence — the d=32 RK-family row in R1.8's literal band is
+> `error`, not a number, revising the "one degradation curve" framing above:
+> the actual d=32/100/166/274 status sequence is error/caveated-ok/n-a/n-a
+> for U-MCCD and SU-MCCD, not caveated-ok/caveated-ok/n-a/n-a.
+
 ## 6. Decisions this protocol makes that the revision plan and inventory left open
 
 - **Musk runs at n=1000, not the full n=3062.** The revision plan's WP5 table
@@ -258,6 +293,14 @@ competitors run against the WP5 data folder and write into the WP5 results
 tree instead of WP4's. The exact diff is recorded in the WP5 hand-off report,
 not duplicated here.
 
+> **Appended note, 2026-09-05 (WP5 R6, verifier pass):** "`84b_wp5_metrics.R`
+> calls the modified script" above is imprecise — `84b_wp5_metrics.R` does
+> not invoke `81_wp4_baselines.py` itself; it only *reads* the score files
+> `81` writes under `results/tr1/wp5/scores/`. `81` must be run separately,
+> to completion (`--status` reporting 0 remaining), before `84b` is run —
+> `84b` hard-errors on a missing score file rather than launching `81` to
+> produce it.
+
 ## 8. Outputs
 
 ```
@@ -271,6 +314,16 @@ results/tr1/wp5/wp5_metrics_main.csv                        84b's merged per-(da
 results/tr1/wp5/WP5_FINDINGS.md                             84b's narrative summary
 results/tr1/wp5/smoke/                                      --smoke outputs for 84 and 81 (proof-of-wiring only, not results)
 ```
+
+> **Appended note, 2026-09-05 (WP5 R6, verifier pass):** "all 17 methods" in
+> the `wp5_metrics_main.csv` row above (and the identical phrase at
+> `84b_wp5_metrics.R:35`) undercounts the row count. The 4 proposed + 5
+> original baselines + 8 WP4 competitors are 17 *methods*, but three of the
+> eight competitors (HDBSCAN/GLOSH, OPTICS, mutual-kNN) are each reported
+> under **two** rows per data set — a T1-thresholded row and a separate
+> native-label row (`HDBSCAN-noise`, `OPTICS-noise`, `MutualKNN-m0`) — so the
+> merged table carries **20 rows per data set**, not 17. Nothing about which
+> cells are computed changes; only the row count this note corrects.
 
 `results/` is gitignored in this nested repo; only this protocol file and the
 scripts that implement it are committed.
@@ -290,3 +343,17 @@ scripts that implement it are committed.
   WP4 look like on these four higher-d sets, following the same structure as
   `82_wp4_metrics.R`'s sections 6-7, since the same eight competitors are
   present and the question does not stop mattering above d=21.
+
+> **Appended note, 2026-09-05 (WP5 R3, verifier pass):** a precision that
+> matters for how this WP's band-coverage claim should be read. R1.8 names a
+> literal band, "20 < d < 50" (the gap between the current Section 6 ceiling
+> of d=21 and the paper's claimed degradation onset at d>=50). Of this WP's
+> four data sets, **only letter (d=32) falls inside that literal band.**
+> mnist (d=100), musk (d=166), and arrhythmia (d=274) all sit above it and
+> extend the degradation curve past d=50, not within it. So this WP answers
+> R1.8 with **one point inside the named band plus a three-point degradation
+> trajectory beyond it**, not with four points spanning the band — the
+> manuscript text must not imply four in-band observations. The protocol
+> pre-commits, now, to reporting whatever letter's cell actually shows,
+> whichever direction it goes, rather than choosing after the run which
+> framing to use.
