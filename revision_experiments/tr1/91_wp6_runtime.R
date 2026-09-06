@@ -124,6 +124,22 @@ cat(sprintf("[config] mode=%s grid=%s reps=%d force=%s threads=%d\n",
 # ---------------------------------------------------------------------------
 idle_check <- function() {
   self_pid <- Sys.getpid()
+  # On Windows, `Rscript.exe` is a launcher that spawns the actual R process, so
+  # Sys.getpid() is the CHILD pid and the launcher itself shows up in tasklist as
+  # an "other" Rscript.exe. Found 2026-09-06: the check could never pass. Walk
+  # the parent chain (PowerShell CIM) and exclude every ancestor pid too.
+  ancestors <- integer(0)
+  pid_cur <- self_pid
+  for (k in 1:4) {
+    pp <- tryCatch(suppressWarnings(as.integer(system2(
+      "powershell", args = c("-NoProfile", "-Command",
+        sprintf("(Get-CimInstance Win32_Process -Filter \"ProcessId=%d\").ParentProcessId", pid_cur)),
+      stdout = TRUE, stderr = FALSE))), error = function(e) NA_integer_)
+    pp <- pp[!is.na(pp)]
+    if (length(pp) == 0 || pp[1] <= 0) break
+    ancestors <- c(ancestors, pp[1]); pid_cur <- pp[1]
+  }
+  exclude <- c(self_pid, ancestors)
   out <- tryCatch(system2("tasklist", args = c("/FO", "CSV", "/NH"),
                           stdout = TRUE, stderr = TRUE),
                    error = function(e) character(0))
@@ -139,7 +155,7 @@ idle_check <- function() {
                        error = function(e) NULL)
     if (is.null(fields) || length(fields) < 2) next
     img <- trimws(fields[[1]]); pid <- suppressWarnings(as.integer(fields[[2]]))
-    if (is.na(pid) || pid == self_pid) next
+    if (is.na(pid) || pid %in% exclude) next
     if (img %in% watch) hits[[length(hits) + 1L]] <- c(image = img, pid = pid)
   }
   if (length(hits) == 0) {
