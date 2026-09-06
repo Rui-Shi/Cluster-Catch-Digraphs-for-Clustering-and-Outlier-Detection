@@ -277,7 +277,7 @@ MST,minimum cluster size to avoid outlier flag,2% of n,fixed constant,main text 
 ODIN,k,round(sqrt(n)),fixed rule (function of n; label-free),main text sec:rand-clust-proc
 ODIN,in-degree threshold T,round(n^(1/3)),fixed rule (function of n; label-free),main text sec:rand-clust-proc
 iForest,number of trees,1000,fixed constant (library-recommended),main text sec:rand-clust-proc
-iForest,sub-sample size,256,fixed constant (library-recommended),main text sec:rand-clust-proc
+iForest,sub-sample size,min(256; n),fixed constant (library-recommended),main text sec:rand-clust-proc
 iForest,outlier-score threshold,0.55,fixed constant,main text sec:rand-clust-proc
 "U-MCCD; SU-MCCD (RK-based)",MC-SRT significance level alpha,"step function of d: 1% (d<10), 0.1% (d>=10)",fixed rule (function of d; pre-declared; label-free),"main text sec:Uniform_clusters; tab:alpha_real for realized values"
 "U-MCCD; SU-MCCD",KS-CCD density-search tolerance tau,0.01,fixed constant (sensitivity checked over 1e-3 to 1; WP2a),Supplementary Material algorithm boxes
