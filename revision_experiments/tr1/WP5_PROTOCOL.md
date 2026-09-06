@@ -357,3 +357,67 @@ scripts that implement it are committed.
 > pre-commits, now, to reporting whatever letter's cell actually shows,
 > whichever direction it goes, rather than choosing after the run which
 > framing to use.
+
+> **Appended note, 2026-09-05 (WP5 follow-up, deviation decided POST-HOC —
+> after seeing the S5 crash, not before it).** The letter (d=32) RK
+> integration error recorded in S5's appended note above is not a fluke of
+> `Kest.f.edge()`'s edge-correction integral in general — it has a specific,
+> confirmed cause in the input data. `letter.csv` (as written by
+> `84a_wp5_fetch_convert.py` from the ADBench mirror, before any change
+> described here) contains **exactly 2 duplicated feature rows** —
+> `sum(duplicated(X)) == 2` — i.e. 2 pairs of exact-duplicate points (row
+> indices 373/476 and 94/384 in the written CSV), for 4 duplicate-involved
+> rows total. **Both duplicated pairs are labelled regular** (repo
+> convention: `label == 1`), not outlier — no outlier point is involved.
+> `letter.csv`'s minimum non-zero pairwise Euclidean distance is 0.2248303;
+> the duplicate pairs sit at distance exactly 0. mnist, musk, and arrhythmia
+> were checked the same way and contain **zero** duplicated feature rows —
+> they do not exhibit this crash and are not affected by anything in this
+> note.
+>
+> Mechanism, confirmed (not merely inferred from the traceback already
+> logged under S5): a zero-distance pair hands `Kest.f.edge()` a candidate
+> covering-ball radius of exactly 0. That zero radius makes the ratio `M/sc`
+> evaluate to `NaN` (0/0-shaped), and `NaN` propagates into the integration
+> bound `integrate(integrand, 0, acos(t/2))`, which is exactly the "a limit
+> is NA or NaN" error S5 recorded. This is a strictly different mechanism
+> from the acos-domain concern raised when S5's crash was first discovered:
+> no traced call had `M/sc > 2` — the failure is a zero radius, not an
+> out-of-domain acos argument.
+>
+> **This paper's own real-data collection is duplicate-free by convention
+> already.** The 16 data sets used in Section 6 are drawn from the DAMI
+> "withoutdupl" file family (ODDS/ELKI), which deduplicates by construction.
+> letter is the one WP5 data set sourced from ADBench instead, and ADBench's
+> mirror does not deduplicate. Applying the collection's own existing
+> duplicate-free convention to letter — drop exact duplicate feature rows,
+> keep the first occurrence of each duplicate pair — is therefore not a new
+> rule invented to route around a crash; it is the rule every other data set
+> in this study already satisfies, applied to the one set that happens not
+> to.
+>
+> **This is disclosed as a POST-HOC deviation, not a pre-declared one.** The
+> decision to deduplicate letter was made after seeing the `integrate()`
+> crash, specifically to explain and resolve it — S1-S9 above did not
+> anticipate or declare deduplication as a preprocessing step for any WP5
+> data set. The remedy applied is: remove the 2 duplicate rows (keep first
+> occurrence), giving `n = 1598`, `n_outliers = 100` unchanged (both removed
+> rows were regular points), contamination rising marginally from 6.25% to
+> 100/1598 = 6.258%. A one-off diagnostic run of `U-MCCD` (registry wrapper,
+> study settings, `min.cls` not applicable to U-MCCD) on the deduplicated
+> n=1598 matrix completed without error in ~45s: TPR=0.320, TNR=0.899,
+> BA=0.610, F2=0.274 — confirming the fix resolves the crash before the full
+> rerun (§ below) is launched.
+>
+> **Both the original-run rows (n=1600, with the crash) and the
+> deduplicated rerun (n=1598) are kept on disk.** The original letter rows
+> from `wp5_highd_results.csv`/`wp5_highd_done.csv`/`fit_log.csv` and the
+> original `results/tr1/wp5/scores/letter_*` files are preserved under
+> `results/tr1/wp5/letter_with_duplicates/` before the live files are
+> stripped of their letter rows and letter is rerun end to end
+> (`84_wp5_highd.R`, `81_wp4_baselines.py`, `84b_wp5_metrics.R`) against the
+> deduplicated data. `84a_wp5_fetch_convert.py` is amended to perform this
+> deduplication as a declared step for letter only, recording `n_raw` and
+> `n_duplicates_removed` in `manifest.csv` for every data set (0 for the
+> three sets unaffected). See `WP5_FINDINGS.md` for the full before/after
+> comparison across all 18 non-RK methods.

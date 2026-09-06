@@ -18,8 +18,15 @@ What it does, per WP5_PROTOCOL.md:
      no file in this repo pre-declares an authoritative mnist outlier count).
   3. Flips label polarity source (1=outlier) -> repo convention (1=regular,
      0=outlier).
-  4. Applies scale_R_safe() column-wise to letter (full n) and to mnist
-     (after subsampling) -- the numpy reimplementation of
+  3a. Drops exact duplicate feature rows from letter only (keep first
+      occurrence), per the WP5_PROTOCOL.md post-hoc note appended
+      2026-09-05: letter (ADBench source, not deduplicated) contains 2
+      duplicate pairs that make Kest.f.edge()'s edge-correction integral
+      receive a zero covering-ball radius and crash. mnist/musk/arrhythmia
+      have none and are unaffected; this step is declared to apply to
+      letter only, not generalized to the other three sets.
+  4. Applies scale_R_safe() column-wise to letter (post-dedup n) and to
+     mnist (after subsampling) -- the numpy reimplementation of
      revision_experiments/tr2/02_load_data.R:142-153, matching R's mad()
      default constant (1.4826) exactly.
   5. Draws mnist's n=1000 contamination-preserving subsample, seed 20260905
@@ -147,6 +154,38 @@ def scale_R_safe_matrix(X, name):
 # which is a stricter subset of n_cols_zero_madn's constant_fallback branch.
 # ---------------------------------------------------------------------------
 
+# ---------------------------------------------------------------------------
+# letter-only duplicate removal (WP5_PROTOCOL.md, appended note 2026-09-05,
+# post-hoc): drop exact duplicate feature rows, keep first occurrence. This
+# is declared as a step for letter only -- mnist/musk/arrhythmia pass through
+# with n_duplicates_removed = 0, verified rather than assumed.
+# ---------------------------------------------------------------------------
+
+def drop_exact_duplicates(X, y_repo, name):
+    n_raw = X.shape[0]
+    _, first_idx, counts = np.unique(X, axis=0, return_index=True, return_counts=True)
+    keep = np.sort(first_idx)
+    n_removed = n_raw - keep.shape[0]
+    if n_removed > 0:
+        log(f"  [{name}] dropped {n_removed} exact duplicate feature row(s) "
+            f"(kept first occurrence); n {n_raw} -> {keep.shape[0]}")
+    else:
+        log(f"  [{name}] no exact duplicate feature rows found (n={n_raw})")
+    return X[keep, :], y_repo[keep], n_raw, n_removed
+
+
+def count_duplicates(X, name):
+    """Verification-only (no removal): confirms a data set has 0 exact
+    duplicate feature rows, per the WP5_PROTOCOL.md post-hoc note's claim
+    that mnist/musk/arrhythmia are unaffected -- checked, not assumed."""
+    n = X.shape[0]
+    _, counts = np.unique(X, axis=0, return_counts=True)
+    n_dup = n - counts.shape[0]
+    log(f"  [{name}] duplicate check (verification only, no rows dropped): "
+        f"{n_dup} duplicate row(s) among n={n}")
+    return n_dup
+
+
 def degeneracy_counts(X):
     n, d = X.shape
     n_zero_madn = 0
@@ -243,20 +282,32 @@ def handle_letter(skip_download):
     if np.isnan(X).any():
         raise RuntimeError("letter: NaN in raw feature matrix")
 
-    y_repo = flip_to_repo_polarity(y_source)
-    X_scaled = scale_R_safe_matrix(X, "letter")
+    y_repo_raw = flip_to_repo_polarity(y_source)
+    # letter-only dedup, post-hoc (WP5_PROTOCOL.md appended note, 2026-09-05):
+    # 2 exact duplicate feature rows crash Kest.f.edge() with a zero covering
+    # radius. Dedup before scaling, so scale_R_safe's median/MAD are computed
+    # on the same n=1598 matrix the study actually runs on (the same order
+    # mnist uses: subsample, then scale on the subsample).
+    X_dedup, y_repo, n_raw, n_dup_removed = drop_exact_duplicates(X, y_repo_raw, "letter")
+    n_final = X_dedup.shape[0]
+    n_outliers_final = int((y_repo == 0).sum())
+
+    X_scaled = scale_R_safe_matrix(X_dedup, "letter")
     write_csv(X_scaled, y_repo, DATA_DIR / "letter.csv")
     n_zero_madn, n_constant = degeneracy_counts(X_scaled)
     log(f"  [letter] on written CSV: {n_zero_madn}/{dd} columns zero-MADN, "
         f"{n_constant}/{dd} columns constant")
 
     return dict(
-        dataset="letter", n=n, d=dd, n_outliers=n_outliers,
-        contamination=n_outliers / n,
-        preprocessing="robust median/MADN per column (scale_R_safe, SD/constant fallback)",
+        dataset="letter", n=n_final, d=dd, n_outliers=n_outliers_final,
+        contamination=n_outliers_final / n_final,
+        preprocessing="robust median/MADN per column (scale_R_safe, SD/constant fallback), "
+                      f"computed post-dedup (n_raw={n_raw} -> n={n_final}, "
+                      f"{n_dup_removed} exact duplicate row(s) dropped, WP5_PROTOCOL.md post-hoc note)",
         source=LETTER_URL, subsample_seed="",
         n_cols_zero_madn=n_zero_madn, n_cols_constant=n_constant,
         scaling_reference="self",
+        n_raw=n_raw, n_duplicates_removed=n_dup_removed,
     )
 
 
@@ -288,6 +339,14 @@ def handle_mnist(skip_download):
     )
     n_outliers_sub = int((y_sub == 0).sum())
 
+    n_dup_mnist = count_duplicates(X_sub, "mnist")
+    if n_dup_mnist > 0:
+        raise RuntimeError(
+            f"mnist: {n_dup_mnist} exact duplicate feature row(s) found in the n=1000 "
+            "subsample -- WP5_PROTOCOL.md's post-hoc note claims mnist is unaffected; "
+            "this needs the same treatment as letter if it fires, not a silent 0."
+        )
+
     X_scaled = scale_R_safe_matrix(X_sub, "mnist")
     write_csv(X_scaled, y_sub, DATA_DIR / "mnist.csv")
     n_zero_madn, n_constant = degeneracy_counts(X_scaled)
@@ -302,6 +361,7 @@ def handle_mnist(skip_download):
         source=MNIST_URL, subsample_seed=MNIST_SUBSAMPLE_SEED,
         n_cols_zero_madn=n_zero_madn, n_cols_constant=n_constant,
         scaling_reference="n=1000 subsample",
+        n_raw=MNIST_SUBSAMPLE_N, n_duplicates_removed=0,
     )
 
 
@@ -326,11 +386,19 @@ def handle_reused(name, src_csv, out_name, expected):
     n_zero_madn, n_constant = degeneracy_counts(X_written)
     log(f"  [{name}] on written CSV: {n_zero_madn}/{d} columns zero-MADN, "
         f"{n_constant}/{d} columns constant")
+    n_dup_reused = count_duplicates(X_written, name)
+    if n_dup_reused > 0:
+        raise RuntimeError(
+            f"[{name}]: {n_dup_reused} exact duplicate feature row(s) found -- "
+            "WP5_PROTOCOL.md's post-hoc note claims only letter is affected; "
+            "this needs the same treatment as letter if it fires, not a silent 0."
+        )
     scaling_reference = ("full n=3062 before subsampling" if name == "musk"
                           else "self")
 
     return dict(
         dataset=name, n=n, d=d, n_outliers=n_outliers, contamination=n_outliers / n,
+        n_raw=n, n_duplicates_removed=0,
         preprocessing=f"unchanged from results/datasets_csv/{src_csv} "
                       "(robust median/MADN per column, existing SD/constant fallback)",
         source=f"results/datasets_csv/{src_csv} (see that folder's own manifest.csv for provenance)",
@@ -360,6 +428,7 @@ def main():
         "dataset", "n", "d", "n_outliers", "contamination", "preprocessing",
         "source", "subsample_seed",
         "n_cols_zero_madn", "n_cols_constant", "scaling_reference",
+        "n_raw", "n_duplicates_removed",
     ])
     manifest_path = DATA_DIR / "manifest.csv"
     manifest.to_csv(manifest_path, index=False)
