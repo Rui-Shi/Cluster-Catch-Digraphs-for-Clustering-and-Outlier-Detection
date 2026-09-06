@@ -1,9 +1,10 @@
 # WP9 protocol — SUN-MCCD component ablation (R3.10a)
 
 Written before `wp9_sun_variants.R` / `89_wp9_ablation.R`, per the cut-list
-scope (REVISION_PLAN §WP9, cut list item 1): **three toggles**, one dimension
-pair, on SUN-MCCD only. Four toggles were originally planned; Holm correction
-is dropped (below).
+scope (REVISION_PLAN §WP9, cut list item 1): **three toggles**, on SUN-MCCD
+only, run across the full plan's grid of two dimensions (d = 3, 10) and two
+generators (uniform, Gaussian) -- four settings, not a single dimension pair.
+Four toggles were originally planned; Holm correction is dropped (below).
 
 ## Dropped toggle: Holm correction
 
@@ -15,11 +16,19 @@ their own per-statistic Monte Carlo lower α-quantiles and rejects CSR if
 **either** falls below its critical value — the marginal per-statistic level
 is exactly what the quantile-table filenames (`..._{95,99,999}%.RData`)
 encode. There is nothing to toggle: "uncorrected" is what the code already
-does, and "Holm-corrected" would require p(1) ≤ α/2 tables that do not exist
-(only the marginal-α tables were ever generated). Building a Holm variant
-would mean fabricating a second quantile schedule at α/2 that no other part
-of the paper uses, which is out of scope for an ablation of the *shipped*
-method. This toggle is dropped and the response letter states why.
+does, and for two hypotheses (mean, median) Holm's step-down procedure
+reduces to a single comparison round at α/2 -- reject CSR if the smaller of
+the two p-values is below α/2, which for the code's either/or rule is
+exactly the same decision as running the existing rule at the α/2 quantile
+table. That α/2 table exists at d = 3 (the α/2 = 5% table, filename suffix
+`95`) but not at d = 10 (α/2 = 0.05%, no `9995`-suffixed table was ever
+generated -- only `{95,99,999}` exist). More to the point, the effect of
+halving α is already measured directly: the WP2(a) α sweep
+(`42_wp2a_alpha_sweep.R`) varies α across the same marginal-quantile tables
+this method already uses. So a dedicated Holm toggle here would be
+redundant with that sweep, not impossible to build -- it is dropped for
+that reason, and the response letter states it this way rather than as an
+unavailable-table claim.
 
 ## The three toggles
 
@@ -89,6 +98,17 @@ appearing *more* significant than it should (smaller simulated clouds have
 larger NN-distance quantiles), which is exactly the kind of silent unit
 error CLAUDE.md's δ₀/Δ and S_min notes warn about. It is not left as a free
 parameter.
+
+**Caveat.** The Monte Carlo envelope is built by simulating i.i.d. CSR
+clouds (`NNDest.simpois.lower.quant()`). With centre removal on, the
+observed cloud genuinely is a set of points free to fall anywhere, matching
+that null. With centre removal off, one of the j (or size) observed points
+is not free -- it sits, by construction, exactly at the ball's own centre,
+since it is the point the ball was grown around. Reading the size-matched
+envelope entry corrects the *count* but not this placement constraint, so
+the j-point i.i.d. CSR envelope is an approximate null for the centre-off
+variant, not an exact one. `centre_off`'s results should be read with that
+in mind.
 
 **Descend branch** (`UN_CCD.R:265-279`), for completeness even though the
 5-cell grid above never combines `centre_off` with `descend`.

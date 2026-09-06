@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# revision_experiments/89_wp9_ablation.R
+# revision_experiments/tr1/89_wp9_ablation.R
 #
 # WP9 (R3.10a): SUN-MCCD component ablation driver. See
 # revision_experiments/tr1/WP9_PROTOCOL.md for the full design and
@@ -52,6 +52,7 @@ CELL_TIMEOUT <- 300   # per-cell hard cap (s)
 run_one_cell <- function(setting_row, variant_id, rep_id) {
   seed <- WP9_BASE_SEED + rep_id
   s <- setting_row
+  q_label <- nn_quant_label_paper_SUN(s$d)
   dat <- if (s$generator == "uniform") gen_uniform(seed, s$n_nominal, s$d, s$contam)
          else                          gen_gaussian(seed, s$n_nominal, s$d, s$contam)
   X <- dat$X; n <- dat$n; n0 <- dat$n0
@@ -68,29 +69,35 @@ run_one_cell <- function(setting_row, variant_id, rep_id) {
     stopifnot(length(res$score) == n, !anyNA(res$score))
     m <- evaluate(Y, res$score, REAL_DATA_THRESHOLDS[["SUN-MCCD"]])
     list(m = m, score = res$score, cluster = res$cluster, radii = res$radii,
-         status = "ok", note = NA_character_)
+         unassigned_rows = res$unassigned_rows, singleton_lost_rows = res$singleton_lost_rows,
+         status = "ok", note = "-")
   }, error = function(e) {
     setTimeLimit(cpu = Inf, elapsed = Inf, transient = FALSE)
     msg <- conditionMessage(e)
     list(m = setNames(rep(NA_real_, 4), c("TPR", "TNR", "BA", "F2")),
          score = NULL, cluster = NULL, radii = NULL,
+         unassigned_rows = NA_integer_, singleton_lost_rows = NA_integer_,
          status = if (grepl("elapsed time limit|reached elapsed time limit", msg)) "timeout" else "error",
          note = msg)
   })
   wall <- as.numeric(difftime(Sys.time(), t0, units = "secs"))
 
   n_clusters <- if (is.null(out$cluster)) NA_integer_ else length(unique(stats::na.omit(out$cluster)))
-  radii_vec  <- if (is.null(out$radii)) NULL else out$radii[[1]]
+  radii_vec  <- if (is.null(out$radii)) NULL else as.numeric(unlist(out$radii))
   mean_radius <- if (is.null(radii_vec)) NA_real_ else mean(radii_vec)
+  sd_radius   <- if (is.null(radii_vec)) NA_real_ else sd(radii_vec)
 
   list(
     setting_id = s$setting_id, generator = s$generator, d = s$d, n = n, n0 = n0,
     rep = rep_id, seed = seed, variant_id = variant_id,
     stat = v$stat, remove_centre = v$remove_centre, method = v$method,
+    quant_label = q_label, min_cls = MIN_CLS, low_num = LOW_NUM,
     TPR = unname(out$m[["TPR"]]), TNR = unname(out$m[["TNR"]]),
     BA = unname(out$m[["BA"]]), F2 = unname(out$m[["F2"]]),
     n_flagged = if (is.null(out$score)) NA_integer_ else sum(out$score == 1),
-    n_clusters = n_clusters, mean_radius = mean_radius,
+    n_clusters = n_clusters, mean_radius = mean_radius, sd_radius = sd_radius,
+    unassigned_rows = if (is.null(out$unassigned_rows)) NA_integer_ else out$unassigned_rows,
+    singleton_lost_rows = if (is.null(out$singleton_lost_rows)) NA_integer_ else out$singleton_lost_rows,
     elapsed_sec = wall, status = out$status, note = out$note,
     timestamp = format(Sys.time()),
     score = out$score, radii_vec = radii_vec   # not written to CSV; used by --smoke's bit-identity check
@@ -202,11 +209,36 @@ do_run <- function(n_reps = 100L, budget = 480) {
 # ---------------------------------------------------------------------------
 do_summarize <- function() {
   if (!file.exists(OUT_CSV)) { cat("no results yet\n"); return(invisible(NULL)) }
-  df <- read.csv(OUT_CSV, stringsAsFactors = FALSE)
-  df <- df[df$status == "ok", ]
+  df_all <- read.csv(OUT_CSV, stringsAsFactors = FALSE)
+
+  # de-duplicate on (setting_id, variant_id, rep), keeping the LAST row for
+  # each key -- a restart after a G: drive drop can leave an earlier partial
+  # attempt's row in the file alongside the successful re-run's row for the
+  # same cell; the later append is the one that should count.
+  key <- paste(df_all$setting_id, df_all$variant_id, df_all$rep, sep = "\r")
+  df_all <- df_all[!duplicated(key, fromLast = TRUE), ]
+
+  n_error_tab <- table(df_all$setting_id[df_all$status != "ok"],
+                        df_all$variant_id[df_all$status != "ok"])
+
+  df <- df_all[df_all$status == "ok", ]
   rows <- list()
-  for (sid in unique(df$setting_id)) for (vid in unique(df$variant_id[df$setting_id == sid])) {
+  for (sid in unique(df_all$setting_id)) for (vid in unique(df_all$variant_id[df_all$setting_id == sid])) {
     sub <- df[df$setting_id == sid & df$variant_id == vid, ]
+    n_err <- tryCatch(n_error_tab[sid, vid], error = function(e) 0L)
+    if (is.null(n_err) || length(n_err) == 0 || is.na(n_err)) n_err <- 0L
+    if (nrow(sub) == 0) {
+      rows[[length(rows) + 1]] <- data.frame(
+        setting_id = sid, variant_id = vid,
+        stat = NA_character_, remove_centre = NA, method = NA_character_,
+        n_reps = 0L,
+        TPR_mean = NA_real_, TPR_sd = NA_real_, TNR_mean = NA_real_, TNR_sd = NA_real_,
+        BA_mean = NA_real_, BA_sd = NA_real_, F2_mean = NA_real_, F2_sd = NA_real_,
+        n_clusters_mean = NA_real_, n_clusters_sd = NA_real_,
+        mean_radius_mean = NA_real_, mean_radius_sd = NA_real_,
+        n_error = n_err, stringsAsFactors = FALSE)
+      next
+    }
     rows[[length(rows) + 1]] <- data.frame(
       setting_id = sid, variant_id = vid,
       stat = sub$stat[1], remove_centre = sub$remove_centre[1], method = sub$method[1],
@@ -215,8 +247,9 @@ do_summarize <- function() {
       TNR_mean = mean(sub$TNR), TNR_sd = sd(sub$TNR),
       BA_mean  = mean(sub$BA),  BA_sd  = sd(sub$BA),
       F2_mean  = mean(sub$F2),  F2_sd  = sd(sub$F2),
-      n_clusters_mean = mean(sub$n_clusters),
-      mean_radius_mean = mean(sub$mean_radius),
+      n_clusters_mean = mean(sub$n_clusters), n_clusters_sd = sd(sub$n_clusters),
+      mean_radius_mean = mean(sub$mean_radius), mean_radius_sd = sd(sub$mean_radius),
+      n_error = n_err,
       stringsAsFactors = FALSE)
   }
   S <- do.call(rbind, rows)
