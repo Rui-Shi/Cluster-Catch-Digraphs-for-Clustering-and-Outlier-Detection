@@ -619,3 +619,6 @@ expected columns with no errors. The real grid was **not** run by this
 fixer session, per the task brief — WP8 background R jobs were still the
 stated reason to stay off the machine, and this session's job was the
 required-changes list, not the grid itself.
+
+## Dated note (2026-09-06 04:40, coordinator)
+During the production run, one manuscript-writing agent was active on the same machine: a single short Python table-generation script at its start and one pdflatex/bibtex build sequence (single-threaded, under 15 minutes total) at its end. No R process and no other compute ran. The idle check passed at launch; this overlap is disclosed as the only known deviation from the idle-machine requirement.
