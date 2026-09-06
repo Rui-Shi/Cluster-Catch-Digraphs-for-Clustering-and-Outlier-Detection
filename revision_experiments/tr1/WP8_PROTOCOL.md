@@ -656,6 +656,16 @@ methods that reward local density) rather than a construction defect. The
 100-replicate production run is what will characterise the true detection
 rate; the single smoke rep is a pipeline sanity check, not a result.
 
+## Dated appended note (2026-09-05, round 3, Opus confirmation before the 86 launch)
+
+Three corrections to the round-2 bridge record above; documentation only, no code change.
+
+1. **The "end gap / chain spacing" column measures nothing.** The chain is an even interpolation, so an endpoint's within-chain nearest-neighbour distance equals the interior spacing by construction and the ratio is about 1 whatever the geometry. The bridging criterion in WP8_REVERIFICATION.md is end gap divided by the *host cluster's* median NN distance. Re-measured over 30 fresh seeds (777000 + 1000 d + r): d = 3 mean 1.57, max 3.67, 21 of 60 endpoints at or below 1.3 (**criterion not met**); d = 10 mean 1.18, 45 of 60 (met). At d = 3 the chain does not reach either cluster: the arm is a detached filament between the clusters rather than a bridge. n_inside 0/30 at both d and axis span 0.80 of the realised gap reproduce the round-2 values.
+2. **The chain is the densest object in the data, and it is exactly S_min-sized.** Chain-point NN over the whole data set is 0.098 (d = 3) and 0.145 (d = 10) against 0.204 and 0.640 for regular points, a ratio of 0.50 and 0.23; 93% (d = 3) and 100% (d = 10) of a chain point's five nearest neighbours are other chain points. With n1 + n2 + n0 = 199 the minimum-cluster-size threshold is round(0.05 x 199) = 10, and n0 = 10, so SU-MCCD and SUN-MCCD are obliged by their declared `min.cls` rule to accept the chain as a cluster and return TPR = 0. This is stated before the numbers exist: a near-zero TPR on this arm is the ground truth contradicting the method's minimum-cluster-size semantics, not a detection failure, and the write-up must say so. Ten evenly spaced points cannot span a realised gap of about 1.0 without being denser than the host clusters (that would need a span of about 1.8 at d = 3 and 5.8 at d = 10), so the limitation is structural to the design, not a tuning slip.
+3. **The smoke gate "non-zero TPR for at least one method at both d" is waived for bridge.** The shipped smoke gives 0 of 9 methods at both d; an 8-rep diagnostic gave a non-zero TPR for some method in 5 of 8 reps at d = 3 and 3 of 8 at d = 10, and a 7-rep re-check gave 3 of 7 at d = 3. Detection on this arm is a boundary effect, not discrimination, and is reported as such.
+
+Launched 2026-09-05 after these edits: `Rscript revision_experiments/tr1/86_wp8_outlier_types.R ALL 100 99999999` (8 settings x 100 reps x 9 methods = 7200 cells).
+
 ## Open questions / choices not fully specified by the revision plan
 
 Recorded here rather than silently decided, per the declare-before-look

@@ -3,7 +3,7 @@
 | Script | Verdict |
 |---|---|
 | 85 boundary FP | PASS — launched 2026-09-05 (background, `ALL 100 99999999`) |
-| 86 outlier types | PASS WITH REQUIRED CHANGES (bridge construct collapsed; local arm framing) |
+| 86 outlier types | fixed `be784c5`; round-3 confirmation: code PASS, HOLD lifted after protocol corrections; launched 2026-09-05 |
 | 87 small cluster | PASS WITH REQUIRED CHANGES (one-line CLI fix at 87:275) |
 | 88 CSR violation | PASS — launched 2026-09-05 (background, RK at 40 reps then the rest at 100, one process) |
 
@@ -22,7 +22,7 @@ orthogonal complement of the cluster axis**, no redraw (perpendicular moves stri
 distance from both centres, so `n_inside = 0` is analytic). Record in the protocol the acceptance
 criteria and measured values: n_inside = 0 over 100 reps at both d; axis span >= 60% of the realised
 gap; within-chain NN <= host cluster median NN; end gap <= ~1.3x that spacing; smoke at both d with
-non-zero TPR for at least one method.
+non-zero TPR for at least one method. **Waived 2026-09-05 (round-3 confirmation): the shipped smoke gives 0/9 at both d; see WP8_PROTOCOL.md round-3 note.**
 
 **local (framing).** Acceptance ratio holds (mean 6.20 at d=3, 2.58 at d=10) but the point sits 0.49
 beyond the host cluster's realised radius (0.40): it is a sparse-outer-shell outlier, not one
