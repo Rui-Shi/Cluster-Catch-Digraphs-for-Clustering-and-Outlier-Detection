@@ -149,7 +149,11 @@ local({
 # Configuration
 # ---------------------------------------------------------------------------
 
-S_MIN           <- 0.0625        # proportion of n (manuscript value)
+S_MIN           <- 0.05          # proportion of n; the label-free constant adopted
+                                 # for every data set and for the simulations
+                                 # (WP2c, 2026-08-10). Was 0.0625 in the
+                                 # 2026-08-09 run, whose outputs are kept
+                                 # under the un-suffixed filenames.
 SIGMA           <- 0.01          # jitter scale, in per-feature SD units
 DROP_FRAC       <- 0.01          # leave-p-out fraction
 N_REPS          <- 50
@@ -158,9 +162,9 @@ CELL_TIMEOUT    <- 420           # seconds
 MIN_CLS_METHODS <- c("SU-MCCD", "SUN-MCCD")
 ALL_METHODS     <- c("U-MCCD", "SU-MCCD", "UN-MCCD", "SUN-MCCD")
 
-OUT_CSV     <- here::here("revision_experiments/results/tr1/wp2b_seed_stability.csv")
-SUMMARY_CSV <- here::here("revision_experiments/results/tr1/wp2b_stability_summary.csv")
-DET_CSV     <- here::here("revision_experiments/results/tr1/wp2b_determinism.csv")
+OUT_CSV     <- here::here("revision_experiments/results/tr1/wp2b_seed_stability_smin005.csv")
+SUMMARY_CSV <- here::here("revision_experiments/results/tr1/wp2b_stability_summary_smin005.csv")
+DET_CSV     <- here::here("revision_experiments/results/tr1/wp2b_determinism_smin005.csv")
 ANCHOR_CSV  <- here::here("revision_experiments/results/tr1/final_comparison.csv")
 
 args <- commandArgs(trailingOnly = TRUE)
@@ -432,6 +436,32 @@ build_summary <- function() {
   for (k in names(chr)) df[[k]][is.na(df[[k]])] <- ""
 
   anchor <- read.csv(ANCHOR_CSV, stringsAsFactors = FALSE)
+
+  # final_comparison.csv is a 2026-08-09 artefact and is STALE for two cells
+  # that were recomputed afterwards: hepatitis x SUN-MCCD (the d = 19 NN
+  # quantile table was regenerated at a genuine 0.1% level on 2026-08-13; the
+  # CSV still holds the pre-repair 0.446/0.686/0.714/0.657) and vertebral x
+  # SU-MCCD (S_min 0.0625 -> 0.05, WP2c).  The manuscript is the authority, so
+  # the affected rows are overridden here from SupplementaryMaterial.tex
+  # Tables SM-tab:Real_Data_Result2.1 / 2.2.  Nothing else in the CSV differs
+  # from the supplement for the four WP2(b) data sets (checked cell by cell).
+  ANCHOR_OVERRIDE <- data.frame(
+    dataset = c("hepatitis", "vertebral"),
+    method  = c("SUN-MCCD", "SU-MCCD"),
+    F2      = c(0.469, 0.129),
+    BA      = c(0.705, 0.493),
+    TPR     = c(0.857, 0.133),
+    TNR     = c(0.552, 0.852),
+    stringsAsFactors = FALSE)
+  for (i in seq_len(nrow(ANCHOR_OVERRIDE))) {
+    hit <- anchor$dataset == ANCHOR_OVERRIDE$dataset[i] &
+           anchor$method  == ANCHOR_OVERRIDE$method[i]
+    if (any(hit)) {
+      for (k in c("F2", "BA", "TPR", "TNR")) anchor[[k]][hit] <- ANCHOR_OVERRIDE[[k]][i]
+      cat(sprintf("  [anchor override] %s x %s <- supplement values\n",
+                  ANCHOR_OVERRIDE$dataset[i], ANCHOR_OVERRIDE$method[i]))
+    }
+  }
 
   rows <- list()
   for (ds in unique(df$dataset)) {
