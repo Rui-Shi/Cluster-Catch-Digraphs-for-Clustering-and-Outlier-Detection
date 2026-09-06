@@ -345,10 +345,44 @@ Smoke-verified: 180-row summary from a single-cell (9-method) smoke run,
 mass bins visibly near-equal-count (18-20 of ~189 points each) vs width
 bins piling into bin 10, done-file skip confirmed on re-invocation.
 
-**87, 88 per-script fixes.** See the further dated notes below (appended as
-each script was fixed) for the density-matched third cluster and RK/NND
-rep-count split (87), and the `gauss_equal`/DBSCAN-note/MST-sweep additions
-(88).
+**87 fixes.** Seed canonicalisation against the fixed `SIZES x c(3,10)`
+CANON grid (`setting_id = "m{m}_d{d}"`) and a
+`run [settings] [reps] [budget] [msel]` mode (`settings`: comma list of
+CANON setting_id or "ALL"; `msel`: an additional comma list of `m` values
+that further restricts whichever settings were already selected, for quick
+chunking by size without composing full setting_id strings).
+**Density-matched cluster 3** (deviation from the original declaration,
+which gave cluster 3 the same `runif(1,R_MIN,R_MAX)` radius as clusters
+1-2): `data3 <- rpoisball.unit(m,d) * (runif(1,R_MIN,R_MAX) * (m/n1)^(1/d))
++ mu3` -- volume scales as radius^d, so scaling the radius by `(m/n1)^(1/d)`
+holds cluster 3's point density (points per unit volume) equal to cluster
+1's at every `m`, instead of confounding "smaller" with "sparser" (measured
+NN-spacing ratio vs background at d=3 under the OLD generator: 4.42 at m=2,
+2.26 at m=10, 1.71 at m=20 -- decreasing, i.e. genuinely getting sparser,
+not just smaller). Added `n_unassigned_third` (`sum(is.na(res$cluster
+[third_idx]))`) and `singleton_lost` (`res$singleton_lost_rows`, sentinel
+`-1L` if absent -- never `NA_integer_`) columns, since `frac_flagged` alone
+conflates "cluster 3 recognised as its own cluster but voted minority"
+with "cluster 3 never claimed by any cluster at all"
+(`mccd_translate()` scores unclaimed rows 0, same as a legitimate
+majority-connected point). Added a WP7 cluster file,
+`87_small_cluster_clusters.csv` (schema `m,d,rep,seed,method,row_index,
+true_cluster,detected_cluster`, `true_cluster` in `{1,2,3}`, one block per
+cell) -- this supersedes the original protocol's "No WP7 cluster file for
+this experiment" (experiment 3's own per-point cluster/label detail is
+exactly what WP8_VERIFICATION.md asked to expose). Added `--summarize`
+(mean/SE of `frac_flagged` and `n_clusters` per `m x d x method`, plus
+`frac_reps_ncls3` = the fraction of reps with `n_clusters == 3`).
+**Cost decision:** RK methods (U-MCCD, SU-MCCD, ~11 s/cell at d=3, 96% of
+the experiment's total cost) run 50 reps; NND methods (UN-MCCD, SUN-MCCD)
+run 100 reps -- `REPS_BY_FAMILY` in the script, overridable uniformly via
+the `reps` run-mode argument for manual chunking. Smoke-verified (m=10,
+d=3, all 4 methods): correct columns on both the main and WP7 cluster
+files, main-CSV skip confirmed on re-invocation, `--summarize` produces
+one row per method with the expected fields.
+
+**88 per-script fixes.** See the further dated note below (appended after
+88 was fixed) for the `gauss_equal`/DBSCAN-note/MST-sweep additions.
 
 ## Open questions / choices not fully specified by the revision plan
 
