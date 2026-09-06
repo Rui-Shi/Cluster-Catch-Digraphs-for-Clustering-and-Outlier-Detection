@@ -219,3 +219,36 @@ mutual-kNN 5 + SNN 5 = **24 cells**, so **384 cells** over sixteen data sets.
 Work is ordered smallest n first so that partial results are usable early. A
 method that fails on a data set is logged with its error and the sweep
 continues; a failure is reported, never dropped.
+
+---
+
+## Run record — appended 2026-09-05, after the sweep
+
+No deviation from the declarations above was needed. All **384 cells completed,
+0 failures**, in a single 328 s invocation of `tr1/81_wp4_baselines.py`
+(logged total fit time 335 s across cells). Outputs: 384 score files, 112
+native-label files (HDBSCAN 16, OPTICS 16, mutual-kNN 80), every one of length
+n with no non-finite entry and no constant score vector.
+
+Fit times per method, summed over all sixteen data sets — **indicative only,
+another R job was running on this machine throughout**: DIF 165 s, LUNAR 125 s,
+OPTICS 39 s, ECOD 1.9 s, SNN 1.8 s, mutual-kNN 1.4 s, HDBSCAN 0.7 s, COPOD
+0.02 s. Nothing here is a scalability measurement; WP6 owns that.
+
+Three observations that the downstream metric computation needs to know about,
+all recorded in the `note` column of `fit_log.csv`:
+
+- **HDBSCAN finds no cluster at all on hepatitis and WDBC** — every point is
+  labelled noise. The GLOSH scores are still informative there (non-constant,
+  and on hepatitis they separate the outliers at AUC 0.76), but the
+  threshold-free native-label variant degenerates to flagging 100% of the data
+  on those two sets. That is HDBSCAN's own default behaviour at
+  `min_cluster_size=5`, not a defect in the wrapper, and it should be reported
+  as such rather than tuned away.
+- **OPTICS noise fractions are extreme in both directions**: 0 noise points on
+  waveform (a single cluster covers everything) against 88% noise on wilt and
+  89% on thyroid. The threshold-free OPTICS variant is therefore near-useless
+  as a detector on several sets, which is itself the finding.
+- **Exactly one infinite reachability per data set** — the first point in the
+  OPTICS ordering, as expected. The declared 1.01 × max-finite fill touches one
+  row per data set and cannot reorder anything else.
