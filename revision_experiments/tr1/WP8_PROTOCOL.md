@@ -381,8 +381,134 @@ d=3, all 4 methods): correct columns on both the main and WP7 cluster
 files, main-CSV skip confirmed on re-invocation, `--summarize` produces
 one row per method with the expected fields.
 
-**88 per-script fixes.** See the further dated note below (appended after
-88 was fixed) for the `gauss_equal`/DBSCAN-note/MST-sweep additions.
+**88 fixes.** Seed canonicalisation against the fixed
+`generator x d in {3,10}` CANON (now 4 generators, 8 settings, see below)
+and a `run [settings] [reps] [budget] [methods]` mode. Added `gauss_equal`
+(`MASS::mvrnorm(n, rep(0,d), diag(d))`, sigma=1 in every coordinate) so
+`gauss_unequal - gauss_equal` isolates ANISOTROPY specifically; the
+original `gauss_unequal - uniform_control` contrast confounded anisotropy
+with the fact that any Gaussian (equal-variance included) has a non-uniform
+radial density, unlike the uniform control. DBSCAN's successful rows now
+carry `note = "oracle contamination = 0; flag rate 0 by construction"`
+instead of the generic `"-"` (it is fed `Y = rep(1,n)`, so its internal
+oracle-contamination-based quantile is 0 and its flag rate is 0 by
+construction, not by detection -- footnote this wherever DBSCAN's 88 numbers
+are tabulated). Added an MST threshold sweep, `MST@1.05/1.40/1.60/2.00`
+(the fixed `MST` row already covers 1.2, so it is not duplicated in the
+sweep) -- `--summarize` reports, per `(generator, d)` with `generator !=
+uniform_control`, the fixed-1.2 flag rate/delta alongside the sweep member
+that minimizes `|delta_vs_control_mean|` (closest match to the CSR
+control's own flag rate = least distorted by that generator's CSR
+violation), labelled as "best" but never replacing the always-reported
+1.2 row. Cluster rows written as one block per cell (200 rows, `true_cluster`
+always 1). `--summarize` adds the paired `generator - uniform_control`
+delta at the same `(d, rep)` with its own SE, alongside the per-`(generator,
+d, method)` mean/SE of `flag_rate`.
+
+**88 cost finding (2026-09-05, measured while debugging a stalled
+foreground smoke run -- important for scheduling the full grid).** The
+9-method-cell benchmark in WP8_VERIFICATION.md (23.3 s at d=3, U/SU-MCCD
+11 s each) was measured on 85/86's TWO-CLUSTER settings and does NOT
+transfer to 88's single-population generators. U-MCCD and SU-MCCD (both
+RK-based; their density-calibration bracket search, `connected.ksccd.m`,
+brackets the largest density keeping the core connected -- see `CLAUDE.md`)
+are 8-140x slower here because a single homogeneous population gives the
+bracket search no natural connectivity break to lock onto. Measured
+one-core cost, n=200, d=3, one call each (U-MCCD; SU-MCCD tracked
+separately and closely matched, both listed): `uniform_control` 137.9 s /
+138.4 s; `beta_gradient` 34.1 s / 32.6 s; `gauss_equal` 43.2 s / 43.1 s;
+`gauss_unequal` 8.6 s / 8.7 s. At d=10 all four generators dropped to
+3.2-3.7 s for U-MCCD (SUN/UN-MCCD were already fast, ~1.3 s, at both d).
+Consequence for the full-grid estimate: at d=3, the U-MCCD+SU-MCCD pair
+alone costs approximately 138+34+43+9 ≈ 224 s PER METHOD across the 4
+generators, i.e. roughly 448 s (~7.5 min) per rep at d=3 for the RK pair,
+against d=10's well under 30 s/rep for the same pair -- d=3 dominates 88's
+cost, the reverse of 85/86/87's own d=3-cheaper-than-d=10 pattern. See
+"Revised full-grid cost estimate" below.
+
+**Schema and chunking interface, consolidated (applies to 85, 86, 87, 88).**
+Every script now: (1) builds a fixed `CANON` settings table from the full
+declared grid at load time, independent of any CLI selection, and derives
+each setting's `s_i` via `match(setting_id, CANON$setting_id)` before
+computing `seed <- BASE_SEED + 100000*s_i + rep` -- a setting's seed is
+therefore invariant to how a run is chunked; (2) exposes a
+`run [settings] [reps] [budget] [methods]` CLI (positional; `settings` is a
+comma list of `CANON$setting_id` or `"ALL"`; 87 additionally exposes a 4th
+`msel` argument, a comma list of `m` values, since its `settings` selector
+alone cannot express "every d for these sizes" as compactly); (3) writes
+every per-cell block (bin rows, cluster rows) via one multi-row
+`append_result()` call rather than a row-by-row loop; (4) implements
+`--summarize`, filtering `status=="ok"` and de-duplicating retried cells on
+the row's own natural key (see the 85 dated note above for the one
+script -- 85 -- where that key must include the bin columns, not just the
+cell-identifying columns); (5) guards its CLI-dispatch tail with
+`if (!isTRUE(getOption("wp8.no_main", FALSE)))`, so the generator/settings
+internals can be `source()`d (with that option set) for ad hoc checks --
+e.g. the 86 acceptance check and the 88 cost finding above -- without
+triggering a live run. **NA convention:** every payload column that
+`has_result()` can see (i.e. every non-key column of a main-CSV row, a done
+row, or -- since it is checked defensively even though nothing gates on it
+-- a WP7 cluster row's `detected_cluster`) must never be `NA` on a
+successful row, because `has_result()` treats ANY such `NA` as a
+sign of a partial/truncated write and will re-run the cell on restart.
+Two sentinels are used throughout instead: the string `"-"` for a `note`
+field with nothing to say (an empty string round-trips through
+`read.csv()`'s `type.convert()` as logical `NA` on an all-empty column,
+which is exactly what trips the guard), and the integer `-1L` for a numeric
+diagnostic that does not apply to a given row (86's `n_inside` for
+`local`/`collective`; 85's `unassigned_rows` and 87's `singleton_lost` for
+the five baseline methods, which have no cluster-assignment concept at
+all). The one place `NA` is used deliberately and safely is
+`detected_cluster` in the WP7 cluster files (`85_boundary_fp_clusters.csv`,
+`86_outlier_types_clusters.csv`, `87_small_cluster_clusters.csv`,
+`88_csr_violation_clusters.csv`) -- it means "this point was never claimed
+by any cluster" (`mccd_translate()`'s unassigned bucket) and is safe there
+because nothing calls `has_result()` against a cluster file; only the main
+metrics file (and 85's done file) gate skip/restart.
+
+## Revised full-grid cost estimate (2026-09-05, one core, post-fix)
+
+WP8_VERIFICATION.md's own figures ("As written: 85 2.1h, 86 3.1h, 87 6.7h,
+88 3.1h (15h); with block writes and the 87 decision above, roughly 11h")
+assumed a uniform ~23.3 s/7.3 s (d=3/d=10) 9-method-cell cost measured on
+TWO-CLUSTER settings. That transfers cleanly to 85 and 86 (same two-cluster
+generators) and, combined with the 87 cost decision (RK methods 50 reps,
+NND methods 100 reps, cutting 87's dominant RK cost roughly in half), gives:
+
+- **85**: 4 settings x 100 reps, ~23.3 s/rep at d=3, ~7.3 s/rep at d=10 ->
+  (2 x 100 x 23.3 + 2 x 100 x 7.3) s ~= 1.7 h. Block writes and the extra
+  10 mass-bin rows/cell add negligible time (same detector calls; the bin
+  computation itself is O(n)).
+- **86**: 6 settings x 100 reps at the same per-cell cost -> ~2.9-3.1 h; the
+  rewritten `local`/`bridge`/`collective` generators call the same
+  `rpoisball.unit`/`mvrnorm` primitives at the same n, so their cost is
+  unchanged from the original estimate.
+- **87**: ~3.3-3.5 h with the RK-50/NND-100 rep split (down from 6.7 h at a
+  uniform 100 reps), plus the new WP7 cluster-file block writes (negligible).
+
+**88 does NOT fit this model and is far more expensive than
+WP8_VERIFICATION.md's 3.1 h estimate.** U-MCCD/SU-MCCD (both RK-based) are
+8-140x slower than the two-cluster benchmark on 88's SINGLE-POPULATION
+generators at d=3 (see the cost finding above) -- their density-calibration
+bracket search has no natural connectivity break to lock onto in a
+homogeneous population. Per-setting-per-rep cost at d=3, summing all 13
+methods (measured RK pair + ~5 s for the NND pair, 5 baselines and the
+4-member MST sweep together, all comparatively negligible):
+`uniform_control` ~281 s, `beta_gradient` ~72 s, `gauss_equal` ~92 s,
+`gauss_unequal` ~23 s; at d=10 all four generators drop to ~12 s/rep. Over
+100 reps and 4 generators: d=3 alone totals roughly **13 h**; d=10 adds
+roughly 1.4 h. **Revised 88 full-grid estimate: ~14-15 h, one core** --
+close to five times the original estimate, and larger than 85+86+87
+combined (~7.9-7.5 h). Revised WP8 total (one core, all four scripts):
+roughly **22-23 h**, not "roughly 11h". This is a launch-planning input,
+not a correctness defect -- every measured run above completed and
+returned a sensible (non-degenerate) score; it is simply slow. Two
+mitigations available if the schedule needs it (neither applied here,
+since only the 87 rep-count decision was authorized): parallelise 88 across
+generators (each generator's cost is independent and the existing
+per-cell `has_result()` restart already supports arbitrary interleaving),
+or apply a 87-style reduced-rep decision to 88's RK methods specifically --
+left to the user/coordinator, not decided unilaterally here.
 
 ## Open questions / choices not fully specified by the revision plan
 
