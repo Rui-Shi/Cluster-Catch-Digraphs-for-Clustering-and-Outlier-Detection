@@ -24,6 +24,13 @@
 #
 # Never edits shared/harness.R, wp0_mccd_methods.R, methods/, R/, or any of
 # 85-88 (those are sourced read-only, see load_wp8_env() below).
+#
+# DO NOT START A PRODUCTION RUN BEFORE ALL FOUR WP8 GRIDS (85-88) HAVE
+# FINISHED. An "incomplete"/partial cell written mid-flight (WP8 still
+# appending rows to a cluster file WP7 is reading) is never revisited by
+# WP7's resumable has_result() gating -- it is scored once, from whatever
+# rows existed at read time, and stays that way (WP7_VERIFICATION.md
+# change 5). See WP7_PROTOCOL.md's dated 2026-09-06 note under section 1.
 
 suppressMessages(library(here))
 suppressPackageStartupMessages(library(mclust))
@@ -187,13 +194,24 @@ load_wp8_env <- function(script_id) {
 
 #' Regenerate one cell's data exactly as the WP8 driver would have, using
 #' the recorded seed (never recomputed from CANON's row order). Returns
-#' list(X = <n_reg x d matrix, regular points only>, true_cluster =, n0 =,
-#' n_reg =).
+#' list(X =, true_cluster =, n0 =, n_reg =).
+#'
+#' WP7_VERIFICATION.md change 1 (blocking): for 85/86, X is the FULL
+#' regenerated matrix (n_reg regular rows FOLLOWED BY n0 outlier rows, per
+#' gen_*_boundary()/gen_bridge() etc.'s own `rbind(data1, data2, outlier)`
+#' convention) -- exactly what the WP8 drivers themselves pass to
+#' METHOD_REGISTRY[[method]] (85_wp8_boundary_fp.R / 86_wp8_outlier_types.R,
+#' `X <- dat$X`, no truncation). true_cluster stays regular-points-only
+#' (length n_reg) since that is all the cluster file ever records; the
+#' caller must run DBSCAN/HDBSCAN on the FULL X and subset the returned
+#' labels to seq_len(n_reg) before scoring, mirroring the drivers'
+#' `res$cluster[seq_len(n_reg)]`. 87/88 already generate n_reg-only X (no
+#' contamination in either generator), so this distinction is a no-op there.
 regenerate_cell <- function(script_id, env, generator_or_m, d, seed) {
   if (script_id == "85" || script_id == "86") {
     dat <- env$GENERATORS[[generator_or_m]](seed, env$N_NOMINAL, d, env$CONT)
     n_reg <- dat$n1 + dat$n2
-    list(X = dat$X[seq_len(n_reg), , drop = FALSE],
+    list(X = dat$X,
          true_cluster = dat$true_cluster[seq_len(n_reg)],
          n0 = dat$n0, n_reg = n_reg)
   } else if (script_id == "87") {
@@ -390,7 +408,28 @@ do_run <- function(wp8_dir, out_csv, budget, scripts_sel, smoke) {
       need_hdbscan <- !wp7_done(out_csv, script_id, setting_key, d, rep_id, "HDBSCAN")
       if (!need_dbscan && !need_hdbscan) next
 
-      ref_rows <- df[df$setting_key == setting_key & df$d == d & df$rep == rep_id, ]
+      # WP7_VERIFICATION.md change 2 (blocking): a done cell can have a
+      # short MCCD block (missing cluster rows after a crash between the
+      # metrics row and the cluster block, WP8_REVERIFICATION.md) that is
+      # flagged in loaded$incomplete_keys (section 2). Such a method's rows
+      # are excluded from BOTH the reference choice and the cross-method
+      # true_cluster check below -- an incomplete block's row_index set is
+      # a strict subset, and comparing it directly against a complete
+      # block's true_cluster vector fails identical() on length alone, which
+      # previously wrote DBSCAN/HDBSCAN as status="error" for the WHOLE cell
+      # even though the cell's other (complete) methods verify cleanly.
+      ref_rows_all <- df[df$setting_key == setting_key & df$d == d & df$rep == rep_id, ]
+      ref_rows <- ref_rows_all[!(ref_rows_all$cell_key %in% loaded$incomplete_keys), ]
+      excluded_incomplete_methods <- setdiff(unique(ref_rows_all$method), unique(ref_rows$method))
+      if (nrow(ref_rows) == 0) {
+        # Every method present for this (setting,d,rep) is incomplete -- no
+        # clean reference exists. Fall back to the unfiltered rows (best
+        # available information) rather than crash on ref_methods[1] being
+        # NA; this is expected to be unreached in practice (WP7_VERIFICATION
+        # .md records exactly one short block across all of WP8's output,
+        # and other methods for that same cell are complete).
+        ref_rows <- ref_rows_all
+      }
       ref_methods <- unique(ref_rows$method)
       ref_one <- ref_rows[ref_rows$method == ref_methods[1], ]
       ref_one <- ref_one[order(ref_one$row_index), ]
@@ -419,6 +458,10 @@ do_run <- function(wp8_dir, out_csv, budget, scripts_sel, smoke) {
           }
         }
       }
+      if (length(excluded_incomplete_methods)) {
+        verify_notes <- c(verify_notes, sprintf("excluded incomplete method(s) from reference/cross-check: %s",
+                                                 paste(excluded_incomplete_methods, collapse = ",")))
+      }
       verify_note <- if (length(verify_notes)) paste(verify_notes, collapse = "; ") else "-"
 
       if (!verify_ok) {
@@ -431,16 +474,26 @@ do_run <- function(wp8_dir, out_csv, budget, scripts_sel, smoke) {
         next
       }
 
+      # WP7_VERIFICATION.md change 1 (blocking): X is now the FULL
+      # regenerated matrix for 85/86 (n_reg regular rows + n0 outlier rows,
+      # regular rows first -- see regenerate_cell()'s comment above). DBSCAN
+      # and HDBSCAN are run on the FULL matrix, exactly as the WP8 drivers
+      # ran the MCCD methods on it, and the returned labels are subset to
+      # seq_len(n_reg) before scoring -- mirroring the drivers' own
+      # `res$cluster[seq_len(n_reg)]`. For 87/88, X already has exactly
+      # n_reg rows (no contamination in either generator), so the subset is
+      # a no-op there.
       X <- regen$X; true_cluster <- regen$true_cluster; row_index <- seq_len(regen$n_reg)
       cont <- if (script_id %in% c("85", "86")) regen$n0 / (regen$n0 + regen$n_reg) else 0
 
       if (need_dbscan) {
-        dlab <- tryCatch(run_dbscan_native(X, cont), error = function(e) NULL)
-        scored <- if (is.null(dlab)) {
+        dlab_full <- tryCatch(run_dbscan_native(X, cont), error = function(e) NULL)
+        scored <- if (is.null(dlab_full) || length(dlab_full) != nrow(X)) {
           m <- list(ari = 0, nmi = 0, ami = 0, status = "error", note = "DBSCAN() call failed")
           list(n_reg = length(true_cluster), n_unassigned = 0L, unassigned_frac = 0,
                true_k = meta$true_k, k_hat = 0L, singleton = m, excluded = m)
         } else {
+          dlab <- dlab_full[seq_len(regen$n_reg)]
           wp7_score_pair(row_index, true_cluster, dlab)
         }
         wp7_write_cell(out_csv, script_id, setting_key, d, rep_id, seed, "DBSCAN", scored)
@@ -449,12 +502,15 @@ do_run <- function(wp8_dir, out_csv, budget, scripts_sel, smoke) {
       if (need_hdbscan) {
         tag <- paste(script_id, setting_key, d, rep_id, sep = "_")
         hres <- run_hdbscan_python(X, tag)
-        scored <- if (identical(hres$status, "error")) {
-          m <- list(ari = 0, nmi = 0, ami = 0, status = "error", note = hres$note)
+        scored <- if (identical(hres$status, "error") || length(hres$labels) != nrow(X)) {
+          m <- list(ari = 0, nmi = 0, ami = 0, status = "error",
+                     note = if (identical(hres$status, "error")) hres$note else
+                       sprintf("hdbscan label count %d != nrow(X) %d", length(hres$labels), nrow(X)))
           list(n_reg = length(true_cluster), n_unassigned = 0L, unassigned_frac = 0,
                true_k = meta$true_k, k_hat = 0L, singleton = m, excluded = m)
         } else {
-          wp7_score_pair(row_index, true_cluster, hres$labels)
+          hlab <- hres$labels[seq_len(regen$n_reg)]
+          wp7_score_pair(row_index, true_cluster, hlab)
         }
         wp7_write_cell(out_csv, script_id, setting_key, d, rep_id, seed, "HDBSCAN", scored)
       }
@@ -472,11 +528,22 @@ do_summarize <- function(out_csv, summ_metrics_csv, khat_csv) {
   key <- paste(df$script, df$setting_key, df$d, df$rep, df$method, df$unassigned_treatment, sep = "\r")
   df <- df[!duplicated(key, fromLast = TRUE), ]
   df_ok <- df[df$status == "ok", ]
+  # WP7_VERIFICATION.md change 5 (non-blocking): unassigned_frac_mean is
+  # averaged over ok + degenerate rows, not ok alone -- unassigned_frac is a
+  # real, meaningful count for a degenerate cell (e.g. <2 points assigned)
+  # even though that cell's ari/nmi/ami are sentinel 0s under status =
+  # "degenerate". "incomplete"/"error" rows are still excluded: their
+  # unassigned_frac is either not comparable (incomplete: computed from a
+  # partial row set) or a bare 0 sentinel (error), not a real observation.
+  df_frac <- df[df$status %in% c("ok", "degenerate"), ]
 
   se <- function(x) if (length(x) > 1) stats::sd(x) / sqrt(length(x)) else NA_real_
 
   rows <- list()
   for (grp in split(df_ok, list(df_ok$script, df_ok$setting_key, df_ok$d, df_ok$method, df_ok$unassigned_treatment), drop = TRUE)) {
+    frac_grp <- df_frac[df_frac$script == grp$script[1] & df_frac$setting_key == grp$setting_key[1] &
+                         df_frac$d == grp$d[1] & df_frac$method == grp$method[1] &
+                         df_frac$unassigned_treatment == grp$unassigned_treatment[1], ]
     rows[[length(rows) + 1L]] <- data.frame(
       script = grp$script[1], setting_key = grp$setting_key[1], d = grp$d[1],
       method = grp$method[1], unassigned_treatment = grp$unassigned_treatment[1],
@@ -484,7 +551,7 @@ do_summarize <- function(out_csv, summ_metrics_csv, khat_csv) {
       ari_mean = mean(grp$ari), ari_se = se(grp$ari),
       nmi_mean = mean(grp$nmi), nmi_se = se(grp$nmi),
       ami_mean = mean(grp$ami), ami_se = se(grp$ami),
-      unassigned_frac_mean = mean(grp$unassigned_frac, na.rm = TRUE),
+      unassigned_frac_mean = mean(frac_grp$unassigned_frac, na.rm = TRUE),
       stringsAsFactors = FALSE)
   }
   S <- do.call(rbind, rows); rownames(S) <- NULL
@@ -492,8 +559,13 @@ do_summarize <- function(out_csv, summ_metrics_csv, khat_csv) {
   write.csv(S, summ_metrics_csv, row.names = FALSE)
   cat(sprintf("wrote %s (%d rows)\n", summ_metrics_csv, if (is.null(S)) 0 else nrow(S)))
 
-  # k-hat count table: independent of unassigned_treatment (dedupe first)
-  khat_df <- df[df$unassigned_treatment == "excluded", ]
+  # k-hat count table: independent of unassigned_treatment (dedupe first).
+  # WP7_VERIFICATION.md change 3 (blocking): filter on status == "ok" --
+  # otherwise the sentinel k_hat = 0 written for "error" rows (regeneration/
+  # verification failure) and the partial k_hat from "incomplete" rows (a
+  # done cell missing cluster rows) enter the k-hat distribution as if they
+  # were real observations.
+  khat_df <- df[df$unassigned_treatment == "excluded" & df$status == "ok", ]
   krows <- list()
   for (grp in split(khat_df, list(khat_df$script, khat_df$setting_key, khat_df$d, khat_df$method), drop = TRUE)) {
     tab <- table(grp$k_hat)

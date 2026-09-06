@@ -32,6 +32,22 @@ smoke gate during WP8 development and were launched straight to production,
 per `WP8_REVERIFICATION.md`), so a `--smoke` run processes 86 and 87 and logs
 "no cluster file found" for 85 and 88 rather than failing.
 
+**2026-09-06 correction (WP7_VERIFICATION.md item (e))**: the setting-identity
+column for 87 in the table above claims `setting_key <- sprintf("m%d_d%d", m,
+d)`. That is wrong — the implementation (`wp7_setting_key()` in
+`90_wp7_clustering_quality.R`) sets `setting_key` to the **bare `m`**, with
+`d` carried alongside as its own column and joined in only where a
+combined key is needed downstream (e.g. `cell_key <- paste(setting_key, d,
+rep, method, ...)`). The row above is left as originally declared; this note
+is the correction, not a silent edit of it.
+
+**2026-09-06 note (WP7_VERIFICATION.md change 5, non-blocking)**: WP7 must
+not be started before all four WP8 grids (85-88) have finished. WP7's
+resumable `has_result()` gating scores a cell once, from whatever rows exist
+in the cluster file at read time — an `incomplete` row written mid-flight
+(WP8 still appending to that cluster file) is never revisited on a later
+WP7 rerun, even after WP8 finishes and the cell becomes complete.
+
 ## 2. De-duplication and completeness (per WP8_REVERIFICATION.md's
 "Analysis-time items for all four")
 
@@ -124,6 +140,20 @@ contingency table machinery, so both are computed and written:
   method cannot improve its score by simply declining to commit — and is
   reported alongside `excluded` rather than replacing it.
 
+**2026-09-06 correction (WP7_VERIFICATION.md item (a))**: the rationale above
+for choosing `excluded` as primary was written before the production data
+existed. The measured fact supersedes it: MCCD abstention is **0 on every
+production cell** (190k cluster rows scanned across 85-88, 0 NA;
+`85_boundary_fp.csv`'s own `unassigned_rows` column records 0 for all 523
+cells). `excluded` and `singleton` therefore coincide for all four proposed
+methods and diverge only for DBSCAN/HDBSCAN noise — so `excluded` as the
+headline treatment flatters the comparators (who do abstain), not the
+proposed methods (who do not), and is not the fairness-neutral choice the
+original rationale implied. The manuscript/response-letter write-up (WP11)
+must print `unassigned_frac` in the same table as ARI/NMI/AMI, not as a
+separately-quoted number, so a reader can see directly that the proposed
+methods' `excluded` and `singleton` rows are identical.
+
 `unassigned_frac = n_unassigned / n_reg` is reported once per cell
 (identical under both treatments, since it is defined before either is
 applied) and is the number that should carry the headline "how often does
@@ -151,6 +181,17 @@ labels, independent of the unassigned treatment (the unassigned bucket is
 not counted as a cluster in either treatment; `singleton` fragments it into
 many size-1 clusters for the ARI/NMI/AMI computation only, not for k-hat).
 `true_k` is 2 (85/86), 3 (87), 1 (88).
+
+**2026-09-06 note (WP7_VERIFICATION.md item (b))**: for 85/86 specifically,
+`k_hat` counts distinct assigned labels among **regular** points only, by
+construction — the cluster file records `detected_cluster` for regular rows
+alone (`idx <- seq_len(n_reg)` in the WP8 drivers). The MCCD methods
+themselves are run on the FULL 199-row `X` (regular + outlier), so a
+macro-cluster the method forms out of outlier points exclusively — one that
+contains no regular row at all — is invisible to this `k_hat`: it is neither
+counted nor detectable from the cluster file. This is not a bug in WP7's
+counting; it follows from what WP8's drivers chose to record, stated here so
+it is not silently assumed away when interpreting the k-hat table.
 
 Reported as **a count table**, per the task brief ("as counts per value, not
 a mean"): for each `(script, setting-key, d, method)`, how many replicates
@@ -216,6 +257,32 @@ if it called DBSCAN on that cell**:
 | 85, 86 | `n0 / (n0 + n_reg)` from the regenerated cell (matches `dbscan_method()`'s own `sum(Y==0)/length(Y)`, since the WP8 driver's `Y` vector is exactly `c(rep(1,n_reg), rep(0,n0))`) |
 | 87 | `0` — 87 never calls DBSCAN or any baseline (only the four MCCD methods, per `WP8_PROTOCOL.md`'s method-list restriction for experiment 3); there is no precedent to match, and cluster 3 is a **legitimate cluster**, not an outlier population, so a nonzero oracle contamination would misrepresent what DBSCAN is being asked to find. `0` is the closest analogue to what the MCCD methods themselves receive (`Y = NULL` — no contamination hint at all, only S_min) |
 | 88 | `0`, by design — no outliers exist in any of the four generators, and `WP8_PROTOCOL.md` already documents DBSCAN's `cont=0` behaviour there ("flag rate 0 by construction") for the binarized-score use; the **native cluster labels** are still informative here even though the binarized outlier score is not, since `cont=0` sets `eps` to the widest (most merging) quantile of the 4th-NN distances, and whether that still fragments the population is itself a finding |
+
+**2026-09-06 correction (WP7_VERIFICATION.md item (c))**: the 85/86 row's
+`n0 / (n0 + n_reg)` justification above ("matches `dbscan_method()`'s own
+`sum(Y==0)/length(Y)`") is coherent only once DBSCAN is actually called on
+the full `(n_reg + n0)`-row matrix, matching the `Y` vector's own length —
+which is what `90_wp7_clustering_quality.R` now does (WP7_VERIFICATION.md
+change 1: `regenerate_cell()` returns the FULL regenerated `X` for 85/86, and
+DBSCAN/HDBSCAN are run on it before their labels are subset to
+`seq_len(n_reg)` for scoring). Before that fix, DBSCAN was run on the
+189-row cleaned-only matrix while `cont` was computed as if the population
+were 199 rows — an internally inconsistent combination that this table's
+prose did not flag at the time it was written.
+
+**2026-09-06 correction (WP7_VERIFICATION.md item (d))**: the claim above
+that "whether [DBSCAN] still fragments the population is itself a finding"
+for 88 is wrong, and the same footnote applies to 87. At `cont = 0`,
+`DBSCAN()`'s `eps` rule selects the **maximum** 4-NN distance in the data,
+which makes every point core and noise structurally impossible — so on 88
+(and on 87, which also passes `cont = 0`) DBSCAN's native labels collapse to
+`ARI = 1`, `k_hat = 1` **by construction**, in every cell, regardless of the
+data's actual structure. This is not a finding about the CSR-null design or
+about small-cluster geometry; it is an artifact of feeding `cont = 0` into
+this particular `eps` rule. 87's and 88's DBSCAN rows must not be tabulated
+in the write-up (WP11) as if they were a real comparison against ground
+truth — HDBSCAN, which receives no contamination hint at all, is the only
+density-clustering comparator whose 87/88 rows carry information.
 
 **Limitation, stated plainly**: `DBSCAN()`'s `eps` rule was designed for the
 real-data outlier-detection use, where an oracle contamination level always
