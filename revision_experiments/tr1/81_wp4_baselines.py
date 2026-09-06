@@ -51,6 +51,19 @@ Usage (from anywhere; paths are resolved from this file's location):
     --dataset NAME     restrict to one data set (repeatable)
     --method NAME      restrict to one method (repeatable)
     --status           print remaining/completed counts and exit
+    --data-dir PATH    override the data directory this script reads
+                       <dataset>.csv / manifest.csv from. Default (omit this
+                       flag): results/tr1/wp4/data, i.e. CURRENT BEHAVIOUR IS
+                       UNCHANGED. Added for WP5 (tr1/84b_wp5_metrics.R),
+                       which points this at results/tr1/wp5/data so the same
+                       eight competitors, under the identical settings and
+                       thresholding rule declared in WP4_PROTOCOL.md, run
+                       against the four real data sets above d = 21.
+    --out-dir PATH     override the output directory this script writes
+                       scores/, fit_log.csv, fit_errors.log and versions.txt
+                       into. Default (omit this flag): results/tr1/wp4, i.e.
+                       CURRENT BEHAVIOUR IS UNCHANGED. WP5 points this at
+                       results/tr1/wp5.
 """
 
 import argparse
@@ -361,7 +374,26 @@ def main():
     ap.add_argument("--dataset", action="append", default=None)
     ap.add_argument("--method", action="append", default=None)
     ap.add_argument("--status", action="store_true")
+    ap.add_argument("--data-dir", type=str, default=None,
+                     help="override data dir (default: results/tr1/wp4/data)")
+    ap.add_argument("--out-dir", type=str, default=None,
+                     help="override output dir for scores/fit_log/etc (default: results/tr1/wp4)")
     args = ap.parse_args()
+
+    # Overriding these module-level constants here, before anything below
+    # reads them, is what lets WP5 point this driver at its own data/output
+    # folders without touching any method, hyperparameter, seed, threshold
+    # rule, or file-naming convention inside the script. Omitting both flags
+    # leaves every path exactly as it was (results/tr1/wp4/...).
+    global DATA_DIR, SCORES_DIR, FIT_LOG_PATH, ERROR_LOG_PATH, VERSIONS_PATH
+    if args.data_dir is not None:
+        DATA_DIR = Path(args.data_dir)
+    if args.out_dir is not None:
+        out_dir = Path(args.out_dir)
+        SCORES_DIR = out_dir / "scores"
+        FIT_LOG_PATH = out_dir / "fit_log.csv"
+        ERROR_LOG_PATH = out_dir / "fit_errors.log"
+        VERSIONS_PATH = out_dir / "versions.txt"
 
     SCORES_DIR.mkdir(parents=True, exist_ok=True)
 
