@@ -470,3 +470,152 @@ real grid, on an idle machine, is the verifier's or a later session's
 task.** Before running it: confirm the four background R jobs mentioned in
 the task brief have finished, run `--idle-check` on both scripts, and only
 then run without `--force`.
+
+## 11. Fixer notes, 2026-09-06 (post-verification changes)
+
+Opus verified this package on 2026-09-06 (`tr1/WP6_VERIFICATION.md`):
+**PASS WITH REQUIRED CHANGES**. All required changes (A1, A2, B1, B2, C, D,
+E, the summariser items, the caption disclosures) have now landed in
+`91_wp6_runtime.R` / `91b_wp6_runtime_py.py`. This section records what
+changed and amends two sentences in the declarations above that the
+verification found to be wrong. **Nothing above this section was edited.**
+
+**A1 (blocker, fixed)** — `get_simul()` is now memoized inside
+`91_wp6_runtime.R` only (one cache entry, evicted on every new
+`(variant, d, quant)` key; `check_simul_extent` still runs on every call).
+`shared/harness.R` is untouched. Before the fix, every rep of every MCCD
+method reloaded its quantile table from disk *inside* the timed region
+(the wrapper's own internal `t_total` excludes the load, but this driver's
+outer `proc.time()` around the whole wrapper call does not) — measured as
+U-MCCD outer 3.96s vs wrapper-internal 1.28s at n=250. Smoke evidence after
+the fix: U-MCCD `time_s` dropped from 2.95s to 0.36s at n=100; `SU-MCCD`,
+`UN-MCCD`, `SUN-MCCD` each show `table_load_s ≈ 0` immediately after
+U-MCCD's cold load populates the shared cache key.
+
+**A2 (blocker, fixed)** — `table_load_s` is now measured once per
+`(cell, method)`, hoisted above the rep loop, and shared by every rep of
+that method at that cell (§4's timed-region description is otherwise
+unchanged — table loading was never inside `time_s` itself, only inside
+this driver's separate, always-untimed `table_load_seconds()` measurement,
+which was simply being repeated wastefully once per rep before this fix).
+
+**B1 (blocker, fixed)** — `mem_delta_mb` (peak minus pre-call baseline,
+`sum(gc_after[,6]) - sum(gc_before[,2])`) is now reported alongside the
+pre-existing `mem_peak_mb` (kept for provenance, per the verification's
+instruction). Smoke evidence: U-MCCD's `mem_peak_mb` is still ≈864 MB
+(dominated by the RK table's own unused 763 MB `Kest.m` matrix, resident
+before the call and therefore part of the *baseline*, not the delta), but
+`mem_delta_mb` is 55.3 MB — two orders of magnitude smaller, and now
+comparable across methods regardless of which quantile table each one
+loads.
+
+**B2 (fixed)** — a memory log-log slope, `lm(log(mem_delta_mb) ~ log(n))`
+at `d=10`, per MCCD method, is now written to `91_wp6_slope.csv` alongside
+the time slope, compared explicitly against 2 (the manuscript's `O(n^2)`
+space claim) rather than 3.
+
+**C (major, fixed)** — `hdbscan.HDBSCAN(...)` now passes
+`core_dist_n_jobs=1`. **Amendment to §4's Python single-threading
+paragraph**: the sentence "`hdbscan` and scikit-learn's `OPTICS` have no
+separate thread knob beyond BLAS/OpenMP" is **wrong for `hdbscan`** —
+`core_dist_n_jobs` defaults to 4 and is controlled via `joblib`, not
+OMP/BLAS, so the pinned env vars do not reach it. It remains true for
+`OPTICS`. This is a documented deviation from `81_wp4_baselines.py` (which
+leaves `hdbscan` at its default thread count) — timing only; detection
+scores are unaffected by this knob.
+
+**D (blocker, fixed)** — `CELLS$cell_value` for the three d-only cells
+(6, 7, 8) now holds the cell's own `d` value ("5", "50", "100") instead of
+n's value ("500", "500", "500"), which had made all three d-only export
+paths collide on `d_500_rep1.csv`. `export_rep1()` additionally writes
+cell 3 (n=500, d=10, shared by both sweeps) under **both**
+`n_500_rep1.csv` and `d_10_rep1.csv`. A new `--check-exports` dry-check mode
+(no idle-check, no data generation, no file writes — pure path-string
+resolution over the `CELLS` table) confirms the fix directly: run and
+verified 2026-09-06, "8 CELLS rows resolve to 9 export names (9 unique)."
+`--smoke` itself only ever touches cell 1, so this dry check is the actual
+confirmation that all 9 names are distinct across the full grid, not just
+smoke's one cell.
+
+**E (major, fixed)** — `from sklearn.neighbors import NearestNeighbors` and
+`from scipy import sparse` are hoisted to module scope in
+`91b_wp6_runtime_py.py` (were previously imported lazily inside
+`knn_index()`/`knn_adjacency()`, i.e. inside the timed region on first
+call). Additionally, one untimed warm-up fit per (method, variant) now runs
+at the smallest available cell before any measured rep, for every method
+including the previously-unaffected `ECOD`/`COPOD`/`HDBSCAN`/`OPTICS`/
+`DIF`/`LUNAR` (first-call costs are not unique to the two hand-rolled
+neighbour methods). **Warm-up fits are discarded**: not written to the raw
+CSV, not written to the done file, logged only as `[warm-up] <method>
+<variant> ok` lines to stdout — chosen over logging them as rows because a
+warm-up fit is deliberately not comparable to a measured rep (different
+JIT/cache state on either side of it) and keeping it out of the raw CSV
+means no downstream aggregation code has to know to filter it out. Smoke
+evidence: `LUNAR seed1` was 5.03s/65MB vs `seed2` 1.93s/0.19MB before the
+fix; after the fix, `seed1` 1.96s/0.16MB vs `seed2` 2.00s/0.16MB — no longer
+distinguishable from sampling noise.
+
+**Summariser (fixed)** — `91_wp6_runtime_n.csv`/`_d.csv` now carry
+`mean_time_s` beside `median_time_s` (CV = sd/mean needs its own centre)
+and `median_mem_delta_mb`/`cv_mem_delta` beside the legacy
+`mem_peak_mb` columns. `91_wp6_slope.csv` gains, per MCCD method: a `mem`
+row (§B2, compared to `n^2`) and, for the two RK-based methods only, a
+`time_folded` row fitting `log(time_s/log(n)) ~ log(n)` and comparing the
+result directly to 3 (rather than "3 with a log factor", which cannot be
+compared to a single fitted number without folding). `--summarize` now also
+reads `91b_wp6_runtime_py_raw.csv`, when present, and writes
+`91b_wp6_runtime_py_summary.csv` applying the collapse rules pre-declared
+here: **MutualKNN/SNN summarized at `k=10` only** (median over reps; the
+full `k ∈ {5,10,15,20,30}` sweep stays in the raw CSV for the supplement),
+**DIF/LUNAR summarized as the median over all seed × rep fits pooled
+together** (not per-seed), and the four deterministic methods
+(ECOD/COPOD/HDBSCAN/OPTICS) as the median over reps of their one variant.
+Each output row records which rule produced it, in a `collapse_rule`
+column. Dry-run tested 2026-09-06 against a temporary copy of the smoke raw
+CSVs (copied into the production paths, summarized, then deleted again —
+the production `results/tr1/wp6/` tree is empty again, as it was before
+this session and as the real grid still expects); with only one `n` value
+present every slope fit correctly falls back to `NA` (fewer than 3 points),
+confirming the fallback path rather than the fitted path, which is the
+correct behaviour for a single-cell smoke sample.
+
+**Caption disclosures (added, for whichever section/table in the
+manuscript reports this grid's results)**:
+- DBSCAN's `eps` is tuned using the **true** contamination rate of the
+  synthetic generator, not an oracle-free rule — a methodological
+  convenience for this runtime grid, not the paper's real-data protocol.
+- MST is run at `cont = 0.05` (this generator's own contamination rate),
+  not the registry's default `cont = 0.02` — set explicitly in
+  `call_method()` to match `gen_uniform_wp6()`.
+- ODIN's `k = round(sqrt(n))` grows with `n` by construction, so ODIN's
+  measured runtime slope is **not** a fixed-parameter comparison the way
+  the four MCCD methods' slopes are (their `N`, `d` are held fixed by
+  design; ODIN's own hyperparameter is not).
+- R and Python `mem_*_mb`/`mem_delta_mb` columns are **not comparable
+  across languages**: R's figures come from `gc()`'s heap accounting
+  (§5), Python's from `tracemalloc` (§5) — different allocators,
+  different blind spots (R misses non-GC C-level allocation; Python's
+  `tracemalloc` misses PyTorch's C++-side tensor allocations inside
+  DIF/LUNAR, as already disclosed in §5).
+- The idle-machine check (§6) **fails open**: it proceeds as idle if
+  `tasklist` itself is unavailable, and it only ever sees
+  `Rscript.exe`/`Rterm.exe`/`R.exe`/`python.exe`/`pythonw.exe` processes —
+  any other process consuming CPU/memory (another user's job, a scheduled
+  task, a non-R/Python compute process) is invisible to it.
+
+**Cost ruling (reaffirmed, unchanged)** — the estimate in §8 stands: no rep
+cap is needed for the real grid, and `--grid=n` and `--grid=d` should still
+be run as two separate invocations (as already specified in the launch
+sequence in §10-adjacent material above), not combined into one `--grid=all`
+call, so a failure or interruption in one sweep does not require re-running
+the other.
+
+Both scripts re-verified 2026-09-06 after all of the above:
+`parse()`/`py_compile` clean; `--check-exports` confirms 9 distinct export
+names; `--smoke` run twice on each side confirms the checkpoint skip fires
+on the second call; the summarizer was dry-run against a temporary copy of
+the smoke CSVs (not committed, deleted after inspection) and produced all
+expected columns with no errors. The real grid was **not** run by this
+fixer session, per the task brief — WP8 background R jobs were still the
+stated reason to stay off the machine, and this session's job was the
+required-changes list, not the grid itself.

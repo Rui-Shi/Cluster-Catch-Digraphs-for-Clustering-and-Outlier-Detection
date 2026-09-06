@@ -19,9 +19,11 @@ noise only). All timed `--reps` times per (cell, method, k-or-seed).
 Comparability with the R side (91_wp6_runtime.R):
   - Single-threaded: OMP/MKL/OPENBLAS/NUMEXPR/VECLIB env vars pinned to 1
     BEFORE numpy/torch are imported (thread pools are fixed at import time),
-    plus torch.set_num_threads(1) / set_num_interop_threads(1). hdbscan and
-    sklearn's OPTICS have no separate thread knob beyond BLAS/OpenMP, which
-    the env vars cover.
+    plus torch.set_num_threads(1) / set_num_interop_threads(1). sklearn's
+    OPTICS has no separate thread knob beyond BLAS/OpenMP, which the env
+    vars cover -- but hdbscan DOES have one: core_dist_n_jobs defaults to 4
+    (joblib, not OMP), so it is pinned explicitly to 1 below (C fix,
+    WP6_VERIFICATION.md); the env vars alone do not reach it.
   - Timed region: construction (model = Method(...)) is NOT timed; only the
     fit call (`model.fit(X)`) is, via time.perf_counter(), matching
     81_wp4_baselines.py's "timing covers model.fit(X) only" convention and
@@ -77,6 +79,13 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 import torch
+# E (WP6_VERIFICATION.md, major): hoisted to module scope from inside
+# knn_index()/knn_adjacency() -- both were imported lazily on first call
+# from INSIDE the timed region (timed_fit() calls fit_mutual_knn/fit_snn,
+# which call these), so the one-time import cost landed on whichever
+# (cell, method, k) happened to run first, not spread across every call.
+from sklearn.neighbors import NearestNeighbors
+from scipy import sparse
 
 torch.set_num_threads(1)
 try:
@@ -224,8 +233,6 @@ def append_raw(raw_path, row):
 # import from / edit for this work package's scripts)
 # ---------------------------------------------------------------------------
 def knn_index(X, k):
-    from sklearn.neighbors import NearestNeighbors
-
     n = X.shape[0]
     nn = NearestNeighbors(n_neighbors=min(k + 1, n)).fit(X)
     _, idx = nn.kneighbors(X)
@@ -238,8 +245,6 @@ def knn_index(X, k):
 
 
 def knn_adjacency(idx, n):
-    from scipy import sparse
-
     k = idx.shape[1]
     rows = np.repeat(np.arange(n, dtype=np.int64), k)
     cols = idx.ravel()
@@ -290,7 +295,14 @@ def timed_fit(method, X, k=None, seed=None):
         elapsed = time.perf_counter() - t0
     elif method == "HDBSCAN":
         import hdbscan
-        model = hdbscan.HDBSCAN(min_cluster_size=5, min_samples=None)
+        # C (WP6_VERIFICATION.md, major): hdbscan is multi-threaded by
+        # default (core_dist_n_jobs defaults to 4, via joblib -- NOT the
+        # OMP/BLAS env vars pinned at module import, which don't reach
+        # joblib's own worker pool). Pinned to 1 for single-threaded
+        # comparability with every other method in this grid; this is a
+        # deviation from 81_wp4_baselines.py (which leaves it at the
+        # default), timing only -- scores are unaffected by this knob.
+        model = hdbscan.HDBSCAN(min_cluster_size=5, min_samples=None, core_dist_n_jobs=1)
         tracemalloc.start()
         t0 = time.perf_counter()
         model.fit(X)
@@ -406,12 +418,39 @@ def main():
         sys.exit(1)
     log(f"{len(files)} dataset files: {[p.name for _, _, p in files]}")
 
-    done = read_done_keys(done_path)
+    # Load every cell once up front (cheap -- these are the small rep-1 CSV
+    # exports) so both the warm-up below and the main loop share one read.
+    cell_data = {path: load_cell(path) for _, _, path in files}
+
     plan = cells_and_methods()
+
+    # E (WP6_VERIFICATION.md, major): one UNTIMED warm-up fit per (method,
+    # variant), at the smallest cell, before any measured rep. Absorbs
+    # first-call costs (lazy imports inside pyod/hdbscan/sklearn, torch
+    # kernel/graph warm-up, OS page-cache warm-up) that otherwise land
+    # entirely on whichever (cell, method, variant) happens to run first and
+    # read like a per-cell outlier -- e.g. ECOD 0.51s vs COPOD 0.002s, and
+    # LUNAR seed1 5.03s/65MB vs seed2 1.93s/0.19MB, both measured before this
+    # fix. Warm-up fits are DISCARDED: not written to the raw CSV, not
+    # written to the done file, and excluded from n_done/n_skip/n_fail below.
+    smallest_path = min(cell_data, key=lambda p: cell_data[p].shape[0] * cell_data[p].shape[1])
+    X_warm = cell_data[smallest_path]
+    log(f"\n==== warm-up on {smallest_path.name} (n={X_warm.shape[0]}, d={X_warm.shape[1]}) "
+        "-- untimed, discarded, not logged to raw/done ====")
+    for method, variant, k, seed_base in plan:
+        seed = seed_base if seed_base is not None else 1
+        try:
+            timed_fit(method, X_warm, k=k, seed=seed)
+            log(f"  [warm-up] {method:10s} {variant:6s} ok")
+        except Exception as e:  # noqa: BLE001 -- warm-up failures never abort the run
+            log(f"  [warm-up] {method:10s} {variant:6s} failed (ignored): "
+                f"{type(e).__name__}: {e}")
+
+    done = read_done_keys(done_path)
     n_done = n_skip = n_fail = 0
 
     for grid, cell_value, path in files:
-        X = load_cell(path)
+        X = cell_data[path]
         n, d = X.shape
         log(f"\n==== {path.name} (grid={grid}, cell={cell_value}, n={n}, d={d}) ====")
 
