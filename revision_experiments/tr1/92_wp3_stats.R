@@ -274,8 +274,8 @@ DBSCAN,MinPts,4,fixed constant,"main text sec:rand-clust-proc and sec:Real-Data-
 DBSCAN,Eps,4-distance heuristic evaluated at each data set own true contamination rate,USES TRUE CONTAMINATION,"main text sec:Real-Data-Examples"
 MST,inconsistent-edge threshold,"1.2 (real data); 1.7 to 1.1 decreasing with d (Neyman-Scott simulation)",fixed constant (held across all 16 real data sets),"main text sec:Real-Data-Examples and sec:rand-clust-proc"
 MST,minimum cluster size to avoid outlier flag,2% of n,fixed constant,main text sec:Real-Data-Examples
-ODIN,k,ceiling(sqrt(n)),fixed rule (function of n; label-free),main text sec:rand-clust-proc
-ODIN,in-degree threshold T,ceiling(n^(1/3)),fixed rule (function of n; label-free),main text sec:rand-clust-proc
+ODIN,k,round(sqrt(n)),fixed rule (function of n; label-free),main text sec:rand-clust-proc
+ODIN,in-degree threshold T,round(n^(1/3)),fixed rule (function of n; label-free),main text sec:rand-clust-proc
 iForest,number of trees,1000,fixed constant (library-recommended),main text sec:rand-clust-proc
 iForest,sub-sample size,256,fixed constant (library-recommended),main text sec:rand-clust-proc
 iForest,outlier-score threshold,0.55,fixed constant,main text sec:rand-clust-proc

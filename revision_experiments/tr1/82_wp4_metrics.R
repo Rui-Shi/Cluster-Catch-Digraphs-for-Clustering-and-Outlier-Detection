@@ -56,8 +56,10 @@
 # aggregate table is ORDERED by mean F2, so adding eight methods can move rows
 # whose own numbers did not change. Both are rebuilt from per-cell values,
 # following 78_manuscript_tables_after_fix.R exactly -- same sprintf("%.3f")
-# rounding (the manuscript rounds half up, R's round() rounds half to even,
-# and SUN-MCCD's median F2 is exactly 0.3285), same stale-cell patch, same
+# rounding, which resolves exact halves inconsistently rather than always half
+# up (R's round() rounds half to even, and SUN-MCCD's median F2 is exactly
+# 0.3285; the PenDigits DIF/LUNAR/OPTICS ties are recovered from counts by
+# 83_wp4_latex_rows.R), same stale-cell patch, same
 # rank/winner computation on ROUNDED values, same tie handling.
 #
 # Before any of that is believed, the nine-method table as published must
