@@ -510,6 +510,152 @@ per-cell `has_result()` restart already supports arbitrary interleaving),
 or apply a 87-style reduced-rep decision to 88's RK methods specifically --
 left to the user/coordinator, not decided unilaterally here.
 
+## Dated appended notes (2026-09-05, round 2, post Opus re-verification WP8_REVERIFICATION.md)
+
+Opus re-reviewed the round-1 fixes above (commits `764bc7f`, `605e103`,
+`710d030`, `0e29d32`) and returned two required changes for `86` and one for
+`87`; `85` and `88` passed outright and were launched unchanged. This note
+records what changed and the acceptance measurements.
+
+**86 `bridge` (blocking -- round 1's fix still failed).** Round 1's
+clearance-0.45-with-isotropic-jitter construction still let the per-point
+3-D `N(0,0.15)` jitter erode the axial margin: `t_lo > t_hi` (an empty or
+inverted interpolation interval) in 37-41% of reps, collapsing the 10-point
+chain to a compact blob at the midpoint -- geometrically near-identical to
+`collective` -- on which every method scored TPR = 0.
+
+Fix: clearance reduced to **0.05** (it only needs to clear the realised
+surface, since jitter can no longer erode it) and jitter restricted to the
+subspace **orthogonal to the cluster axis**: draw `g ~ N(0, I_d)`, subtract
+its projection onto the unit axis vector `axis = (mu2-mu1)/CLS_DIS`
+(`g_perp <- g - sum(g*axis)*axis`), scale by 0.03. Because the axial
+component of the displacement is now exactly zero, Pythagoras guarantees
+`distance_from_centre^2 = axial_distance^2 + perp_distance^2 >=
+axial_distance^2`, i.e. perpendicular jitter can only INCREASE distance from
+either `mu1` or `mu2` relative to the already-clear axial placement --
+`n_inside = 0` is analytic, not merely likely, and the round-1 bounded-redraw
+loop is removed entirely (nothing left for it to catch).
+
+Acceptance measurement (100 reps, `d in {3, 10}`, production seed scheme
+`BASE_SEED + 100000*s_i + rep`, `s_i` from the fixed CANON grid; script
+sourced with `options(wp8.no_main=TRUE)` and `gen_bridge()` called directly,
+recovering the realised jitter scales `s1, s2` by replaying the same seeded
+`draw_cluster()` calls `gen_bridge()` itself makes -- no change to the
+production RNG stream):
+
+| d | n_inside (sum/100) | axis span / realised gap | chain NN <= host NN | end gap / chain spacing |
+|---|---|---|---|---|
+| 3  | 0/100 (max 0) | mean 0.801 (min 0.711, max 0.838) | 100/100 | mean 1.18 (min 0.95, max 1.75) |
+| 10 | 0/100 (max 0) | mean 0.803 (min 0.738, max 0.841) | 100/100 | mean 1.18 (min 0.92, max 1.65) |
+
+Definitions: "realised gap" = `CLS_DIS - s1 - s2` (axial extent between the
+two clusters' realised surfaces); "axis span" = the chain's own first-to-last
+axial extent (unaffected by the now-perpendicular-only jitter); "within-chain
+NN" = per-point nearest-neighbour distance among the `n0` chain points,
+summarised as the per-rep median; "host-cluster NN" = the pooled per-point
+NN distance within `data1`/`data2`, per-rep median; "end gap" = the larger of
+the two chain ENDPOINTS' own nearest-neighbour distance (checking the
+uniform `t_i` interpolation does not leave an anomalously large gap at
+either end), divided by the chain's median interior spacing. All four
+criteria pass: `n_inside` is exactly 0 in every one of the 200 reps
+(matching the analytic guarantee); axis span is 80%, comfortably above the
+60% floor; the chain is at least as tightly packed as the host cluster in
+every rep; end-gap ratio averages 1.18 at both d (individual reps range up
+to 1.65-1.75, still close to the "~1.3x" target on average, not a hard
+violation).
+
+**86 `local` (framing -- two placements, not a fix).** Per
+WP8_REVERIFICATION.md's decision, the arm now reports BOTH placements rather
+than replacing one with the other:
+
+- `local_shell` (round-1 construction, kept as-is, renamed): host cluster's
+  regular points confined to a dense core (`core_frac = 0.4`, i.e. radius
+  `0.4*scale`); each outlier at `runif(1, 0.8, 1.0)*scale` along a random
+  direction from its host centre -- a shell placement, 0.49 beyond the host
+  cluster's own realised radius (0.40) on average, not "embedded within" the
+  cluster in the sense R3.7 describes. All 7 methods scored TPR = 1 on it in
+  round-1 smoke.
+- `local_interior` (restored verbatim from git `5ed690c`, the pre-rewrite
+  construction WP8_VERIFICATION.md originally FAILED): a fixed 0.4*scale
+  interior offset from the host centre, host regular points kept out of a
+  0.3-radius ball around each outlier by rejection sampling. Its own
+  `draw_cluster_avoid()` helper is restored alongside the shared `draw_cluster()`
+  used by the other three generators (the two are not interchangeable: the
+  interior construction needs per-point rejection sampling against a list of
+  exclusion balls, which the shared core/shell `draw_cluster()` has no
+  argument for).
+
+Both clusters in `local_shell` are shrunk (`core_frac = 0.4`), making that
+arm's clusters roughly **2.6x denser** (by NN spacing, which scales linearly
+with radius at fixed n, so shrinking radius by 0.4 shrinks spacing by the
+same factor -- reciprocal 1/0.4 = 2.5, matching the ~2.6x figure measured) than
+`bridge`/`collective`'s full-radius clusters -- the four types are therefore
+not density-matched, and this is reported as a known asymmetry rather than
+corrected (correcting it would mean shrinking `bridge`/`collective`'s
+clusters too, which is out of scope for this fixer pass).
+
+Geometric fact carried over from WP8_VERIFICATION.md, restated here because
+`local_interior`'s expected result depends on it: at d = 10, n = 95 (one
+host cluster's regular-point count), the median within-cluster NN distance
+is 0.699 against a realised radius of ~1.009 -- an interior point whose
+isolation requires roughly DOUBLING the typical NN distance is not
+realisable inside that radius at that d. **`local_interior` is therefore
+expected to give near-zero TPR for every method at d = 10, and this is
+itself the R3.7 finding (a legitimately embedded, locally-isolated outlier
+is not geometrically constructible at high d with this cluster size) -- not
+a construction defect to be re-fixed.** At d = 3 the same construction is
+realisable and is expected to discriminate normally.
+
+Stale comment fixed: `local_shell`'s header comment (86:100-116 before this
+edit) had drifted to describe the FIRST attempt's core 0.5/shell 0.75-1.0
+radii (measured ratio 1.89 at d=10, below the required 2.0, and therefore
+never shipped); it now states the actual, adopted core 0.4/shell 0.8-1.0
+radii (measured ratio 6.032 at d=3, 2.540 at d=10 -- see the round-1 note
+above).
+
+CANON, the settings selector, and the summariser all pick up the fourth type
+automatically (`GENERATORS` is now `list(local_interior=, local_shell=,
+bridge=, collective=)`; `build_settings()` iterates `names(GENERATORS)`, and
+`do_summarize()` groups by `setting_id`/`type` generically) -- no
+type-specific logic needed changing beyond the generator definitions
+themselves. The type x d grid is now **8 settings**, not 6.
+
+**87 (one-line CLI fix).** `87:275`'s reps-override parsing treated ANY
+non-empty second argument as an override, including `"0"` -- so the intended
+launch command `Rscript 87_wp8_small_cluster.R ALL 0 99999999` (meant to
+supply `budget` while leaving `reps` at its per-family default) evaluated
+`reps_ov <- as.integer("0") = 0L`, which is not `NULL`, so `do_run()`'s
+`if (!is.null(reps_override)) reps_override else REPS_BY_FAMILY[[m_id]]`
+picked **0 reps for every method** instead of the intended 50/100 split.
+Fixed to `reps_ov <- if (length(args) >= 2 && nzchar(args[2]) &&
+!is.na(suppressWarnings(as.integer(args[2]))) && as.integer(args[2]) > 0)
+as.integer(args[2]) else NULL` -- only a positive integer counts as an
+override. Dry-checked (no R run): with `args <- c("ALL","0","99999999")`,
+`reps_ov` resolves to `NULL`, and the per-method loop then resolves to
+U-MCCD 50, SU-MCCD 50, UN-MCCD 100, SUN-MCCD 100 -- the intended family
+split, confirmed.
+
+**Smoke re-verification (86, foreground, `results/tr1/wp8/smoke/` only).**
+`--smoke` now covers all 8 canonical settings (both d, all 4 types), 1 rep,
+9 default methods, with done-skip confirmed on re-invocation. See the commit
+message / task report for the per-type, per-d TPR table.
+
+**Bridge smoke caveat (2026-09-05, round 2, recorded not to overstate the
+single-rep smoke result).** The fixed smoke replicate (`rep = 9001`, the
+convention shared by all four WP8 scripts) gives TPR = 0 for all 9 methods
+on `bridge` at BOTH d = 3 and d = 10 -- an unlucky draw, not a sign the
+construction is degenerate. An ad hoc diagnostic (8 additional reps per d,
+`rep in 1:8`, called directly against `gen_bridge()`/`METHOD_REGISTRY`
+without touching any output file) found `n_inside = 0` in all 16 cells
+checked and a NON-zero TPR for at least one method in 5/8 reps at d = 3
+(MST 0.2-0.5, U-MCCD 0.3, LOF 0.2, ODIN 0.1) and 3/8 reps at d = 10 (U-MCCD
+0.4, SU-MCCD 0.1-0.3, MST 0.2) -- so detection of the bridge chain is
+genuinely possible but inconsistent across replicates, which is itself
+consistent with R3.7's argument (a chain of mutually-close points can evade
+methods that reward local density) rather than a construction defect. The
+100-replicate production run is what will characterise the true detection
+rate; the single smoke rep is a pipeline sanity check, not a result.
+
 ## Open questions / choices not fully specified by the revision plan
 
 Recorded here rather than silently decided, per the declare-before-look
@@ -523,9 +669,11 @@ discipline:
    contamination sweep; a sweep is left to a future package if the response
    letter needs one.
 3. Experiment 2's jitter scales (0.4 interior offset / 0.3 clearance for
-   "local", 0.15 for "bridge" and "collective") and experiment 4's
-   Beta(2,5)/variance-range choices are the author's; the plan names the
-   distribution families but not their parameters.
+   `local_interior`; 0.4/0.8-1.0 core/shell radii for `local_shell`; 0.05
+   clearance / sd-0.03 perpendicular jitter for `bridge`; 0.15 jitter for
+   `collective` -- see the round-2 dated note below for `bridge`'s history)
+   and experiment 4's Beta(2,5)/variance-range choices are the author's; the
+   plan names the distribution families but not their parameters.
 4. Experiment 3's third cluster uses independent basis directions
    (`e1, e2`) rather than any specific angle; any two directions at
    `cls_dis` separation from both existing centres would serve equally.

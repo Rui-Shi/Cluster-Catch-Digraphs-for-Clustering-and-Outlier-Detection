@@ -272,7 +272,18 @@ if (!isTRUE(getOption("wp8.no_main", FALSE))) {
     quit(save = "no", status = 0)
   } else {
     sel     <- if (length(args) >= 1 && nzchar(args[1])) strsplit(args[1], ",")[[1]] else NULL
-    reps_ov <- if (length(args) >= 2 && nzchar(args[2])) as.integer(args[2]) else NULL
+    # 2026-09-05, round 2 (WP8_REVERIFICATION.md): a bare `as.integer(args[2])`
+    # override, when args[2] is "0" (as in the intended launch command
+    # `ALL 0 99999999`, meant to KEEP the 50/100 REPS_BY_FAMILY split rather
+    # than override it uniformly), evaluated to integer 0 -- not NULL -- so
+    # `do_run()`'s `if (!is.null(reps_override)) reps_override else
+    # REPS_BY_FAMILY[[m_id]]` picked 0 reps for every method instead of
+    # leaving the family split intact. Guarded so only a POSITIVE integer
+    # counts as an override; "0", "", or a non-numeric second argument all
+    # fall through to NULL (i.e. the 50/100 family split).
+    reps_ov <- if (length(args) >= 2 && nzchar(args[2]) &&
+                   !is.na(suppressWarnings(as.integer(args[2]))) &&
+                   as.integer(args[2]) > 0) as.integer(args[2]) else NULL
     budget  <- if (length(args) >= 3 && nzchar(args[3])) as.numeric(args[3]) else 480
     msel    <- if (length(args) >= 4 && nzchar(args[4])) strsplit(args[4], ",")[[1]] else NULL
     do_run(sel, msel, reps_ov, budget, DEFAULT_METHODS)

@@ -17,8 +17,9 @@
 # throughout, so evaluate()/count_scores2 is safe (n0 > 0), unlike experiment
 # 4 (88), which has no outliers at all.
 #
-# Settings: type in {local, bridge, collective} x d in {3, 10}, n = 200,
-# n0 = 10. 6 settings, 100 reps, 9 methods (4 MCCD + 5 baselines) per rep.
+# Settings: type in {local_interior, local_shell, bridge, collective} x d in
+# {3, 10}, n = 200, n0 = 10. 8 settings, 100 reps, 9 methods (4 MCCD + 5
+# baselines) per rep.
 #
 # Single row per cell -- has_result() on the main CSV gates skip/restart
 # directly (no done-marker needed, unlike 85).
@@ -30,9 +31,23 @@
 # the dated notes appended to WP8_PROTOCOL.md for the replacement
 # construction and the measured acceptance-check values.
 #
+# 2026-09-05, round 2 (Opus re-verification WP8_REVERIFICATION.md): `bridge`
+# still collapsed to a compact, `collective`-like blob under the round-1 fix
+# (clearance 0.45 with 3-D N(0,0.15) jitter eroded ~10% of the realised gap);
+# rebuilt with clearance 0.05 and jitter projected onto the orthogonal
+# complement of the cluster axis, so the axial span is analytic (jitter can
+# only increase, never decrease, distance from either centre) and no redraw
+# is needed. `local` (round-1 shell construction) is kept as `local_shell`;
+# the ORIGINAL pre-rewrite interior construction (git 5ed690c) is restored
+# as `local_interior` so both placements are reported side by side -- the
+# interior arm's near-zero TPR at d=10 (an interior point with doubled NN
+# distance is not realisable at this n; see WP8_PROTOCOL.md) is itself part
+# of the R3.7 answer, not a defect to fix away. See the round-2 dated note in
+# WP8_PROTOCOL.md.
+#
 # Usage:
 #   Rscript 86_wp8_outlier_types.R --smoke
-#     One rep of EVERY (type, d) setting -- all 6 canonical settings, all 9
+#     One rep of EVERY (type, d) setting -- all 8 canonical settings, all 9
 #     default methods -- written to
 #     results/tr1/wp8/smoke/86_wp8_outlier_types.csv.
 #   Rscript 86_wp8_outlier_types.R --summarize
@@ -40,10 +55,11 @@
 #     results/tr1/wp8/86_outlier_types_summary.csv.
 #   Rscript 86_wp8_outlier_types.R [settings] [reps] [budget] [methods]
 #     settings: comma list of setting_id (from the fixed canonical grid
-#               type x d in {3,10}, e.g. "local_d3,bridge_d10"), or "ALL"
-#               (default). The canonical grid is fixed regardless of this
-#               selection, so the seed for a given setting never depends on
-#               which subset of settings a chunk happens to cover.
+#               type x d in {3,10}, e.g. "local_interior_d3,bridge_d10"), or
+#               "ALL" (default). The canonical grid is fixed regardless of
+#               this selection, so the seed for a given setting never
+#               depends on which subset of settings a chunk happens to
+#               cover.
 #     reps:     target replicate count (default 100)
 #     budget:   stop starting new reps after this many seconds (default 480)
 #     methods:  comma list, default the 9-method WP8 default (see below)
@@ -97,23 +113,27 @@ draw_cluster <- function(n_k, d, mu_k, core_frac = 1) {
 # the 2026-09-05 dated notes below the original declarations)
 # ---------------------------------------------------------------------------
 
-# local -- an outlier that is deep inside a cluster's spatial extent but
-# locally isolated. FIX (2026-09-05): the host cluster's own regular points
-# are confined to a dense CORE of radius 0.5*scale; each local outlier sits
-# at `runif(1, 0.75, 1.0) * scale` along a uniformly random direction from
-# its host centre -- inside the nominal support (<= scale) but strictly
-# outside the core, so no rejection sampling is needed to keep the outlier
-# isolated (the earlier fixed 0.4*scale/0.3-clearance construction measured
-# ratio 0.61 at d=10 -- see the acceptance-check note below).
-gen_local <- function(seed, n, d, cont) {
+# local_shell -- an outlier that is deep inside a cluster's spatial extent
+# but locally isolated. The host cluster's own regular points are confined
+# to a dense CORE of radius `core_frac * scale` = 0.4*scale; each local
+# outlier sits at `runif(1, 0.8, 1.0) * scale` (shell 0.8-1.0*scale) along a
+# uniformly random direction from its host centre -- inside the nominal
+# support (<= scale) but strictly outside the core, so no rejection sampling
+# is needed to keep the outlier isolated. (Comment corrected 2026-09-05,
+# round 2, WP8_REVERIFICATION.md: this had drifted to describe the FIRST
+# attempt's core 0.5*scale / shell 0.75-1.0*scale, which measured ratio 1.89
+# at d=10 -- below the required 2.0. The code below, and the values in this
+# comment, are the SECOND, adopted attempt: core 0.4*scale / shell
+# 0.8-1.0*scale, measured ratio 6.032 at d=3 and 2.540 at d=10 -- see the
+# round-1 acceptance-check note in WP8_PROTOCOL.md.) Per
+# WP8_REVERIFICATION.md's two-placement decision, this shell construction is
+# reported alongside the restored original interior construction
+# (`local_interior`, below) rather than replacing it.
+gen_local_shell <- function(seed, n, d, cont) {
   mu1 <- rep(3, d); mu2 <- c(3 + CLS_DIS, rep(3, d - 1))
   n1 <- round(n * (1 - cont) * 0.5); n2 <- round(n * (1 - cont) * 0.5) - 1
   n0 <- round(n * cont)
   set.seed(seed)
-  # Core/shell radii (2026-09-05, second attempt): core 0.5*scale / shell
-  # 0.75-1.0*scale measured ratio 1.89 at d=10 (below the required 2.0; see
-  # the acceptance-check note). Core 0.4*scale / shell 0.8-1.0*scale
-  # (still within the "e.g." bracket named in the verification) clears it.
   data1 <- draw_cluster(n1, d, mu1, core_frac = 0.4)
   data2 <- draw_cluster(n2, d, mu2, core_frac = 0.4)
   scale1 <- attr(data1, "scale"); scale2 <- attr(data2, "scale")
@@ -130,15 +150,87 @@ gen_local <- function(seed, n, d, cont) {
        true_cluster = c(rep(1L, n1), rep(2L, n2)), n_inside = -1L)
 }
 
+# local_interior -- the ORIGINAL pre-rewrite construction (recovered
+# verbatim from git 5ed690c, 2026-09-05 round 2, per WP8_REVERIFICATION.md's
+# two-placement decision): a fixed 0.4*scale interior offset from the host
+# centre, with the host cluster's own regular points kept OUT of a 0.3-radius
+# ball around each outlier via rejection sampling (up to 200 attempts, kept
+# anyway past that and logged via `n_forced`). This is the construction
+# WP8_VERIFICATION.md originally FAILED (measured outlier-NN/regular-NN
+# ratio 1.28 at d=3, 0.61 at d=10) -- it is restored here not because the
+# ratio problem was wrong, but because the failure mode IS the R3.7 answer:
+# at d=10, n=95, an interior point with doubled NN distance is not
+# realisable at all (median within-cluster NN 0.699 vs realised radius
+# 1.009), so an "embedded, isolated" local outlier at that dimension is a
+# geometric impossibility, not a construction bug, and every method's
+# TPR = 0 there is expected to be reported as such, not engineered away.
+draw_cluster_avoid <- function(n_k, d, mu_k, avoid = NULL) {
+  scale <- runif(1, R_MIN, R_MAX)
+  pts <- matrix(NA_real_, nrow = n_k, ncol = d)
+  n_forced <- 0L
+  for (i in seq_len(n_k)) {
+    ok <- FALSE
+    for (attempt in 1:200) {
+      cand <- as.numeric(rpoisball.unit(1, d)) * scale + mu_k
+      clash <- FALSE
+      if (!is.null(avoid)) {
+        for (a in avoid) if (sqrt(sum((cand - a$center)^2)) < a$radius) { clash <- TRUE; break }
+      }
+      if (!clash) { ok <- TRUE; break }
+    }
+    if (!ok) n_forced <- n_forced + 1L
+    pts[i, ] <- cand
+  }
+  attr(pts, "n_forced") <- n_forced
+  attr(pts, "scale") <- scale
+  pts
+}
+
+gen_local_interior <- function(seed, n, d, cont) {
+  mu1 <- rep(3, d); mu2 <- c(3 + CLS_DIS, rep(3, d - 1))
+  n1 <- round(n * (1 - cont) * 0.5); n2 <- round(n * (1 - cont) * 0.5) - 1
+  n0 <- round(n * cont)
+  set.seed(seed)
+  n_k1 <- ceiling(n0 / 2)
+  gaps <- vector("list", n0)
+  for (i in seq_len(n0)) {
+    host <- if (i <= n_k1) 1L else 2L
+    mu_k <- if (host == 1L) mu1 else mu2
+    g <- mu_k + as.numeric(rpoisball.unit(1, d)) * 0.4
+    gaps[[i]] <- list(center = g, radius = 0.3, host = host)
+  }
+  avoid1 <- Filter(function(a) a$host == 1L, gaps)
+  avoid2 <- Filter(function(a) a$host == 2L, gaps)
+  data1 <- draw_cluster_avoid(n1, d, mu1, avoid1)
+  data2 <- draw_cluster_avoid(n2, d, mu2, avoid2)
+  outlier <- do.call(rbind, lapply(gaps, function(a) a$center))
+  list(X = rbind(data1, data2, outlier), n = n1 + n2 + n0, n0 = n0, n1 = n1, n2 = n2,
+       true_cluster = c(rep(1L, n1), rep(2L, n2)), n_inside = -1L)
+}
+
 # bridge -- a chain of n0 points spanning ONLY the gap between the two
 # clusters' REALISED surfaces (not the nominal centre-to-centre segment).
-# FIX (2026-09-05): with s1, s2 the realised jitter scales,
+# ROUND 1 FIX (2026-09-05): with s1, s2 the realised jitter scales,
 # t_lo = (s1+0.25)/CLS_DIS, t_hi = 1-(s2+0.25)/CLS_DIS place the chain's
-# endpoints just past each cluster's own realised radius (0.25 clearance);
-# t_i interpolates n0 points evenly inside (t_lo, t_hi). The earlier
-# construction spanned the full centre-to-centre segment regardless of the
-# realised cluster sizes, so 5-6 of 10 points per rep landed inside a
-# cluster's own realised ball (see the acceptance-check note below).
+# endpoints just past each cluster's own realised radius; t_i interpolates
+# n0 points evenly inside (t_lo, t_hi). The earlier construction spanned the
+# full centre-to-centre segment regardless of the realised cluster sizes, so
+# 5-6 of 10 points per rep landed inside a cluster's own realised ball.
+# ROUND 2 FIX (2026-09-05, WP8_REVERIFICATION.md): round 1's 0.45 clearance
+# with isotropic 3-D N(0,0.15) jitter still ate ~10% of the realised gap
+# (t_lo > t_hi in 37-41% of reps), collapsing the chain to a compact,
+# `collective`-like blob with TPR = 0 everywhere. Fixed by (a) shrinking
+# clearance back to 0.05 -- it only needs to clear the realised surface, not
+# absorb any jitter -- and (b) restricting jitter to the PERPENDICULAR
+# subspace: draw a raw d-dim N(0,1) vector, subtract its projection onto the
+# unit cluster-axis vector, scale the remainder to sd 0.03 per coordinate.
+# Because the axis component of the jitter is now exactly zero, a
+# perpendicular displacement strictly INCREASES Euclidean distance from both
+# mu1 and mu2 relative to the (already-clear) axial placement (Pythagoras:
+# distance^2 = axial_distance^2 + perp_distance^2) -- n_inside = 0 is
+# therefore analytic, not merely likely, and the bounded-redraw loop from
+# round 1 is removed entirely (nothing left for it to catch). See the
+# round-2 dated note in WP8_PROTOCOL.md for the 100-rep measured values.
 gen_bridge <- function(seed, n, d, cont) {
   mu1 <- rep(3, d); mu2 <- c(3 + CLS_DIS, rep(3, d - 1))
   n1 <- round(n * (1 - cont) * 0.5); n2 <- round(n * (1 - cont) * 0.5) - 1
@@ -147,27 +239,16 @@ gen_bridge <- function(seed, n, d, cont) {
   data1 <- draw_cluster(n1, d, mu1)
   data2 <- draw_cluster(n2, d, mu2)
   s1 <- attr(data1, "scale"); s2 <- attr(data2, "scale")
-  # Clearance (2026-09-05, second attempt): 0.25 left 1 of 4000 points
-  # (20 reps x 10 points, d=3) inside a realised ball -- the per-point
-  # N(0,0.15) jitter occasionally erodes a 0.25 margin. 0.45 clears it at
-  # both d=3 and d=10 over the acceptance-check reps (see the dated note).
-  clearance <- 0.45
+  clearance <- 0.05
+  axis <- (mu2 - mu1) / CLS_DIS  # unit vector along the cluster axis
   t_lo <- (s1 + clearance) / CLS_DIS
   t_hi <- 1 - (s2 + clearance) / CLS_DIS
-  # Even with the 0.45 clearance, the per-point N(0,0.15) jitter alone
-  # (with NO redraw) still put 6/1000 points at d=3 and 3/1000 at d=10
-  # inside a realised ball over a 100-rep measurement (see the dated note) --
-  # low-probability but not the required zero. Redraw (up to 50 attempts,
-  # then keep and let n_inside report it) the jitter alone -- never the
-  # mean position t_i -- whenever it lands inside either realised ball.
   outlier <- do.call(rbind, lapply(seq_len(n0), function(i) {
     t_i <- t_lo + (i - 0.5) / n0 * (t_hi - t_lo)
     base <- mu1 + t_i * (mu2 - mu1)
-    for (attempt in 1:50) {
-      cand <- base + rnorm(d, 0, 0.15)
-      if (sqrt(sum((cand - mu1)^2)) >= s1 && sqrt(sum((cand - mu2)^2)) >= s2) return(cand)
-    }
-    cand  # 50 redraws exhausted; kept anyway, n_inside below will report it
+    g <- rnorm(d)
+    g_perp <- g - sum(g * axis) * axis  # strip the axial component
+    base + 0.03 * g_perp
   }))
   d1 <- sqrt(rowSums(sweep(outlier, 2, mu1)^2))
   d2 <- sqrt(rowSums(sweep(outlier, 2, mu2)^2))
@@ -199,7 +280,8 @@ gen_collective <- function(seed, n, d, cont) {
        true_cluster = c(rep(1L, n1), rep(2L, n2)), n_inside = -1L)
 }
 
-GENERATORS <- list(local = gen_local, bridge = gen_bridge, collective = gen_collective)
+GENERATORS <- list(local_interior = gen_local_interior, local_shell = gen_local_shell,
+                    bridge = gen_bridge, collective = gen_collective)
 
 build_settings <- function(dims) {
   s <- do.call(rbind, lapply(names(GENERATORS), function(g)
@@ -209,10 +291,11 @@ build_settings <- function(dims) {
   s
 }
 
-# Fixed canonical grid (WP8_PROTOCOL.md: type x d in {3,10}, nothing else
-# declared). CANON never changes with how a run is chunked, which is what
-# fixes the seed bug: s_i is always this table's row index, never the row
-# index of a re-built, possibly-DIMS-restricted table.
+# Fixed canonical grid (WP8_REVERIFICATION.md, round 2: type x d in {3,10},
+# type in {local_interior, local_shell, bridge, collective}). CANON never
+# changes with how a run is chunked, which is what fixes the seed bug: s_i
+# is always this table's row index, never the row index of a re-built,
+# possibly-DIMS-restricted table.
 FULL_DIMS <- c(3L, 10L)
 CANON <- build_settings(FULL_DIMS)
 
@@ -363,7 +446,7 @@ args <- args[!args %in% c("--smoke", "--summarize")]
 if (!isTRUE(getOption("wp8.no_main", FALSE))) {
   if (MODE_SMOKE) {
     dir.create(SMOKE_DIR, recursive = TRUE, showWarnings = FALSE)
-    cat(sprintf("==== 86_wp8_outlier_types --smoke: all %d settings (both d, all 3 types), 1 rep, %d methods ====\n",
+    cat(sprintf("==== 86_wp8_outlier_types --smoke: all %d settings (both d, all 4 types), 1 rep, %d methods ====\n",
                 nrow(CANON), length(DEFAULT_METHODS)))
     for (row in seq_len(nrow(CANON))) {
       s <- CANON[row, ]
