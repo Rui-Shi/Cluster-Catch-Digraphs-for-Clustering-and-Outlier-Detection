@@ -1,5 +1,13 @@
 # WP5 preparation inventory — real data above d = 21
 
+> **Status note (added 2026-09-23).** Pre-run reconnaissance, kept as written.
+> WP5 has since run under `WP5_PROTOCOL.md` on all four sets (letter, mnist,
+> musk, arrhythmia); letter and mnist were downloaded and converted by
+> `84a_wp5_fetch_convert.py` into `../results/tr1/wp5/data/` (letter n = 1598
+> after two duplicate rows were dropped; mnist a 1000-row subsample with 92
+> outliers). Results and measured runtimes: `../results/tr1/wp5/WP5_FINDINGS.md`.
+> The §5 runtime extrapolations below are pre-run estimates.
+
 Read-only reconnaissance for WP5 (AE.4, R1.8, R3.8, R5.6). No experiments were run;
 no manuscript, harness, or data files were modified. All facts below are backed by
 file paths, sizes, and small R snippets loaded in the foreground

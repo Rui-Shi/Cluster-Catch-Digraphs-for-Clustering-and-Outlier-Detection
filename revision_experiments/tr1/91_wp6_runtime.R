@@ -259,13 +259,26 @@ iforest_1thread_wp6 <- function(X, d, Y = NULL, seed = 1, ...) {
 MCCD_METHODS <- c("U-MCCD", "SU-MCCD", "UN-MCCD", "SUN-MCCD")
 BASELINE_METHODS <- c("LOF", "DBSCAN", "MST", "ODIN", "iForest")
 R_METHOD_ORDER <- c(BASELINE_METHODS, MCCD_METHODS)   # cheap-first
+# --methods=UN-MCCD,SUN-MCCD restricts the run to a subset (2026-09-23: rerun of
+# the NND-based pair after the incremental nearest-neighbour update in
+# R/ccds/UN_CCD.R; see tr1/92_validate_incremental_radi.R).
+METHODS_SEL <- opt_val("methods", "")
+if (nzchar(METHODS_SEL)) {
+  sel <- strsplit(METHODS_SEL, ",", fixed = TRUE)[[1]]
+  stopifnot("--methods: unknown method" = all(sel %in% R_METHOD_ORDER))
+  R_METHOD_ORDER <- R_METHOD_ORDER[R_METHOD_ORDER %in% sel]
+}
 S_MIN <- 0.05
+# --nn-direction=descend times the descending radius search of UN-MCCD and
+# SUN-MCCD (the direction the d >= 10 simulation scripts use); default ascend.
+NN_DIRECTION <- opt_val("nn-direction", "ascend")
+stopifnot("--nn-direction must be ascend or descend" = NN_DIRECTION %in% c("ascend", "descend"))
 
 call_method <- function(method, X, d, Y, seed) {
   if (method == "U-MCCD")   return(list(res = umccd_method(X = X, d = d, Y = Y)))
   if (method == "SU-MCCD")  return(list(res = sumccd_method(X = X, d = d, Y = Y, min.cls = S_MIN)))
-  if (method == "UN-MCCD")  return(list(res = unmccd_method(X = X, d = d, Y = Y, method = "ascend")))
-  if (method == "SUN-MCCD") return(list(res = sunmccd_method(X = X, d = d, Y = Y, method = "ascend", min.cls = S_MIN)))
+  if (method == "UN-MCCD")  return(list(res = unmccd_method(X = X, d = d, Y = Y, method = NN_DIRECTION)))
+  if (method == "SUN-MCCD") return(list(res = sunmccd_method(X = X, d = d, Y = Y, method = NN_DIRECTION, min.cls = S_MIN)))
   if (method == "LOF")      return(list(res = METHOD_REGISTRY[["LOF"]](X = X, d = d, Y = Y)))
   if (method == "DBSCAN")   return(list(res = METHOD_REGISTRY[["DBSCAN"]](X = X, d = d, Y = Y)))
   if (method == "MST")      return(list(res = METHOD_REGISTRY[["MST"]](X = X, d = d, Y = Y, cont = 0.05)))
@@ -299,7 +312,9 @@ mem_peak_mb_of <- function(gc_after) sum(gc_after[, 6])
 # ---------------------------------------------------------------------------
 # Output paths
 # ---------------------------------------------------------------------------
-RESDIR      <- here::here("revision_experiments/results/tr1/wp6")
+# --resdir=wp6_incr writes to results/tr1/wp6_incr instead (the original wp6
+# results stay untouched).
+RESDIR      <- here::here("revision_experiments/results/tr1", opt_val("resdir", "wp6"))
 DATA_DIR    <- file.path(RESDIR, "data")
 SMOKE_DIR   <- file.path(RESDIR, "smoke")
 SMOKE_DATA  <- file.path(SMOKE_DIR, "data")

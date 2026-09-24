@@ -230,93 +230,104 @@ nnccd.silhouette_mutual1 <- function(graph, datax,ind=NULL, lenClimit=Inf, k=NUL
 # quantile to be used as the confidence interval max
 # simul is the provided simulation for the problem, if null, compute
 # scores: whether to calculate the outlyingness scores
+# Incremental nearest-neighbour update (2026-09-23).
+# The earlier version rebuilt every nearest-neighbour distance of the candidate
+# ball from a fresh submatrix at each candidate radius (NNDest.dist.f), which
+# costs O(j^2) at a ball of j points and O(n^4) over the whole search in the
+# worst case. Here the within-ball NN distances are kept in a vector `nn` in the
+# same member order as before and updated when one point enters (ascending) or
+# leaves (descending) the ball, so each step costs O(j). mean() and median() are
+# still taken over the same values in the same order, so the statistics, and
+# therefore the radii, are identical to the earlier version
+# (checked by revision_experiments/tr1/92_validate_incremental_radi.R against
+# R/ccds/UN_CCD_radi_recompute_reference.R).
+
+# Ascending search for centre i: ball members o.d[2:j]; returns the radius.
+nnccd.radi.ascend.one <- function(i, ddx, o.d, n, low.num, env.ave, env.med) {
+  m0 <- o.d[2:low.num]                       # members at the first step
+  if (length(m0) < 2) {                      # degenerate ball: defer to the reference statistic
+    for (j in low.num:n) {
+      r <- ddx[i, o.d[j]]
+      s <- NNDest.dist.f(ddx[o.d[2:j], o.d[2:j]], r)
+      if (s$averge < env.ave[j - 1] | s$median < env.med[j - 1]) {
+        return(if (j == low.num) 0 else ddx[i, o.d[j - 1]])
+      }
+    }
+    return(0)
+  }
+  sub <- ddx[m0, m0, drop = FALSE]; diag(sub) <- Inf
+  nn <- apply(sub, 1, min)
+  for (j in low.num:n) {
+    if (j > low.num) {                        # point o.d[j] enters the ball
+      p <- o.d[j]
+      dp <- ddx[p, o.d[2:(j - 1)]]
+      nn <- c(pmin(nn, dp), min(dp))
+    }
+    r <- ddx[i, o.d[j]]
+    if (mean(nn) / r < env.ave[j - 1] | median(nn) / r < env.med[j - 1]) {
+      return(if (j == low.num) 0 else ddx[i, o.d[j - 1]])
+    }
+  }
+  0
+}
+
+# Descending search for centre i: ball members o.d[j:(n-1)]; returns the radius.
+# nn1.val/nn1.idx/nn2.val: each point's nearest and second-nearest distance to
+# any other point (computed once per data set), used to start the full ball in O(n).
+nnccd.radi.descend.one <- function(i, ddx, o.d, n, low.num, env.ave.rev, env.med.rev,
+                                   nn1.val, nn1.idx, nn2.val) {
+  mem <- o.d[1:(n - 1)]                       # members at j = 1
+  e <- o.d[n]                                 # the one point outside the ball
+  nn <- ifelse(nn1.idx[mem] == e, nn2.val[mem], nn1.val[mem])   # position k <-> point mem[k]
+  for (j in 1:(n - low.num)) {
+    if (j > 1) {                              # point o.d[j-1] leaves; members are mem[j:(n-1)]
+      x <- o.d[j - 1]
+      pos <- j:(n - 1)
+      hit <- pos[nn[pos] == ddx[mem[pos], x]]
+      for (k in hit) {
+        others <- mem[pos[pos != k]]
+        nn[k] <- if (length(others)) min(ddx[mem[k], others]) else Inf
+      }
+    }
+    r <- ddx[i, o.d[j]]
+    cur <- nn[j:(n - 1)]
+    if (mean(cur) / r > env.ave.rev[j + 2] & median(cur) / r > env.med.rev[j + 2]) {
+      return(r)
+    }
+  }
+  0
+}
+
 nnccd.radi <- function(dx, quantile="lower", method="ascend", low.num, quant, simul=NULL, niter, scores=F){
-  
+
   ddx <- as.matrix(dist(dx)) # the distance matrix
   n <- nrow(dx)
   d <- ncol(dx)
   R <- rep(0,n)
-  
+
   if(quantile=="lower"){
-    if(!is.null(simul)) {NN.envelop <- list(average=simul$average[1:n],median=simul$median[1:n])} 
+    if(!is.null(simul)) {NN.envelop <- list(average=simul$average[1:n],median=simul$median[1:n])}
     else {NN.envelop <- NNDest.simpois.lower.quant(n, d, quant, niter)}
-    if(!scores){
-      for(i in 1:n){
-        if(method == "ascend"){
-          o.d <- order(ddx[i,]) # the descending distance order for i_th object
-          for(j in low.num:n){
-            r <- ddx[i,o.d[j]]
-            NN.dist.obs <- NNDest.dist.f(ddx[o.d[2:j],o.d[2:j]],r) # the average NN distance of within a covering ball, the center point is dropped
-            
-            # check the values, if accepted, set the R[i] as the radius
-            lower.bound.ave = NN.envelop$average[j-1]
-            lower.bound.med = NN.envelop$median[j-1]
-            # if(NN.dist.obs$averge<lower.bound.ave | NN.dist.obs$median<lower.bound.med){
-            #   R[i] = ddx[i,o.d[j-1]]
-            #   break
-            # }
-            if(NN.dist.obs$averge<lower.bound.ave | NN.dist.obs$median<lower.bound.med){
-              if(j == low.num) R[i] = 0
-              else  R[i] = ddx[i,o.d[j-1]]
-              break
-            }
-          }
-        }
-        if(method=="descend"){
-          o.d <- order(ddx[i,], decreasing=T) # the descending distance order for i_th object
-          for(j in 1:(n-low.num)){
-            r <- ddx[i,o.d[j]]
-            NN.dist.obs <- NNDest.dist.f(ddx[o.d[j:(n-1)],o.d[j:(n-1)]],r) # the average NN distance of within a covering ball, the center point is dropped
-            
-            # check the values, if accepted, set the R[i] as the radius
-            lower.bound.ave = rev(NN.envelop$average)[j+2]
-            lower.bound.med = rev(NN.envelop$median)[j+2]
-            if(NN.dist.obs$averge>lower.bound.ave & NN.dist.obs$median>lower.bound.med){
-              R[i] = r
-              break
-            }
-          }
-        }
+    if(method=="descend"){
+      env.ave.rev <- rev(NN.envelop$average); env.med.rev <- rev(NN.envelop$median)
+      dd0 <- ddx; diag(dd0) <- Inf
+      nn1.idx <- apply(dd0, 1, which.min)
+      nn1.val <- dd0[cbind(1:n, nn1.idx)]
+      dd0[cbind(1:n, nn1.idx)] <- Inf
+      nn2.val <- apply(dd0, 1, min)
+      rm(dd0)
+    }
+    for(i in 1:n){
+      if(method == "ascend"){
+        o.d <- order(ddx[i,]) # the ascending distance order for i_th object
+        R[i] <- nnccd.radi.ascend.one(i, ddx, o.d, n, low.num, NN.envelop$average, NN.envelop$median)
       }
-    } else {
-      for(i in 1:n){
-        if(method == "ascend"){
-          o.d <- order(ddx[i,]) # the descending distance order for i_th object
-          for(j in low.num:n){
-            r <- ddx[i,o.d[j]]
-            NN.dist.obs <- NNDest.dist.f(ddx[o.d[2:j],o.d[2:j]],r) # the average NN distance of within a covering ball, the center point is dropped
-            
-            # check the values, if accepted, set the R[i] as the radius
-            lower.bound.ave = NN.envelop$average[j-1]
-            lower.bound.med = NN.envelop$median[j-1]
-            # if(NN.dist.obs$averge<lower.bound.ave | NN.dist.obs$median<lower.bound.med){
-            #   R[i] = ddx[i,o.d[j-1]]
-            #   break
-            # }
-            if(NN.dist.obs$averge<lower.bound.ave | NN.dist.obs$median<lower.bound.med){
-              if(j == low.num) R[i] = 0
-              else  R[i] = ddx[i,o.d[j-1]]
-              break
-            }
-          }
-        }
-        if(method=="descend"){
-          o.d <- order(ddx[i,], decreasing=T) # the descending distance order for i_th object
-          for(j in 1:(n-low.num)){
-            r <- ddx[i,o.d[j]]
-            NN.dist.obs <- NNDest.dist.f(ddx[o.d[j:(n-1)],o.d[j:(n-1)]],r) # the average NN distance of within a covering ball, the center point is dropped
-            
-            # check the values, if accepted, set the R[i] as the radius
-            lower.bound.ave = rev(NN.envelop$average)[j+2]
-            lower.bound.med = rev(NN.envelop$median)[j+2]
-            if(NN.dist.obs$averge>lower.bound.ave & NN.dist.obs$median>lower.bound.med){
-              R[i] = r
-              break
-            }
-          }
-        }
-        if(R[i]==0){R[i]=sort(ddx[i,])[2]} # avoid 0 radius (necessary for outlyingness scores!)
+      if(method=="descend"){
+        o.d <- order(ddx[i,], decreasing=T) # the descending distance order for i_th object
+        R[i] <- nnccd.radi.descend.one(i, ddx, o.d, n, low.num, env.ave.rev, env.med.rev,
+                                       nn1.val, nn1.idx, nn2.val)
       }
+      if(scores && R[i]==0){R[i]=sort(ddx[i,])[2]} # avoid 0 radius (necessary for outlyingness scores!)
     }
   }
   return(list(R=R,KS=NULL))

@@ -52,8 +52,10 @@ Windows setup, `Rscript` must be launched from PowerShell, not Git-Bash/MSYS
 ## .venv/
 
 The pinned PyOD 3.6.1 / torch 2.13.0+cpu Python environment, used by tr2's
-`05_wp4_runtime_pyod.py` and `08_wp6_pyod_baselines.py`. Nothing tr1-specific
-uses Python. Unmoved by this reorg (still `revision_experiments/.venv`).
+`05_wp4_runtime_pyod.py` and `08_wp6_pyod_baselines.py`, and (since
+2026-09-05) by tr1's `81_wp4_baselines.py`, `84a_wp5_fetch_convert.py`,
+`90b_wp7_hdbscan.py` and `91b_wp6_runtime_py.py`. Unmoved by this reorg
+(still `revision_experiments/.venv`).
 
 ## results/
 
@@ -61,15 +63,19 @@ uses Python. Unmoved by this reorg (still `revision_experiments/.venv`).
   (two of the 16, `Musk_sub1000.csv` and `Speech_sub1000.csv`, come from the
   WP5 subsample path, `07_wp5_subsample_ccd.R`, not the main loader). Written
   by tr2; read by tr2 scripts that need a dataset as a flat CSV rather than
-  through `load_real_dataset()`. tr1 does not read this directory -- it loads
-  data only via `load_real_dataset()`, per `tr1/REGEN_SPEC.md`. Not moved or
-  touched by this reorg.
+  through `load_real_dataset()`. tr1's regeneration pipeline does not read
+  this directory -- it loads data only via `load_real_dataset()`, per
+  `tr1/REGEN_SPEC.md`; the one exception is tr1's WP5 step
+  `84a_wp5_fetch_convert.py`, which copies musk/arrhythmia from here into
+  `results/tr1/wp5/data/`. Not moved or touched by this reorg.
 - `results/scores_cache/` -- cached `.rds` score vectors keyed by
   `<dataset>_<method>.rds`. Shared in principle, written by tr2's
   `06_wp5_highdim.R` / `07_wp5_subsample_ccd.R` / `07b_wp5_fulldata_ccd.R`
   and read by `10_wp3_real.R`. Not moved or touched by this reorg.
 - `results/tr1/` -- tr1's flat result files (csv/log). Contents untouched by
-  this reorg.
+  this reorg. Since 2026-09-05 the WP3-WP9 runs write to per-package
+  subdirectories (`wp3/` .. `wp9/`, `cost_probe/`, and `wp6_incr/` for the
+  2026-09-23 incremental-radius validation and UN-/SUN-MCCD re-timing).
 - `results/tr2/` -- tr2's result files (csv, `figures/`, `probes/`,
   `wp4_data/`, `wp4_data2/`, `wp6_scores/`). CSVs and `figures/` stay directly
   under `results/tr2/`.
@@ -92,6 +98,22 @@ and the `regen_wilt_*_launcher.ps1` pair) are unchanged from before this reorg
 See `tr1/REGEN_SPEC.md`, `tr1/BENCHMARK_EXPANSION_RULE.md` and
 `tr1/REGENERATION_REPORT.md` for tr1's own documentation; this file does not
 duplicate it.
+
+Added after the reorg: `tr1/79_harness_guard_tests.R` and `tr1/80_*` ..
+`tr1/93_*` (the WP3-WP9 drivers, each package with its `WP*_PROTOCOL.md`,
+plus the two validation scripts below; note the two different `92_*` files).
+tr1's WP2 alpha/S_min scripts `40_*` .. `79_*` sit at the top level of
+`revision_experiments/` (note the two different `79_*` files). Additions of
+2026-09-22/23:
+
+| Script | Purpose | Main output |
+|---|---|---|
+| `79_rerun_sun_smin_fixed_tables.R` (top level) | Reruns the SUN-MCCD S_min sensitivity cells with the repaired 0.1% NND tables. Supersedes the SUN-MCCD column of `wp2c_smin_zero_real.csv` and the SUN-MCCD waveform cells of `wp2a_smin_bigfour.csv`. | `results/tr1/wp2c_sun_smin_rerun_fixed.csv` |
+| `tr1/91_wp6_runtime.R` | WP6 runtime/memory grid; options `--methods=`, `--resdir=`, `--nn-direction=` added 2026-09-23. | `results/tr1/wp6/` (default), `results/tr1/wp6_incr/` |
+| `tr1/92_validate_incremental_radi.R` | Checks that the incremental nearest-neighbour radius search in `R/ccds/UN_CCD.R` (2026-09-23) returns radii identical to the earlier per-step recomputation, kept as `R/ccds/UN_CCD_radi_recompute_reference.R`. | `results/tr1/wp6_incr/92_validate.csv` |
+| `tr1/93_validate_incremental_extended.R` | Extended check of the same change: radii over d = 2-100 and six generators, both directions, plus end-to-end UN-MCCD/SUN-MCCD outputs on the real data sets. | `results/tr1/wp6_incr/93_validate_extended.csv` |
+
+Outcome: `results/tr1/wp6_incr/FINDINGS.md`.
 
 ## tr2/
 
