@@ -112,8 +112,9 @@ tr1's WP2 alpha/S_min scripts `40_*` .. `79_*` sit at the top level of
 | `tr1/91_wp6_runtime.R` | WP6 runtime/memory grid; options `--methods=`, `--resdir=`, `--nn-direction=` added 2026-09-23. | `results/tr1/wp6/` (default), `results/tr1/wp6_incr/` |
 | `tr1/92_validate_incremental_radi.R` | Checks that the incremental nearest-neighbour radius search in `R/ccds/UN_CCD.R` (2026-09-23) returns radii identical to the earlier per-step recomputation, kept as `R/ccds/UN_CCD_radi_recompute_reference.R`. | `results/tr1/wp6_incr/92_validate.csv` |
 | `tr1/93_validate_incremental_extended.R` | Extended check of the same change: radii over d = 2-100 and six generators, both directions, plus end-to-end UN-MCCD/SUN-MCCD outputs on the real data sets. | `results/tr1/wp6_incr/93_validate_extended.csv` |
+| `tr1/94_wp6_ab_old_vs_new.R` | Paired timing: each replicate times the old per-step search (`UN_CCD_radi_recompute_reference.R`) and the new incremental one on the same data (cells and seeds of `91_wp6_runtime.R`, alternating order). Supersedes the `wp6_incr/91_*` re-timing, which ran under different machine conditions; the manuscript reports its `impl=new`, `part=detector` arm. | `results/tr1/wp6_incr/94_ab_raw.csv`, `94_ab_run.log` |
 
-Outcome: `results/tr1/wp6_incr/FINDINGS.md`.
+Outcome: 42 + 420 radius cases and 66 end-to-end runs identical; paired timing (94) shows the radius search 44-51% faster at n = 2000 and the whole detector 2-5% faster at d = 10, n >= 500.
 
 ## tr2/
 
