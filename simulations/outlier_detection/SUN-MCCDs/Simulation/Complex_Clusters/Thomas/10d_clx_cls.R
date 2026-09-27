@@ -3,7 +3,7 @@ tt1 = Sys.time()
 source(here::here("methods/outlier_detection/SUN-MCCD.R"))
 source(here::here("R/general_functions/count.R"))
 source(here::here("R/general_functions/Uni-Gau_cls.R"))
-load(here::here("R/NN-test_quantile/NN-test-simul_10d_99%.RData"))
+load(here::here("R/NN-test_quantile/NN-test-simul_10d_999%.RData"))
 source(here::here("R/general_functions/ratio2.R"))
 
 
@@ -26,7 +26,7 @@ if(d==2){quant=0.85 # the level of K-test
 } else if(d==5) {
   quant=0.95
 } else if(d==10) {
-  quant=0.99
+  quant=0.999
 } else {
   quant=0.999
 }
