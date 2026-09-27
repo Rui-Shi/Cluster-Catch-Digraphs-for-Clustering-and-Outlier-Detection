@@ -55,6 +55,7 @@ mcols <- c("TPR", "TNR", "BA", "F2")
 man <- read.csv(file.path(WP4, "data/manifest.csv"), stringsAsFactors = FALSE)
 stopifnot(setequal(man$dataset, ORDER), all(man$table_match))
 nn <- setNames(man$n, man$dataset); n0 <- setNames(man$n_outliers, man$dataset)
+KSQ <- round(sqrt(nn))   # label-free k per data set (ODIN's rule), as in 82
 
 exact <- function(df) {
   n <- nn[df$dataset]; k <- n0[df$dataset]
@@ -84,17 +85,31 @@ seed_summary <- do.call(rbind, lapply(c("DIF", "LUNAR"), function(m)
                  stringsAsFactors = FALSE)
     }))))))
 
-pick_k <- function(m, rg, mode) do.call(rbind, lapply(ORDER, function(ds) {
-  h <- long[long$method == m & long$regime == rg & long$dataset == ds, ]
-  stopifnot(nrow(h) == length(KS))
-  i <- if (mode == "oracle") which.max(h$F2) else which(h$k == 10)
-  data.frame(dataset = ds, method = m, regime = rg,
-             TPR = h$TPR[i], TNR = h$TNR[i], BA = h$BA[i], F2 = h$F2[i],
-             sd_TPR = NA, sd_TNR = NA, sd_BA = NA, sd_F2 = NA, k = h$k[i],
-             stringsAsFactors = FALSE)
-}))
+# --- k-swept methods (2026-09-26): the PRIMARY rows use the label-free rule
+# k = round(sqrt(n)), the rule ODIN uses in this study; the label-chosen
+# (oracle-best-F2) k over the declared grid KS is kept as an upper bound under
+# the method name "<m>-oracle"; the fixed k = 10 rows stay as "<m>-k10".
+pick_k <- function(m, rg, mode) {
+  do.call(rbind, lapply(ORDER, function(ds) {
+    h <- long[long$method == m & long$regime == rg & long$dataset == ds, ]
+    stopifnot(all(KS %in% h$k), KSQ[[ds]] %in% h$k)
+    g <- which(h$k %in% KS)
+    i <- switch(mode,
+                oracle = g[which.max(h$F2[g])],   # first maximum = smallest k among F2 ties
+                fixed  = which(h$k == 10),
+                sqrt   = which(h$k == KSQ[[ds]]))
+    stopifnot(length(i) == 1)
+    data.frame(dataset = ds, method = m, regime = rg,
+               TPR = h$TPR[i], TNR = h$TNR[i], BA = h$BA[i], F2 = h$F2[i],
+               sd_TPR = NA, sd_TNR = NA, sd_BA = NA, sd_F2 = NA,
+               k = h$k[i], stringsAsFactors = FALSE)
+  }))
+}
+sqrt_k <- do.call(rbind, lapply(c("MutualKNN", "SNN"), function(m)
+  do.call(rbind, lapply(c("T1", "T2"), function(rg) pick_k(m, rg, "sqrt")))))
 oracle_k <- do.call(rbind, lapply(c("MutualKNN", "SNN"), function(m)
   do.call(rbind, lapply(c("T1", "T2"), function(rg) pick_k(m, rg, "oracle")))))
+oracle_k$method <- paste0(oracle_k$method, "-oracle")
 fixed_k <- do.call(rbind, lapply(c("MutualKNN", "SNN"), function(m)
   do.call(rbind, lapply(c("T1", "T2"), function(rg) pick_k(m, rg, "fixed")))))
 fixed_k$method <- paste0(fixed_k$method, "-k10")
@@ -111,14 +126,22 @@ native_rows <- do.call(rbind, lapply(c("HDBSCAN-noise", "OPTICS-noise"), functio
              TPR = g$TPR, TNR = g$TNR, BA = g$BA, F2 = g$F2,
              sd_TPR = NA, sd_TNR = NA, sd_BA = NA, sd_F2 = NA, k = NA_real_,
              stringsAsFactors = FALSE)}))
-native_rows <- rbind(native_rows, do.call(rbind, lapply(ORDER, function(ds) {
+# mutual-kNN m_i = 0: primary at the sqrt rule, label-chosen k kept as "-oracle"
+m0_row <- function(ds, mode) {
   h <- long[long$method == "MutualKNN-m0" & long$dataset == ds, ]
-  i <- which.max(h$F2)
-  data.frame(dataset = ds, method = "MutualKNN-m0", regime = "native",
+  g <- which(h$k %in% KS)
+  i <- if (mode == "oracle") g[which.max(h$F2[g])] else which(h$k == KSQ[[ds]])
+  stopifnot(length(i) == 1)
+  data.frame(dataset = ds, method = if (mode == "oracle") "MutualKNN-m0-oracle" else "MutualKNN-m0",
+             regime = "native",
              TPR = h$TPR[i], TNR = h$TNR[i], BA = h$BA[i], F2 = h$F2[i],
-             sd_TPR = NA, sd_TNR = NA, sd_BA = NA, sd_F2 = NA, k = h$k[i],
-             stringsAsFactors = FALSE)})))
-main <- rbind(plain, seed_summary, oracle_k, fixed_k, native_rows)
+             sd_TPR = NA, sd_TNR = NA, sd_BA = NA, sd_F2 = NA,
+             k = h$k[i], stringsAsFactors = FALSE)
+}
+native_rows <- rbind(native_rows,
+                     do.call(rbind, lapply(ORDER, m0_row, mode = "sqrt")),
+                     do.call(rbind, lapply(ORDER, m0_row, mode = "oracle")))
+main <- rbind(plain, seed_summary, sqrt_k, oracle_k, fixed_k, native_rows)
 
 # gate: the rebuild must agree with 82's own summary CSV to numerical noise
 chk <- read.csv(file.path(WP4, "wp4_metrics_main.csv"), stringsAsFactors = FALSE)
@@ -384,3 +407,41 @@ cat(sprintf("%%   SUN-MCCD F2 ahead of GLOSH on %d of 16; GLOSH ahead on %d; tie
 cat(sprintf("%%   mean F2: GLOSH %.3f, OPTICS %.3f, SU-MCCD %.3f, SUN-MCCD %.3f\n",
             r3(mean(gl)), r3(mean(sapply(ORDER, function(ds) wp4v(ds, "OPTICS", "F2")))),
             r3(mean(su)), r3(mean(sn2))))
+
+# ===========================================================================
+# 2026-09-26: label-free k for mutual-kNN and SNN (round(sqrt(n)), ODIN's rule)
+# is the primary result above; the label-chosen k is printed here as an upper
+# bound, unranked, for the main-text aggregate table and the supplement k table.
+# ===========================================================================
+hdr("main text tab:Real_Data_Aggregate -- upper-bound rows (k chosen with the true labels; not ranked)")
+for (m in c("MutualKNN-oracle", "SNN-oracle")) {
+  g <- main[main$method == m & main$regime == "T1", ]; g <- g[match(ORDER, g$dataset), ]
+  f2 <- sapply(ORDER, function(ds) wp4v(ds, m, "F2")); ba <- sapply(ORDER, function(ds) wp4v(ds, m, "BA"))
+  cat(sprintf("  %-18s & %s & %s & %s & %s \\\\ \\hline\n", m,
+              f3(mean(f2)), f3(median(f2)), f3(mean(ba)), f3(median(ba))))
+}
+hdr("supplement: mutual-kNN at k = round(sqrt(n)) and at the label-chosen k, vs SUN-MCCD and UN-MCCD, T1")
+for (ds in ORDER) {
+  kq <- main$k[main$dataset == ds & main$method == "MutualKNN" & main$regime == "T1"]
+  ko <- main$k[main$dataset == ds & main$method == "MutualKNN-oracle" & main$regime == "T1"]
+  cat(sprintf("  %-12s & %2d & %s & %s & %2d & %s & %s & %s & %s & %s & %s \\\\ \\hline\n", ds,
+              kq, f3(wp4v(ds, "MutualKNN", "F2")), f3(wp4v(ds, "MutualKNN", "BA")),
+              ko, f3(wp4v(ds, "MutualKNN-oracle", "F2")), f3(wp4v(ds, "MutualKNN-oracle", "BA")),
+              f3(inc(ds, "SUN-MCCD", "F2")), f3(inc(ds, "SUN-MCCD", "BA")),
+              f3(inc(ds, "UN-MCCD", "F2")), f3(inc(ds, "UN-MCCD", "BA"))))
+}
+cnt <- function(a, b) sprintf("%d ahead, %d behind, %d tied", sum(a > b), sum(b > a), sum(a == b))
+for (m in c("MutualKNN", "MutualKNN-oracle")) for (p in c("SUN-MCCD", "UN-MCCD")) for (col in c("F2", "BA")) {
+  a <- sapply(ORDER, function(ds) inc(ds, p, col)); b <- sapply(ORDER, function(ds) wp4v(ds, m, col))
+  cat(sprintf("%%   %-8s vs %-16s on %s: %s\n", p, m, col, cnt(a, b)))
+}
+for (m in c("MutualKNN", "MutualKNN-oracle", "MutualKNN-k10", "SNN", "SNN-oracle", "SNN-k10")) {
+  f2 <- sapply(ORDER, function(ds) wp4v(ds, m, "F2")); ba <- sapply(ORDER, function(ds) wp4v(ds, m, "BA"))
+  cat(sprintf("%%   %-17s mean F2 %s  mean BA %s\n", m, f3(mean(f2)), f3(mean(ba))))
+}
+hdr("supplement: mutual-kNN m_i = 0 (native), sqrt rule and label-chosen k")
+for (m in c("MutualKNN-m0", "MutualKNN-m0-oracle")) {
+  g <- main[main$method == m & main$regime == "native", ]
+  cat(sprintf("  %-20s & %s & %s & %s & %s \\\\ \\hline\n", m, f3(mean(r3(g$F2))), f3(median(r3(g$F2))),
+              f3(mean(r3(g$BA))), f3(median(r3(g$BA)))))
+}

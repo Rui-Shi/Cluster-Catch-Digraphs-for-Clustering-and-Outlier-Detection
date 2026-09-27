@@ -56,6 +56,7 @@ OUT_MD   <- file.path(WP5, "WP5_FINDINGS.md")
 
 ORDER <- c("letter", "mnist", "musk", "arrhythmia")
 KS <- c(5, 10, 15, 20, 30)
+# KSQ (label-free k = round(sqrt(n)), ODIN's rule) is set once the manifest is read
 SEEDS <- 1:5
 r3 <- function(x) as.numeric(sprintf("%.3f", x))
 
@@ -72,6 +73,7 @@ saydf <- function(df) {
 # ---------------------------------------------------------------------------
 man <- read.csv(file.path(DATA, "manifest.csv"), stringsAsFactors = FALSE)
 stopifnot(setequal(man$dataset, ORDER))
+KSQ <- setNames(round(sqrt(man$n[match(ORDER, man$dataset)])), ORDER)
 
 labs <- setNames(lapply(ORDER, function(ds) {
   d <- read.csv(file.path(DATA, paste0(ds, ".csv")), stringsAsFactors = FALSE)
@@ -135,8 +137,8 @@ for (ds in ORDER) {
   for (s in SEEDS) emit(ds, "LUNAR", sprintf("LUNAR_seed%d", s), seed = s)
   emit(ds, "GLOSH", "HDBSCAN")
   emit(ds, "OPTICS", "OPTICS")
-  for (k in KS) emit(ds, "MutualKNN", sprintf("MutualKNN_k%d", k), k = k)
-  for (k in KS) emit(ds, "SNN", sprintf("SNN_k%d", k), k = k)
+  for (k in union(KS, KSQ[[ds]])) emit(ds, "MutualKNN", sprintf("MutualKNN_k%d", k), k = k)
+  for (k in union(KS, KSQ[[ds]])) emit(ds, "SNN", sprintf("SNN_k%d", k), k = k)
 
   nat <- list(c("HDBSCAN-noise", "HDBSCAN"), c("OPTICS-noise", "OPTICS"))
   for (p in nat) {
@@ -144,7 +146,7 @@ for (ds in ORDER) {
     add(dataset = ds, method = p[1], k = NA, seed = NA,
         TPR = v[["TPR"]], TNR = v[["TNR"]], BA = v[["BA"]], F2 = v[["F2"]], n_flagged = v[["n_flagged"]])
   }
-  for (k in KS) {
+  for (k in union(KS, KSQ[[ds]])) {
     v <- metrics_from_labels(ds, read_native(ds, sprintf("MutualKNN_k%d", k)))
     add(dataset = ds, method = "MutualKNN-m0", k = k, seed = NA,
         TPR = v[["TPR"]], TNR = v[["TNR"]], BA = v[["BA"]], F2 = v[["F2"]], n_flagged = v[["n_flagged"]])
@@ -170,17 +172,23 @@ seed_summary <- do.call(rbind, lapply(c("DIF", "LUNAR"), function(m) {
   }))
 }))
 
-# k-swept methods: oracle-best k by F2 (82_wp4_metrics.R's declared oracle)
-pick_k <- function(m) {
+# k-swept methods (2026-09-26, as in 82_wp4_metrics.R): the primary rows use
+# k = round(sqrt(n)); the label-chosen (oracle-best-F2) k over KS is kept as
+# "<m>-oracle", an upper bound.
+pick_k <- function(m, mode) {
   do.call(rbind, lapply(ORDER, function(ds) {
     h <- long[long$method == m & long$dataset == ds, ]
-    stopifnot(nrow(h) == length(KS))
-    i <- which.max(h$F2)
-    data.frame(dataset = ds, method = m, TPR = h$TPR[i], TNR = h$TNR[i], BA = h$BA[i], F2 = h$F2[i],
+    stopifnot(all(KS %in% h$k), KSQ[[ds]] %in% h$k)
+    g <- which(h$k %in% KS)
+    i <- if (mode == "oracle") g[which.max(h$F2[g])] else which(h$k == KSQ[[ds]])
+    stopifnot(length(i) == 1)
+    data.frame(dataset = ds, method = if (mode == "oracle") paste0(m, "-oracle") else m,
+               TPR = h$TPR[i], TNR = h$TNR[i], BA = h$BA[i], F2 = h$F2[i],
                sd_F2 = NA, k = h$k[i], stringsAsFactors = FALSE)
   }))
 }
-oracle_k <- do.call(rbind, lapply(c("MutualKNN", "SNN"), pick_k))
+sqrt_k   <- do.call(rbind, lapply(c("MutualKNN", "SNN"), pick_k, mode = "sqrt"))
+oracle_k <- do.call(rbind, lapply(c("MutualKNN", "SNN"), pick_k, mode = "oracle"))
 
 plain <- do.call(rbind, lapply(c("ECOD", "COPOD", "GLOSH", "OPTICS"), function(m) {
   g <- long[long$method == m, ]; g <- g[match(ORDER, g$dataset), ]
@@ -193,14 +201,18 @@ native_rows <- do.call(rbind, lapply(c("HDBSCAN-noise", "OPTICS-noise"), functio
   data.frame(dataset = g$dataset, method = m, TPR = g$TPR, TNR = g$TNR, BA = g$BA, F2 = g$F2,
              sd_F2 = NA, k = NA_real_, stringsAsFactors = FALSE)
 }))
-native_rows <- rbind(native_rows, do.call(rbind, lapply(ORDER, function(ds) {
+m0_row <- function(ds, mode) {
   h <- long[long$method == "MutualKNN-m0" & long$dataset == ds, ]
-  i <- which.max(h$F2)
-  data.frame(dataset = ds, method = "MutualKNN-m0", TPR = h$TPR[i], TNR = h$TNR[i],
+  g <- which(h$k %in% KS)
+  i <- if (mode == "oracle") g[which.max(h$F2[g])] else which(h$k == KSQ[[ds]])
+  data.frame(dataset = ds, method = if (mode == "oracle") "MutualKNN-m0-oracle" else "MutualKNN-m0",
+             TPR = h$TPR[i], TNR = h$TNR[i],
              BA = h$BA[i], F2 = h$F2[i], sd_F2 = NA, k = h$k[i], stringsAsFactors = FALSE)
-})))
+}
+native_rows <- rbind(native_rows, do.call(rbind, lapply(ORDER, m0_row, mode = "sqrt")),
+                     do.call(rbind, lapply(ORDER, m0_row, mode = "oracle")))
 
-wp4_competitors <- rbind(plain, seed_summary, oracle_k, native_rows)
+wp4_competitors <- rbind(plain, seed_summary, sqrt_k, oracle_k, native_rows)
 wp4_competitors <- wp4_competitors[order(match(wp4_competitors$dataset, ORDER), wp4_competitors$method), ]
 
 # ---------------------------------------------------------------------------
@@ -264,7 +276,7 @@ gv <- function(ds, m, col) {
 }
 
 say("\n=== R3.3 read-off: oracle-k mutual-kNN vs SUN-MCCD / UN-MCCD (T1) ===\n")
-mk_oracle <- oracle_k[oracle_k$method == "MutualKNN", ]
+mk_oracle <- oracle_k[oracle_k$method == "MutualKNN-oracle", ]
 r33 <- do.call(rbind, lapply(ORDER, function(ds) data.frame(
   dataset = ds,
   k_star = mk_oracle$k[mk_oracle$dataset == ds],

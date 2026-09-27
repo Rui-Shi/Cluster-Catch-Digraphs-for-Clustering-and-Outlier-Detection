@@ -296,8 +296,8 @@ GLOSH (HDBSCAN),min_cluster_size,5,library default,tr1/WP4_PROTOCOL.md sections 
 GLOSH (HDBSCAN),min_samples,None (falls back to min_cluster_size),library default,tr1/WP4_PROTOCOL.md section 5
 OPTICS,min_samples,5,library default,tr1/WP4_PROTOCOL.md section 5
 OPTICS,xi,0.05,library default,tr1/WP4_PROTOCOL.md section 5
-MutualKNN,k,"best of {5,10,15,20,30} by F2 under true labels, per data set",ORACLE-K (uses true labels),"tr1/WP4_PROTOCOL.md section 2, oracle concession on k"
-SNN,k,"best of {5,10,15,20,30} by F2 under true labels, per data set",ORACLE-K (uses true labels),tr1/WP4_PROTOCOL.md section 2
+MutualKNN,k,"round(sqrt(n)), the rule ODIN uses; the best of {5,10,15,20,30} by F2 under the true labels is reported separately as an upper bound",FIXED-RULE (function of n; uses no labels),"changed 2026-09-26 from the oracle concession of tr1/WP4_PROTOCOL.md section 2"
+SNN,k,"round(sqrt(n)), the rule ODIN uses; the best of {5,10,15,20,30} by F2 under the true labels is reported separately as an upper bound",FIXED-RULE (function of n; uses no labels),"changed 2026-09-26 from the oracle concession of tr1/WP4_PROTOCOL.md section 2"
 "all 8 WP4 competitors (T1 thresholding)",contamination fraction to threshold the score,"0.1, identical for every data set",library default; label-free,"tr1/WP4_PROTOCOL.md section 3; main text sec:Real-Data-Examples"
 '), stringsAsFactors = FALSE)
 write.csv(prov, file.path(WP3, "parameter_provenance.csv"), row.names = FALSE)

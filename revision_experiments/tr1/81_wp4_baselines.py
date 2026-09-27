@@ -87,6 +87,13 @@ ERROR_LOG_PATH = WP4 / "fit_errors.log"
 VERSIONS_PATH = WP4 / "versions.txt"
 
 K_GRID = [5, 10, 15, 20, 30]
+
+
+def sqrt_k(n):
+    """Label-free k for mutual-kNN and SNN: round(sqrt(n)), the rule ODIN uses in this
+    study (shared/harness.R, odin_method). Added 2026-09-26: the primary mutual-kNN and
+    SNN results use this k; the label-chosen k over K_GRID is kept as an upper bound."""
+    return int(round(n ** 0.5))
 SEEDS = [1, 2, 3, 4, 5]
 NA = "NA"
 MAX_RETRIES = 2
@@ -105,17 +112,20 @@ def log(msg):
 # cells
 # ---------------------------------------------------------------------------
 
-def cells_for_dataset(dataset):
-    """Cheapest-first within a data set."""
+def cells_for_dataset(dataset, n=None):
+    """Cheapest-first within a data set. With n given, the sqrt-rule k is added to the grid."""
+    grid = list(K_GRID)
+    if n is not None and sqrt_k(n) not in grid:
+        grid.append(sqrt_k(n))
     out = [
         (dataset, "ECOD", NA, NA),
         (dataset, "COPOD", NA, NA),
         (dataset, "HDBSCAN", NA, NA),
         (dataset, "OPTICS", NA, NA),
     ]
-    for k in K_GRID:
+    for k in grid:
         out.append((dataset, "MutualKNN", str(k), NA))
-    for k in K_GRID:
+    for k in grid:
         out.append((dataset, "SNN", str(k), NA))
     for s in SEEDS:
         out.append((dataset, "DIF", NA, str(s)))
@@ -399,12 +409,13 @@ def main():
 
     manifest = pd.read_csv(DATA_DIR / "manifest.csv").sort_values("n")
     datasets = list(manifest["dataset"])
+    n_of = dict(zip(manifest["dataset"], manifest["n"]))
     if args.dataset:
         datasets = [d for d in datasets if d in set(args.dataset)]
 
     all_cells = []
     for ds in datasets:
-        for c in cells_for_dataset(ds):
+        for c in cells_for_dataset(ds, int(n_of[ds])):
             if args.method and c[1] not in set(args.method):
                 continue
             all_cells.append(c)

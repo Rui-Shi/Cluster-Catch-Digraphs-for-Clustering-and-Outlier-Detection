@@ -87,6 +87,7 @@ ORDER <- c("hepatitis", "lymphography", "glass", "WBC", "vertebral", "ecoli",
            "waveform", "thyroid", "pageblocks", "wilt")
 PROPOSED <- c("U-MCCD", "SU-MCCD", "UN-MCCD", "SUN-MCCD")
 KS <- c(5, 10, 15, 20, 30)
+# label-free k per data set, round(sqrt(n)); defined once labs is read (below)
 SEEDS <- 1:5
 
 # manuscript rounding: half UP, not R's half-to-even
@@ -118,6 +119,7 @@ labs <- setNames(lapply(ORDER, function(ds) {
 }), ORDER)
 
 cont_true <- setNames(man$contamination[match(ORDER, man$dataset)], ORDER)
+KSQ <- setNames(round(sqrt(man$n[match(ORDER, man$dataset)])), ORDER)   # label-free k, ODIN's rule
 
 read_score <- function(ds, tag) {
   f <- file.path(SCO, sprintf("%s_%s.csv", ds, tag))
@@ -177,8 +179,8 @@ for (ds in ORDER) {
   for (s in SEEDS) emit(ds, "LUNAR", sprintf("LUNAR_seed%d", s), seed = s)
   emit(ds, "GLOSH",  "HDBSCAN")            # hdbscan outlier_scores_
   emit(ds, "OPTICS", "OPTICS")             # reachability_, inf filled 1.01x
-  for (k in KS) emit(ds, "MutualKNN", sprintf("MutualKNN_k%d", k), k = k)
-  for (k in KS) emit(ds, "SNN",       sprintf("SNN_k%d", k),       k = k)
+  for (k in union(KS, KSQ[[ds]])) emit(ds, "MutualKNN", sprintf("MutualKNN_k%d", k), k = k)
+  for (k in union(KS, KSQ[[ds]])) emit(ds, "SNN",       sprintf("SNN_k%d", k),       k = k)
 
   # threshold-free native variants
   nat <- list(c("HDBSCAN-noise", "HDBSCAN"), c("OPTICS-noise", "OPTICS"))
@@ -189,7 +191,7 @@ for (ds in ORDER) {
         TPR = v[["TPR"]], TNR = v[["TNR"]], BA = v[["BA"]], F2 = v[["F2"]],
         n_flagged = v[["n_flagged"]], n_tied_at_thr = NA, threshold = NA)
   }
-  for (k in KS) {
+  for (k in union(KS, KSQ[[ds]])) {
     v <- metrics_from_labels(ds, read_native(ds, sprintf("MutualKNN_k%d", k)))
     add(dataset = ds, method = "MutualKNN-m0", variant = "native",
         regime = "native", contamination = NA, k = k, seed = NA,
@@ -216,21 +218,31 @@ seed_summary <- do.call(rbind, lapply(c("DIF", "LUNAR"), function(m) {
   }))
 }))
 
-# --- k-swept methods: oracle-best k by F2 (declared), and fixed k = 10 -------
+# --- k-swept methods (2026-09-26): the PRIMARY rows use the label-free rule
+# k = round(sqrt(n)), the rule ODIN uses in this study; the label-chosen
+# (oracle-best-F2) k over the declared grid KS is kept as an upper bound under
+# the method name "<m>-oracle"; the fixed k = 10 rows stay as "<m>-k10".
 pick_k <- function(m, rg, mode) {
   do.call(rbind, lapply(ORDER, function(ds) {
     h <- long[long$method == m & long$regime == rg & long$dataset == ds, ]
-    stopifnot(nrow(h) == length(KS))
-    i <- if (mode == "oracle") which.max(h$F2) else which(h$k == 10)
+    stopifnot(all(KS %in% h$k), KSQ[[ds]] %in% h$k)
+    g <- which(h$k %in% KS)
+    i <- switch(mode,
+                oracle = g[which.max(h$F2[g])],   # first maximum = smallest k among F2 ties
+                fixed  = which(h$k == 10),
+                sqrt   = which(h$k == KSQ[[ds]]))
+    stopifnot(length(i) == 1)
     data.frame(dataset = ds, method = m, regime = rg,
                TPR = h$TPR[i], TNR = h$TNR[i], BA = h$BA[i], F2 = h$F2[i],
                sd_TPR = NA, sd_TNR = NA, sd_BA = NA, sd_F2 = NA,
                k = h$k[i], stringsAsFactors = FALSE)
   }))
 }
-# which.max takes the FIRST maximum, i.e. the smallest k among F2 ties.
+sqrt_k <- do.call(rbind, lapply(c("MutualKNN", "SNN"), function(m)
+  do.call(rbind, lapply(c("T1", "T2"), function(rg) pick_k(m, rg, "sqrt")))))
 oracle_k <- do.call(rbind, lapply(c("MutualKNN", "SNN"), function(m)
   do.call(rbind, lapply(c("T1", "T2"), function(rg) pick_k(m, rg, "oracle")))))
+oracle_k$method <- paste0(oracle_k$method, "-oracle")
 fixed_k <- do.call(rbind, lapply(c("MutualKNN", "SNN"), function(m)
   do.call(rbind, lapply(c("T1", "T2"), function(rg) pick_k(m, rg, "fixed")))))
 fixed_k$method <- paste0(fixed_k$method, "-k10")
@@ -252,17 +264,23 @@ native_rows <- do.call(rbind, lapply(c("HDBSCAN-noise", "OPTICS-noise"), functio
              sd_TPR = NA, sd_TNR = NA, sd_BA = NA, sd_F2 = NA,
              k = NA_real_, stringsAsFactors = FALSE)
 }))
-# mutual-kNN m_i = 0 also sweeps k; report it oracle-k on F2 for symmetry
-native_rows <- rbind(native_rows, do.call(rbind, lapply(ORDER, function(ds) {
+# mutual-kNN m_i = 0: primary at the sqrt rule, label-chosen k kept as "-oracle"
+m0_row <- function(ds, mode) {
   h <- long[long$method == "MutualKNN-m0" & long$dataset == ds, ]
-  i <- which.max(h$F2)
-  data.frame(dataset = ds, method = "MutualKNN-m0", regime = "native",
+  g <- which(h$k %in% KS)
+  i <- if (mode == "oracle") g[which.max(h$F2[g])] else which(h$k == KSQ[[ds]])
+  stopifnot(length(i) == 1)
+  data.frame(dataset = ds, method = if (mode == "oracle") "MutualKNN-m0-oracle" else "MutualKNN-m0",
+             regime = "native",
              TPR = h$TPR[i], TNR = h$TNR[i], BA = h$BA[i], F2 = h$F2[i],
              sd_TPR = NA, sd_TNR = NA, sd_BA = NA, sd_F2 = NA,
              k = h$k[i], stringsAsFactors = FALSE)
-})))
+}
+native_rows <- rbind(native_rows,
+                     do.call(rbind, lapply(ORDER, m0_row, mode = "sqrt")),
+                     do.call(rbind, lapply(ORDER, m0_row, mode = "oracle")))
 
-main <- rbind(plain, seed_summary, oracle_k, fixed_k, native_rows)
+main <- rbind(plain, seed_summary, sqrt_k, oracle_k, fixed_k, native_rows)
 main <- main[order(match(main$dataset, ORDER), main$method, main$regime), ]
 write.csv(main, OUT_MAIN, row.names = FALSE)
 
@@ -419,46 +437,55 @@ saydf(s_after[, setdiff(names(s_after), "n_methods")])
 # ---------------------------------------------------------------------------
 # 6. R3.3 -- mutual reciprocity vs mutual CATCH
 # ---------------------------------------------------------------------------
-say("\n=== R3.3: oracle-k mutual-kNN vs the two NND-based proposed methods (T1) ===\n")
+say("\n=== R3.3: mutual-kNN (primary k = round(sqrt(n)); label-chosen k = upper bound) vs the NND-based proposed methods (T1) ===\n")
 mk  <- main[main$method == "MutualKNN" & main$regime == "T1", ]
+mko <- main[main$method == "MutualKNN-oracle" & main$regime == "T1", ]
 mk10 <- main[main$method == "MutualKNN-k10" & main$regime == "T1", ]
 mk0 <- main[main$method == "MutualKNN-m0", ]
+mk0o <- main[main$method == "MutualKNN-m0-oracle", ]
 g <- function(ds, m, col) fx[[col]][tolower(fx$dataset) == tolower(ds) & fx$method == m]
+v <- function(d, ds, col) r3(d[[col]][d$dataset == ds])
 mkt <- do.call(rbind, lapply(ORDER, function(ds) data.frame(
   dataset = ds,
-  k_star  = mk$k[mk$dataset == ds],
-  mkNN_F2 = r3(mk$F2[mk$dataset == ds]), mkNN_BA = r3(mk$BA[mk$dataset == ds]),
-  mkNN_k10_F2 = r3(mk10$F2[mk10$dataset == ds]),
-  mkNN_m0_F2  = r3(mk0$F2[mk0$dataset == ds]),
+  k_sqrt = mk$k[mk$dataset == ds], mkNN_F2 = v(mk, ds, "F2"), mkNN_BA = v(mk, ds, "BA"),
+  k_star = mko$k[mko$dataset == ds], mkNNo_F2 = v(mko, ds, "F2"), mkNNo_BA = v(mko, ds, "BA"),
+  mkNN_k10_F2 = v(mk10, ds, "F2"),
+  m0_F2 = v(mk0, ds, "F2"), m0o_F2 = v(mk0o, ds, "F2"),
   SUN_F2 = g(ds, "SUN-MCCD", "F2"), SUN_BA = g(ds, "SUN-MCCD", "BA"),
   UN_F2  = g(ds, "UN-MCCD",  "F2"), UN_BA  = g(ds, "UN-MCCD",  "BA"),
   stringsAsFactors = FALSE)))
 saydf(mkt)
-sayf("  SUN-MCCD F2 > oracle-k mutual-kNN F2 on %d of 16; mutual-kNN ahead on %d; tied %d\n",
-     sum(mkt$SUN_F2 > mkt$mkNN_F2), sum(mkt$mkNN_F2 > mkt$SUN_F2), sum(mkt$SUN_F2 == mkt$mkNN_F2))
-sayf("  SUN-MCCD BA > oracle-k mutual-kNN BA on %d of 16; mutual-kNN ahead on %d; tied %d\n",
-     sum(mkt$SUN_BA > mkt$mkNN_BA), sum(mkt$mkNN_BA > mkt$SUN_BA), sum(mkt$SUN_BA == mkt$mkNN_BA))
-sayf("  UN-MCCD  F2 > oracle-k mutual-kNN F2 on %d of 16; mutual-kNN ahead on %d; tied %d\n",
-     sum(mkt$UN_F2 > mkt$mkNN_F2), sum(mkt$mkNN_F2 > mkt$UN_F2), sum(mkt$UN_F2 == mkt$mkNN_F2))
-sayf("  mean F2: mutual-kNN oracle-k %.3f, fixed k=10 %.3f, m_i=0 native %.3f, SUN-MCCD %.3f, UN-MCCD %.3f\n",
-     r3(mean(mkt$mkNN_F2)), r3(mean(mkt$mkNN_k10_F2)), r3(mean(mkt$mkNN_m0_F2)),
-     r3(mean(mkt$SUN_F2)), r3(mean(mkt$UN_F2)))
-sayf("  mean BA: mutual-kNN oracle-k %.3f, SUN-MCCD %.3f, UN-MCCD %.3f\n",
-     r3(mean(mkt$mkNN_BA)), r3(mean(mkt$SUN_BA)), r3(mean(mkt$UN_BA)))
-sayf("  oracle-k gain over fixed k = 10, mean F2: %+0.3f (the oracle's own advantage)\n",
-     r3(mean(mkt$mkNN_F2)) - r3(mean(mkt$mkNN_k10_F2)))
+cmp <- function(a, b, lab) sayf("  %-52s %2d of 16; other ahead on %2d; tied %d\n", lab,
+                                sum(a > b), sum(b > a), sum(a == b))
+cmp(mkt$SUN_F2, mkt$mkNN_F2,  "SUN-MCCD F2 > mutual-kNN (sqrt rule) F2 on")
+cmp(mkt$SUN_BA, mkt$mkNN_BA,  "SUN-MCCD BA > mutual-kNN (sqrt rule) BA on")
+cmp(mkt$UN_F2,  mkt$mkNN_F2,  "UN-MCCD  F2 > mutual-kNN (sqrt rule) F2 on")
+cmp(mkt$UN_BA,  mkt$mkNN_BA,  "UN-MCCD  BA > mutual-kNN (sqrt rule) BA on")
+cmp(mkt$SUN_F2, mkt$mkNNo_F2, "SUN-MCCD F2 > mutual-kNN (label-chosen k) F2 on")
+cmp(mkt$SUN_BA, mkt$mkNNo_BA, "SUN-MCCD BA > mutual-kNN (label-chosen k) BA on")
+cmp(mkt$UN_F2,  mkt$mkNNo_F2, "UN-MCCD  F2 > mutual-kNN (label-chosen k) F2 on")
+cmp(mkt$UN_BA,  mkt$mkNNo_BA, "UN-MCCD  BA > mutual-kNN (label-chosen k) BA on")
+sayf("  mean F2: mutual-kNN sqrt %.3f, label-chosen %.3f, k=10 %.3f; m_i=0 sqrt %.3f, label-chosen %.3f; SUN-MCCD %.3f, UN-MCCD %.3f\n",
+     r3(mean(mkt$mkNN_F2)), r3(mean(mkt$mkNNo_F2)), r3(mean(mkt$mkNN_k10_F2)),
+     r3(mean(mkt$m0_F2)), r3(mean(mkt$m0o_F2)), r3(mean(mkt$SUN_F2)), r3(mean(mkt$UN_F2)))
+sayf("  mean BA: mutual-kNN sqrt %.3f, label-chosen %.3f; SUN-MCCD %.3f, UN-MCCD %.3f\n",
+     r3(mean(mkt$mkNN_BA)), r3(mean(mkt$mkNNo_BA)), r3(mean(mkt$SUN_BA)), r3(mean(mkt$UN_BA)))
+sayf("  label-chosen k gain over the sqrt rule, mean F2: %+0.3f (the oracle's own advantage)\n",
+     r3(mean(mkt$mkNNo_F2)) - r3(mean(mkt$mkNN_F2)))
 
-say("\n=== SNN: oracle-k vs fixed k = 10 (T1) ===\n")
-sn <- main[main$method == "SNN" & main$regime == "T1", ]
+say("\n=== SNN: sqrt rule (primary) vs label-chosen k vs fixed k = 10 (T1) ===\n")
+sn  <- main[main$method == "SNN" & main$regime == "T1", ]
+sno <- main[main$method == "SNN-oracle" & main$regime == "T1", ]
 sn10 <- main[main$method == "SNN-k10" & main$regime == "T1", ]
-snt <- data.frame(dataset = ORDER, k_star = sn$k[match(ORDER, sn$dataset)],
-                  SNN_F2 = r3(sn$F2[match(ORDER, sn$dataset)]),
-                  SNN_k10_F2 = r3(sn10$F2[match(ORDER, sn10$dataset)]),
+snt <- data.frame(dataset = ORDER,
+                  k_sqrt = sn$k[match(ORDER, sn$dataset)], SNN_F2 = r3(sn$F2[match(ORDER, sn$dataset)]),
                   SNN_BA = r3(sn$BA[match(ORDER, sn$dataset)]),
+                  k_star = sno$k[match(ORDER, sno$dataset)], SNNo_F2 = r3(sno$F2[match(ORDER, sno$dataset)]),
+                  SNN_k10_F2 = r3(sn10$F2[match(ORDER, sn10$dataset)]),
                   stringsAsFactors = FALSE)
 saydf(snt)
-sayf("  mean F2: SNN oracle-k %.3f, SNN fixed k=10 %.3f\n",
-     r3(mean(snt$SNN_F2)), r3(mean(snt$SNN_k10_F2)))
+sayf("  mean F2: SNN sqrt %.3f, label-chosen %.3f, fixed k=10 %.3f\n",
+     r3(mean(snt$SNN_F2)), r3(mean(snt$SNNo_F2)), r3(mean(snt$SNN_k10_F2)))
 
 # ---------------------------------------------------------------------------
 # 7. R1.3 -- density clustering with varying-density support
@@ -558,13 +585,13 @@ say("  3. The enlarged set moves SUN-MCCD from a first place to a top-quartile p
 say("     it does not overturn the paper's internal comparison. SUN-MCCD still leads\n")
 say("     the four proposed detectors on all four aggregates, and UN-MCCD -> SUN-MCCD,\n")
 say("     the shape-adaptive step the paper argues for, is unchanged.\n")
-say("  4. R3.3 has an answer that does not depend on how k was chosen: an oracle-k\n")
-say("     mutual-kNN detector, given the true labels to pick k, still averages below\n")
-say("     SUN-MCCD on both F2 (0.237 vs 0.317) and BA (0.628 vs 0.718), and loses on\n")
-say("     11 of 16 sets on each. Reciprocity alone does not reproduce the gain. The\n")
-say("     same comparison against UN-MCCD goes the OTHER way -- oracle-k mutual-kNN is\n")
-say("     ahead on 9 of 16 and on mean F2 (0.237 vs 0.229) -- so what beats plain\n")
-say("     reciprocity is the shape-adaptive coverage, not the NND test on its own.\n")
+say("  4. R3.3 (2026-09-26: primary k = round(sqrt(n)), ODIN's rule; label-chosen k is\n")
+say("     an upper bound). At the sqrt rule mutual-kNN averages F2 0.207 / BA 0.610 and\n")
+say("     loses to SUN-MCCD (0.317 / 0.718) on 11 of 16 on each; at the label-chosen k\n")
+say("     (0.237 / 0.628) the counts are again 11 and 11. Against UN-MCCD it is ahead on\n")
+say("     9 of 16 but lower on mean F2 (0.207 vs 0.229), and higher on mean only with\n")
+say("     the label-chosen k (0.237) -- reciprocity alone matches uniform coverage at\n")
+say("     best; the gain comes from the shape-adaptive coverage.\n")
 say("  5. The nine incumbent rows are NOT recomputed at T2. The T2 block therefore\n")
 say("     compares oracle-thresholded competitors against fixed-threshold incumbents\n")
 say("     and is a sensitivity on the competitors only, not a like-for-like table.\n")
