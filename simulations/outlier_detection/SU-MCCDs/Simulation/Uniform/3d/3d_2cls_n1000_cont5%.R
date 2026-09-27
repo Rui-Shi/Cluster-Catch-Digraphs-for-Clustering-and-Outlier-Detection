@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 source(here::here("methods/outlier_detection/SU-MCCDs.R"))
 source(here::here("R/general_functions/count.R"))
-load(here::here("R/RK-test_quantile/RK-test-simul_2d_99%.RData"))
+load(here::here("R/RK-test_quantile/RK-test-simul_3d_99%.RData"))
 library(parallel)
 library(doParallel)
 library(MASS)
@@ -21,7 +21,7 @@ cores = detectCores()
 # iteN: number of experiments
 
 n = 1000
-d = 2
+d = 3
 cont = 0.05
 
 if(d<=5){
@@ -87,4 +87,4 @@ print(paste("The mean success rate is", mean[1],",","and, the mean True positive
 t2 = Sys.time()
 t2-t1
 
-save.image(here::here("simulations/outlier_detection/SU-MCCDs/Simulation/Uniform/2d/2d_2cls_n1000_cont5%.RData"))
+save.image(here::here("simulations/outlier_detection/SU-MCCDs/Simulation/Uniform/3d/3d_2cls_n1000_cont5%.RData"))

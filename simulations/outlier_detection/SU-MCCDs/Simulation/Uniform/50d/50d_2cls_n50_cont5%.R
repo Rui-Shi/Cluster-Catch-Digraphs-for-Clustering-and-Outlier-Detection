@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 source(here::here("methods/outlier_detection/SU-MCCDs.R"))
 source(here::here("R/general_functions/count.R"))
-load(here::here("R/RK-test_quantile/RK-test-simul_2d_99%.RData"))
+load(here::here("R/RK-test_quantile/RK-test-simul_50d_999%.RData"))
 library(parallel)
 library(doParallel)
 library(MASS)
