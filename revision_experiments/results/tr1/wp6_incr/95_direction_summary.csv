@@ -1,0 +1,5 @@
+"method","n","d","direction","n_reps","median_time_s","cv_time","median_mem_delta_mb"
+"UN-MCCD",500,10,"ascend",10,0.935,0.0936240524866808,89.6
+"UN-MCCD",500,10,"descend",10,6.55,0.0191122930656391,89.6
+"SUN-MCCD",500,10,"ascend",10,2.065,0.187952288007317,89.8
+"SUN-MCCD",500,10,"descend",10,7.43,0.0599818902710962,90
