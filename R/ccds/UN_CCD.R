@@ -3,6 +3,7 @@ library(cluster)
 library(igraph)
 source(here::here("R/ccds/ccdfunctions.R"))
 source(here::here("R/ccds/NN_Dist_Est.R"))
+source(here::here("R/ccds/quantile_table.R"))
 
 # ccd clustering that find the dominating set with greedy alg
 # old name = ccd3.clustering_correct_quantile
@@ -306,6 +307,8 @@ nnccd.radi <- function(dx, quantile="lower", method="ascend", low.num, quant, si
   R <- rep(0,n)
 
   if(quantile=="lower"){
+    # a table not on disk (placeholder) or generated too short is generated at n (quantile_table.R)
+    if(!is.null(simul) && !is.null(attr(simul, "ccd_table")) && .ccd_qt_extent(simul, "NN") < n) simul <- .ccd_qt_grow(simul, "NN", d, n)
     if(!is.null(simul)) {NN.envelop <- list(average=simul$average[1:n],median=simul$median[1:n])}
     else {NN.envelop <- NNDest.simpois.lower.quant(n, d, quant, niter)}
     if(method=="descend"){

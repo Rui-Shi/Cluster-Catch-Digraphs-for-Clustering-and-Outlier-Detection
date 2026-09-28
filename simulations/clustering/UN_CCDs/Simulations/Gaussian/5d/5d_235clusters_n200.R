@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 source(here::here("methods/clustering/UN-CCDs.R"))
 source(here::here("R/general_functions/Uni-Gau_cls.R"))
-load(here::here("R/NN-test_quantile/NN-test-simul_5d_95%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_5d_95%.RData"))
 setwd(here::here("simulations/clustering/UN_CCDs/Simulations/Gaussian/5d"))
 library(mclust)
 library(parallel)

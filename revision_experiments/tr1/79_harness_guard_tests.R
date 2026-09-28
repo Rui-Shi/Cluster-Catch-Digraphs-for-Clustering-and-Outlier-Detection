@@ -73,7 +73,11 @@ ok("SUN-MCCD schedule matches the manuscript", identical(got_sn, E_SN))
 ok("UN and SUN diverge exactly on d = 10..19",
    identical(D[got_un != got_sn], c(10, 12, 19)))
 
-cat("\n=== 3. get_simul() refuses a table shorter than the data ===\n")
+cat("\n=== 3. get_simul() refuses a table shorter than the data (generation off) ===\n")
+# Since 2026-09-28 a missing or short table is generated on the spot
+# (R/ccds/quantile_table.R); with generation switched off the old refusal
+# must still hold. Section 3b tests the generation itself.
+op_gen <- options(ccd.quantile.generate = FALSE)
 # NN-test-simul_19d_999%.RData was regenerated at exactly hepatitis's size
 # (74 entries) under a generic filename. It serves hepatitis and nothing
 # larger.
@@ -87,6 +91,71 @@ ok("the refusal names the extent and the requirement",
    stops_with(get_simul("NN", 19, "999", n = 75), "average = 74.*required n = 75|required n = 75(.|\n)*average = 74"))
 ok("a full-length table is accepted at the same d",
    { t <- get_simul("NN", 19, "99", n = 5000); length(t$simul$average) == 5000 })
+ok("a missing table is refused when generation is off",
+   stops_with(get_simul("NN", 7, "90", n = 30), "missing quantile table"))
+options(op_gen)
+
+cat("\n=== 3b. missing or short tables are generated on the spot ===\n")
+# All generation here goes to a temporary cache folder, never the shared one.
+QT_CACHE <- file.path(tempdir(), "79_quantile_cache")
+op_q <- options(ccd.quantile.niter = 40L, ccd.quantile.cores = 1L, ccd.quantile.seed = 11L,
+                ccd.quantile.cache = QT_CACHE)
+rm(list = ls(.ccd_qt_memo), envir = .ccd_qt_memo)
+# (i) the generator reproduces the original Monte Carlo exactly: serially
+# under the same seed, its NN and RK draws are the ones
+# NNDest.simpois.lower.quant() and Kest.simpois.edge.quantile() make.
+g_nn <- ccd_generate_quantile_table("NN", 4, 0.95, 25, niter = 30, cores = 1, seed = 5)
+set.seed(5); o_nn <- NNDest.simpois.lower.quant(25, 4, 0.95, 30)
+ok("NN generator == NNDest.simpois.lower.quant (same seed)",
+   identical(c(g_nn$average, g_nn$median), c(o_nn$average, o_nn$median)))
+g_rk <- ccd_generate_quantile_table("RK", 3, 0.99, 20, niter = 15, cores = 1, seed = 6)
+set.seed(6); o_rk <- Kest.simpois.edge.quantile(20, 3, 10, 0.99, 15)
+ok("RK generator == Kest.simpois.edge.quantile (same seed)",
+   identical(g_rk$quan[["0.99"]], o_rk$quan[["0.99"]]) && identical(g_rk$r, o_rk$r))
+set.seed(123); u1 <- runif(3)
+set.seed(123); invisible(ccd_generate_quantile_table("NN", 2, 0.9, 10, niter = 5, cores = 1, seed = 1)); u2 <- runif(3)
+ok("generation leaves the caller's random-number stream untouched", identical(u1, u2))
+# (ii) a shipped file loads exactly as load() does
+f19 <- file.path(NN_QUANT_TABLE_DIR, "NN-test-simul_19d_99%.RData")
+e1 <- new.env(); load(f19, envir = e1); e2 <- new.env(); load_quantile_table(f19, envir = e2)
+ok("load_quantile_table() == load() for a shipped file", identical(e1$simul, e2$simul))
+# (iii) a shipped table shorter than n keeps its entries and is completed
+e74 <- new.env(); load(file.path(NN_QUANT_TABLE_DIR, "NN-test-simul_19d_999%.RData"), envir = e74)
+t <- get_simul("NN", 19, "999", n = 75)
+ok("NN d=19 999% for n = 75: the 74 shipped entries kept, entry 75 generated",
+   length(t$simul$average) == 75 && identical(t$simul$average[1:74], e74$simul$average) &&
+   identical(t$simul$median[1:74], e74$simul$median) && startsWith(t$file, QT_CACHE))
+# (iv) a missing table is generated, cached, and found again
+t <- get_simul("NN", 7, "90", n = 30)
+ok("missing NN d=7 90% is generated at n = 30", length(t$simul$median) == 30 && file.exists(t$file))
+rm(list = ls(.ccd_qt_memo), envir = .ccd_qt_memo)
+t2 <- get_simul("NN", 7, "90", n = 20)
+ok("a later, smaller request reuses the cached file", identical(t2$file, t$file))
+t <- get_simul("RK", 3, "95", n = 12)
+ok("missing RK d=3 95% is generated at n = 12", nrow(t$simul$quan[["0.95"]]) == 12 && length(t$simul$r) == 10)
+ok("a numeric level is accepted", identical(get_simul("NN", 7, 0.9, n = 20)$quant_label, "90"))
+# (v) load_quantile_table() on a missing file leaves a placeholder
+e3 <- new.env(); load_quantile_table(file.path(NN_QUANT_TABLE_DIR, "NN-test-simul_6d_85%.RData"), envir = e3)
+ok("load_quantile_table() on a missing file sets a placeholder, not a table",
+   isTRUE(attr(e3$simul, "ccd_table")$pending) && length(e3$simul$average) == 0)
+# (vi) the construction fills it at the data's size with the recorded level
+set.seed(7); X <- matrix(runif(40 * 6), 40, 6)
+r_ext <- nnccd.radi(X, low.num = 3, quant = 0.99, simul = e3$simul, niter = 40)
+ok("nnccd.radi() fills an NN placeholder at n = 40, at its own level (85%)",
+   length(r_ext$R) == 40 && !anyNA(r_ext$R) &&
+   file.exists(file.path(QT_CACHE, "NN-test-simul_6d_85%_n40.RData")))
+# (vii) a shipped (untagged) NN table shorter than n is used as before
+short <- list(average = e74$simul$average[1:10], median = e74$simul$median[1:10])
+r_old <- tryCatch(nnccd.radi(X[1:12, ], low.num = 3, quant = 0.99, simul = short, niter = 40), error = function(e) "error")
+ok("an untagged short NN table is not replaced", !file.exists(file.path(QT_CACHE, "NN-test-simul_6d_99%_n12.RData")))
+# (viii) the RK search grows a short table only when it reaches past its end
+rk_short <- g_rk; attr(rk_short, "ccd_table") <- NULL; attr(rk_short, "generated") <- NULL
+set.seed(8); Y <- matrix(runif(30 * 3), 30, 3)
+rk_run <- ccd.Kest.edge.quantile(Y, as.matrix(dist(Y)), low.num = 2, r.seq = 10, quan = 0.99,
+                                 simul = rk_short, niter = 15)
+ok("ccd.Kest.edge.quantile() completes a 20-row RK table for n = 30", length(rk_run$R) == 30 && !anyNA(rk_run$R))
+options(op_q)
+unlink(QT_CACHE, recursive = TRUE); rm(list = ls(.ccd_qt_memo), envir = .ccd_qt_memo)
 
 cat("\n=== 4. evaluate() refuses scores it cannot count honestly ===\n")
 # count_scores2() initialises label_pred to 0 (= OUTLIER) and fills by

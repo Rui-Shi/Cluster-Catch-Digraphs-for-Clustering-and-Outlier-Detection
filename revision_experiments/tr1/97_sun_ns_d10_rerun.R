@@ -88,7 +88,8 @@ invisible(clusterCall(cl, function(tab, mf, impl) {
   suppressPackageStartupMessages({ library(MASS); library(cluster); library(igraph) })
   source(mf)
   if (impl == "sun") assign("MFNNCCD_outlier", SUNMCCD_outlier, envir = globalenv())
-  load(tab, envir = globalenv())
+  source(here::here("R/ccds/quantile_table.R"))   # a missing table is generated on the spot
+  load_quantile_table(tab, envir = globalenv())
   NULL
 }, TABLE, METHOD_FILE, IMPL))
 clusterExport(cl, c("min.cls", "method"))

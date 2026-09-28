@@ -3,6 +3,7 @@ library(cluster)
 library(igraph)
 source(here::here("R/ccds/ccdfunctions.R"))
 source(here::here("R/ccds/Kest.R"))
+source(here::here("R/ccds/quantile_table.R"))
 
 # ccd clustering that find the dominating set with greedy alg
 # translation correction as edge correction
@@ -171,6 +172,8 @@ ccd.Kest.edge.quantile <- function(dx, ddx, low.num, method="non-dynamic", r.seq
     Kest.slopes <- Kest.simpois.edge.quantile.dynamic(n, d, r.seq, quan, niter)
   }
   rr = Kest.slopes$r
+  # rows the table covers; a row past the end is generated on the spot (quantile_table.R)
+  ext <- if(!is.null(simul)) .ccd_qt_extent(Kest.slopes, "RK", quan) else Inf
   
   if(!scores){
     for(i in 1:n){
@@ -181,6 +184,7 @@ ccd.Kest.edge.quantile <- function(dx, ddx, low.num, method="non-dynamic", r.seq
         Kest.obs <- Kest.f.edge(ddx[o.d[1:j],o.d[1:j]],r,sc,d)
         
         # check the values, if rejected, set the R[i] as the radius
+        if(j > ext){ Kest.slopes <- .ccd_qt_grow(Kest.slopes, "RK", d, .ccd_qt_rk_target(j, n), quan); ext <- .ccd_qt_extent(Kest.slopes, "RK", quan) }
         lo.hi <- Kest.slopes$quan[[as.character(quan)]][j,]
         flag <- (Kest.obs > lo.hi)
         if(any(flag)){
@@ -202,6 +206,7 @@ ccd.Kest.edge.quantile <- function(dx, ddx, low.num, method="non-dynamic", r.seq
         Kest.obs <- Kest.f.edge(ddx[o.d[1:j],o.d[1:j]],r,sc,d)
         
         # check the values, if rejected, set the R[i] as the radius
+        if(j > ext){ Kest.slopes <- .ccd_qt_grow(Kest.slopes, "RK", d, .ccd_qt_rk_target(j, n), quan); ext <- .ccd_qt_extent(Kest.slopes, "RK", quan) }
         lo.hi <- Kest.slopes$quan[[as.character(quan)]][j,]
         flag <- (Kest.obs > lo.hi)
         if(any(flag)){

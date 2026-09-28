@@ -42,7 +42,7 @@ if(d<=5){quant=0.99 # the level of K-test
 } else {
   quant=0.999
 }
-load(here::here("R/RK-test_quantile/RK-test-simul_2d_99%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/RK-test_quantile/RK-test-simul_2d_99%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -99,7 +99,7 @@ if(d<=5){quant=0.99 # the level of K-test
 } else {
   quant=0.999
 }
-load(here::here("R/RK-test_quantile/RK-test-simul_3d_99%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/RK-test_quantile/RK-test-simul_3d_99%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -156,7 +156,7 @@ if(d<=5){quant=0.99 # the level of K-test
 } else {
   quant=0.999
 }
-load(here::here("R/RK-test_quantile/RK-test-simul_5d_99%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/RK-test_quantile/RK-test-simul_5d_99%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -213,7 +213,7 @@ if(d<=5){quant=0.99 # the level of K-test
 } else {
   quant=0.999
 }
-load(here::here("R/RK-test_quantile/RK-test-simul_10d_999%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/RK-test_quantile/RK-test-simul_10d_999%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -270,7 +270,7 @@ if(d<=5){quant=0.99 # the level of K-test
 } else {
   quant=0.999
 }
-load(here::here("R/RK-test_quantile/RK-test-simul_20d_999%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/RK-test_quantile/RK-test-simul_20d_999%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -327,7 +327,7 @@ if(d<=5){quant=0.99 # the level of K-test
 } else {
   quant=0.999
 }
-load(here::here("R/RK-test_quantile/RK-test-simul_50d_999%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/RK-test_quantile/RK-test-simul_50d_999%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3
@@ -384,7 +384,7 @@ if(d<=5){quant=0.99 # the level of K-test
 } else {
   quant=0.999
 }
-load(here::here("R/RK-test_quantile/RK-test-simul_100d_999%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/RK-test_quantile/RK-test-simul_100d_999%.RData"))
 
 # simulate two clusters of equal size within two unit balls centered at (3,3) and (3+cls_dis,3)
 # the radius of clusters are random numbers between 0.7-1.3

@@ -70,6 +70,7 @@ source(here::here("simulations/outlier_detection/Algo_Compare_OutlierDetection/I
 
 # Metrics.
 source(here::here("R/general_functions/count.R"))
+source(here::here("R/ccds/quantile_table.R"))
 
 # ---------------------------------------------------------------------------
 # 2. The paper's alpha schedule, and get_simul(): quantile-table loader
@@ -213,7 +214,9 @@ get_simul <- function(variant = c("RK", "NN"), d, quant = NULL, n = NULL) {
       "  (The former rk_quant_for_d()/nn_quant_for_d() defaults were removed on\n",
       "   2026-09-05: they disagreed with the manuscript at d = 10.)"))
   }
-  q <- quant
+  # a level given as a probability (0.999) is turned into its file label ("999")
+  q <- if (is.numeric(quant)) .ccd_qt_label(quant) else quant
+  if (!is.null(n) && is.na(n)) n <- NULL
   if (variant == "RK") {
     fname <- sprintf("RK-test-simul_%dd_%s%%.RData", d, q)
     path <- file.path(RK_QUANT_TABLE_DIR, fname)
@@ -222,6 +225,14 @@ get_simul <- function(variant = c("RK", "NN"), d, quant = NULL, n = NULL) {
     path <- file.path(NN_QUANT_TABLE_DIR, fname)
   }
   if (!file.exists(path)) {
+    # not on disk (the tables are not in the public repository): generate it
+    # on the spot, sized to n, with R/ccds/quantile_table.R -- unless that is
+    # switched off (ccd.quantile.generate / CCD_QUANTILE_GENERATE)
+    if (.ccd_qt_generate_allowed()) {
+      res <- ccd_quantile_table(variant, d, q, n = n, dir = dirname(path))
+      return(list(simul = res$simul, quant = as.numeric(paste0("0.", q)),
+                  quant_label = q, file = res$file))
+    }
     stop(sprintf(
       "get_simul(): missing quantile table for variant=%s, d=%d, quant=%s.\nExpected file: %s",
       variant, d, q, path
@@ -233,6 +244,14 @@ get_simul <- function(variant = c("RK", "NN"), d, quant = NULL, n = NULL) {
     stop(sprintf("get_simul(): file %s does not contain an object named 'simul'", path))
   }
   simul <- get("simul", envir = e)
+  # a shipped table shorter than the data: generate one that covers it
+  # (with generation switched off, check_simul_extent() stops as before)
+  if (!is.null(n) && !is.na(n) && .ccd_qt_generate_allowed() &&
+      .ccd_qt_extent(simul, variant, as.numeric(paste0("0.", q))) < n) {
+    res <- ccd_quantile_table(variant, d, q, n = n, dir = dirname(path))
+    return(list(simul = res$simul, quant = as.numeric(paste0("0.", q)),
+                quant_label = q, file = res$file))
+  }
   check_simul_extent(simul, variant, d, n, path)
   list(
     simul = simul,

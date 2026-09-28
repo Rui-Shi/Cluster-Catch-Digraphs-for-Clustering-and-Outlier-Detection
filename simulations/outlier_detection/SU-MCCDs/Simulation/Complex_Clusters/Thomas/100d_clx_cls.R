@@ -3,7 +3,7 @@ tt1 = Sys.time()
 source(here::here("methods/outlier_detection/SU-MCCDs.R"))
 source(here::here("R/general_functions/count.R"))
 source(here::here("R/general_functions/Uni-Gau_cls.R"))
-load(here::here("R/RK-test_quantile/RK-test-simul_100d_999%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/RK-test_quantile/RK-test-simul_100d_999%.RData"))
 source(here::here("R/general_functions/ratio2.R"))
 
 library(parallel)

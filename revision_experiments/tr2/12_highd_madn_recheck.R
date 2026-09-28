@@ -104,12 +104,14 @@ d_idx <- match(D, c(2,3,5,10,20,50,100))
 if (is.na(d_idx)) stop("unsupported d (expect one of 2,3,5,10,20,50,100)")
 
 if (FAMILY == "RKCCD") {
-  load(here::here(sprintf("R/RK-test_quantile/RK-test-simul_%dd_999%%.RData", D)))  # -> simul
+  source(here::here("R/ccds/quantile_table.R"))   # a missing table is generated on the spot
+  load_quantile_table(here::here(sprintf("R/RK-test_quantile/RK-test-simul_%dd_999%%.RData", D)))  # -> simul
   QUANT  <- if (D >= 10) 0.999 else 0.99   # matches the driver if/else chain
   METHOD <- NA_character_
   thr_src <- sprintf("simulations/outlyingness_scores/RKCCD_OOS_IOS/Simulation/%s/Threshold.R", DIST)
 } else {
-  load(here::here(sprintf("R/NN-test_quantile/NN-test-simul_%dd_999%%.RData", D)))  # -> simul
+  source(here::here("R/ccds/quantile_table.R"))   # a missing table is generated on the spot
+  load_quantile_table(here::here(sprintf("R/NN-test_quantile/NN-test-simul_%dd_999%%.RData", D)))  # -> simul
   QUANT  <- c(0.85,0.9,0.95,0.99,0.999,0.999,0.999)[d_idx]  # UNCCD driver chain
   METHOD <- "descend"
   thr_src <- sprintf("simulations/outlyingness_scores/UNCCD_OOS_IOS/Simulation/%s/Threshold.R", DIST)

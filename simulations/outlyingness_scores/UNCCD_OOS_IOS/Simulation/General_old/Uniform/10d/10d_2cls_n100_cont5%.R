@@ -2,7 +2,7 @@
 source(here::here("R/ccds/UN_CCD.R"))
 source(here::here("methods/outlyingness_scores/NNCCD_OOS_IOS.R"))
 source(here::here("R/general_functions/count.R"))
-load(here::here("R/NN-test_quantile/NN-test-simul_10d_99%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_10d_99%.RData"))
 source(here::here("simulations/outlyingness_scores/NNCCD_OOS_IOS/Simulation/Uniform/Threshold.R"))
 library(parallel)
 library(doParallel)
