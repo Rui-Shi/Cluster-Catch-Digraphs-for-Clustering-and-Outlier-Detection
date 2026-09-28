@@ -196,7 +196,7 @@ append_row <- function(row) append_result(RAW_CSV, row)
 if (MODE == "validate") {
   cat(sprintf("=== 07b validate === Arrhythmia serial-vs-parallel, cores=%d\n", CORES))
   ds <- load_csv("Arrhythmia")
-  tab <- get_simul("NN", ds$d)
+  tab <- get_simul("NN", ds$d, nn_quant_label_paper_UN(ds$d))
   dir <- if (ds$d <= 5) "ascend" else "descend"
 
   cat("serial radii...\n"); t0 <- Sys.time()

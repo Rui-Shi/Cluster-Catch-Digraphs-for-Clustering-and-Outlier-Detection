@@ -480,7 +480,7 @@ iforest_1thread <- function(X, d, Y = NULL, seed = 1) {
 ccd_single_pass <- function(m, X, d) {
   X <- as.matrix(X)
   variant <- ccd_variant_for_method(m)
-  tab <- get_simul(variant, d)   # table load NOT timed (matches registry)
+  tab <- get_simul(variant, d, if (variant == "RK") rk_quant_label_paper(d) else nn_quant_label_paper_UN(d))   # table load NOT timed (matches registry)
   um <- unccd_dir_for_d(d)
   t0 <- Sys.time()
   score <- switch(m,

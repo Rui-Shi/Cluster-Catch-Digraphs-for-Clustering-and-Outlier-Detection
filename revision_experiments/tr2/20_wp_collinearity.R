@@ -199,7 +199,7 @@ cat("Calibrated cutoffs (d=10, gaussian setting):",
 # d in [10,19]) already agrees with 09_wp3_synthetic.R's own assertion, so
 # no NN override is needed.
 RK_TAB <- get_simul("RK", D, quant = "999")
-NN_TAB <- get_simul("NN", D)
+NN_TAB <- get_simul("NN", D, nn_quant_label_paper_UN(D))
 stopifnot(RK_TAB$quant_label == "999", NN_TAB$quant_label == "99")
 
 # ---------------------------------------------------------------------------

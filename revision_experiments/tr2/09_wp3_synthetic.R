@@ -112,8 +112,8 @@ stopifnot(
 )
 
 # Quantile tables (master-side sanity check; workers load their own copies).
-RK_TAB <- get_simul("RK", D)
-NN_TAB <- get_simul("NN", D)
+RK_TAB <- get_simul("RK", D, rk_quant_label_paper(D))
+NN_TAB <- get_simul("NN", D, nn_quant_label_paper_UN(D))
 stopifnot(RK_TAB$quant_label == "999", NN_TAB$quant_label == "99")
 
 # ---------------------------------------------------------------------------
@@ -326,8 +326,8 @@ invisible(clusterEvalQ(cl, {
   suppressMessages(source(file.path(REPO_ROOT, "revision_experiments/shared/harness.R")))
   source(file.path(REPO_ROOT, "R/general_functions/Uni-Gau_cls.R"))
   source(file.path(REPO_ROOT, "R/general_functions/ratio1.R"))
-  RK_TAB <- get_simul("RK", 10)
-  NN_TAB <- get_simul("NN", 10)
+  RK_TAB <- get_simul("RK", 10, rk_quant_label_paper(10))
+  NN_TAB <- get_simul("NN", 10, nn_quant_label_paper_UN(10))
   TRUE
 }))
 clusterExport(cl, c("D", "MULTIPLIERS", "OS_METHODS", "CUTOFFS", "SETTINGS",

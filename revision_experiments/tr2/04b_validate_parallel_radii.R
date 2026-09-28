@@ -135,7 +135,7 @@ gen_gaussian_2cls_runtime <- function(n, d, cont = 0.05, seed,
 }
 
 dat <- gen_gaussian_2cls_runtime(300, 10, seed = 314159L)
-tab <- get_simul("NN", 10)
+tab <- get_simul("NN", 10, nn_quant_label_paper_UN(10))
 dir <- if (10 <= 5) "ascend" else "descend"   # matches 04_wp4_runtime.R's unccd_dir_for_d(10)
 
 # ---------------------------------------------------------------------------

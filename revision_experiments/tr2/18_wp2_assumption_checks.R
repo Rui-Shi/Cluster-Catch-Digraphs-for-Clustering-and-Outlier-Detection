@@ -47,12 +47,12 @@ set.seed(20260822)
 #' Radii and adjacency for one construction, in the point order the scorers use.
 build <- function(kind, X, d) {
   if (kind == "RK") {
-    tab <- get_simul("RK", d)
+    tab <- get_simul("RK", d, rk_quant_label_paper(d))
     g <- RKCCD_correct_quant(X, r.seq = 10, dom.method = "greedy2",
                              quan = tab$quant, simul = tab$simul,
                              niter = 1000, scores = TRUE, min.cls = 0)
   } else {
-    tab <- get_simul("NN", d)
+    tab <- get_simul("NN", d, nn_quant_label_paper_UN(d))
     g <- nnccd_clustering_quantile(X, low.num = 3, quantile = "lower",
                                    method = "ascend", dom.method = "greedy2",
                                    simul = tab$simul, niter = 1000, scores = TRUE)
