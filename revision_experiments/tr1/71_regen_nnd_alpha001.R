@@ -77,7 +77,7 @@
 # entry per data point. A shorter table yields NA past its end, not a clamp.
 #
 # Usage:
-#   Rscript revision_experiments/71_regen_nnd_alpha001.R [cores] [niter] [dims]
+#   Rscript revision_experiments/tr1/71_regen_nnd_alpha001.R [cores] [niter] [dims]
 #   defaults: 22 cores, 10000 iterations, dims = 19,18,12 (the cheap block)
 #   e.g.      Rscript ... 22 10000 16      # the 50 h dimension
 #             Rscript ... 22 10000 21      # the 78 h dimension
@@ -85,7 +85,7 @@
 # Resume: safe to re-invoke at any time; finished chunks are skipped.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "01i_nn_multiquant_table.R"))
+source(here::here("revision_experiments", "tr1", "01i_nn_multiquant_table.R"))
 
 args   <- commandArgs(trailingOnly = TRUE)
 CORES  <- if (length(args) >= 1) as.integer(args[[1]]) else 22L
@@ -214,4 +214,4 @@ for (j in seq_len(nrow(JOBS))) {
 }
 
 say("ALLDONE\tstaging=%s", OUTROOT)
-say("NEXT\tRscript revision_experiments/72_verify_regen999.R  (verify before installing)")
+say("NEXT\tRscript revision_experiments/tr1/72_verify_regen999.R  (verify before installing)")

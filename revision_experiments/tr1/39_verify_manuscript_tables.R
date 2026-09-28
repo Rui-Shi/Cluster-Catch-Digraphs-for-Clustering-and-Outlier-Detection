@@ -10,7 +10,10 @@
 
 suppressMessages(library(here))
 
-ROOT <- dirname(here::here())          # manuscript repo root
+# manuscript repo root (not part of this repository): TR1_MANUSCRIPT_DIR, or a
+# sibling folder TR1_Neurocomputing_resubmit by default
+ROOT <- Sys.getenv("TR1_MANUSCRIPT_DIR",
+                   file.path(dirname(here::here()), "TR1_Neurocomputing_resubmit"))
 SUP  <- file.path(ROOT, "SupplementaryMaterial.tex")
 MAIN <- file.path(ROOT, "CCD_OutlierDetection_Neurocomputing.tex")
 

@@ -18,7 +18,7 @@
 # Read-only apart from its own CSV.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "01i_nn_multiquant_table.R"))
+source(here::here("revision_experiments", "tr1", "01i_nn_multiquant_table.R"))
 
 CHK   <- here::here("R/NN-test_quantile_regen999/12d/chunks")
 OUT   <- here::here("revision_experiments/results/tr1/wp2c_niter_sensitivity.csv")

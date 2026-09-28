@@ -557,7 +557,7 @@ build_summary <- function() {
 run_cost <- function(d = 5L, niter = 200L, cores = 4L) {
   outdir <- here::here("revision_experiments/results/tr1/cost_probe")
   dir.create(outdir, recursive = TRUE, showWarnings = FALSE)
-  script <- here::here("revision_experiments/01_gen_quantile_table.R")
+  script <- here::here("revision_experiments/tr2/01_gen_quantile_table.R")
   cat(sprintf("42_wp2a --cost: NN d=%d niter=%d cores=%d -> %s\n", d, niter, cores, outdir))
   t0 <- Sys.time()
   st <- system2(file.path(R.home("bin"), "Rscript"),

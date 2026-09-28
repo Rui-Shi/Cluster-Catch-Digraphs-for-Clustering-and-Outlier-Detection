@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# 79_rerun_sun_smin_fixed_tables.R -- rerun the SUN-MCCD S_min sensitivity cells
+# 78b_rerun_sun_smin_fixed_tables.R -- rerun the SUN-MCCD S_min sensitivity cells
 # with the repaired 0.1% NND quantile tables (71_regen_nnd_alpha001.R,
 # 75_install_regen999.R, 77_purge_wrong_tables.R).
 #

@@ -94,15 +94,15 @@
 #   wp2a_provenance_findings.md      written by hand from these
 #
 # CLI
-#   Rscript revision_experiments/65_nn_provenance_test.R --test1
-#   Rscript revision_experiments/65_nn_provenance_test.R --test2 [dataset,csv]
+#   Rscript revision_experiments/tr1/65_nn_provenance_test.R --test1
+#   Rscript revision_experiments/tr1/65_nn_provenance_test.R --test2 [dataset,csv]
 #   (--test2 appends per cell and skips cells already recorded, so it can be
 #    chunked by data set and resumed after an interruption.)
 
 suppressPackageStartupMessages(library(here))
 # for nn_reduce_quant(), used to rebuild a replicate cloud from the auxiliary
 # d=21 draw matrix. Safe to source: its CLI is guarded by .nn_mq_is_main().
-source(here::here("revision_experiments/01i_nn_multiquant_table.R"))
+source(here::here("revision_experiments/tr1/01i_nn_multiquant_table.R"))
 
 PROV_ROOT <- here::here("R/NN-test_quantile_provenance")
 SHIP_DIR  <- here::here("R/NN-test_quantile")

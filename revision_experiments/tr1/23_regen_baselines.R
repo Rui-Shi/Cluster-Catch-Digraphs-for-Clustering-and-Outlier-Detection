@@ -38,7 +38,7 @@ suppressMessages(library(here))
 source(here::here("revision_experiments", "shared", "harness.R"))
 
 OUT_CSV   <- here::here("revision_experiments", "results", "tr1", "regen_baselines.csv")
-TRUTH_CSV <- here::here("revision_experiments", "published_realdata_truth.csv")
+TRUTH_CSV <- here::here("revision_experiments", "tr1", "published_realdata_truth.csv")
 
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) < 1 || !nzchar(args[1])) {

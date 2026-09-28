@@ -261,7 +261,7 @@ BASELINE_METHODS <- c("LOF", "DBSCAN", "MST", "ODIN", "iForest")
 R_METHOD_ORDER <- c(BASELINE_METHODS, MCCD_METHODS)   # cheap-first
 # --methods=UN-MCCD,SUN-MCCD restricts the run to a subset (2026-09-23: rerun of
 # the NND-based pair after the incremental nearest-neighbour update in
-# R/ccds/UN_CCD.R; see tr1/92_validate_incremental_radi.R).
+# R/ccds/UN_CCD.R; see tr1/92b_validate_incremental_radi.R).
 METHODS_SEL <- opt_val("methods", "")
 if (nzchar(METHODS_SEL)) {
   sel <- strsplit(METHODS_SEL, ",", fixed = TRUE)[[1]]

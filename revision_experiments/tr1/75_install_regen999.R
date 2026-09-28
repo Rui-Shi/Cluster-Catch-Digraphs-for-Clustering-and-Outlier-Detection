@@ -24,8 +24,8 @@
 #      invisible to git.
 #
 # Usage:
-#   Rscript revision_experiments/75_install_regen999.R           # dry run
-#   Rscript revision_experiments/75_install_regen999.R --apply
+#   Rscript revision_experiments/tr1/75_install_regen999.R           # dry run
+#   Rscript revision_experiments/tr1/75_install_regen999.R --apply
 
 suppressMessages(library(here))
 APPLY <- "--apply" %in% commandArgs(trailingOnly = TRUE)
@@ -33,7 +33,7 @@ APPLY <- "--apply" %in% commandArgs(trailingOnly = TRUE)
 STAGE <- here::here("R/NN-test_quantile_regen999")
 LIVE  <- here::here("R/NN-test_quantile")
 VCSV  <- here::here("revision_experiments/results/tr1/wp2c_regen999_verify.csv")
-MANI  <- here::here("revision_experiments/INSTALLED_REGEN999_TABLES.md")
+MANI  <- here::here("revision_experiments/tr1/INSTALLED_REGEN999_TABLES.md")
 
 load1 <- function(p) { e <- new.env(); load(p, envir = e); get("simul", envir = e) }
 livef <- function(d, tok) file.path(LIVE, sprintf("NN-test-simul_%dd_%s%%.RData", d, tok))

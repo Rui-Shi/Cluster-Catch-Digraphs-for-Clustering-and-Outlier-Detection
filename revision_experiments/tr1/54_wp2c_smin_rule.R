@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# revision_experiments/54_wp2c_smin_rule.R
+# revision_experiments/tr1/54_wp2c_smin_rule.R
 #
 # WP2(c): a LABEL-FREE rule for S_min, and what it costs.
 #

@@ -1,10 +1,10 @@
 #!/usr/bin/env Rscript
-# 92_validate_incremental_radi.R -- the incremental nearest-neighbour radius
+# 92b_validate_incremental_radi.R -- the incremental nearest-neighbour radius
 # search in R/ccds/UN_CCD.R (2026-09-23) must return EXACTLY the radii of the
 # earlier per-step recomputation (R/ccds/UN_CCD_radi_recompute_reference.R).
 # Compares identical() radii, both search directions, on synthetic two-cluster
 # data and on real data sets, with the production quantile tables, and reports
-# the speed-up. Appends one row per case to results/tr1/wp6_incr/92_validate.csv.
+# the speed-up. Appends one row per case to results/tr1/wp6_incr/92b_validate.csv.
 
 suppressMessages(library(here))
 source(here::here("revision_experiments", "shared", "harness.R"))
@@ -13,7 +13,7 @@ source(here::here("R", "ccds", "UN_CCD_radi_recompute_reference.R"))
 
 OUTDIR <- here::here("revision_experiments/results/tr1/wp6_incr")
 dir.create(OUTDIR, recursive = TRUE, showWarnings = FALSE)
-OUT <- file.path(OUTDIR, "92_validate.csv")
+OUT <- file.path(OUTDIR, "92b_validate.csv")
 
 run_case <- function(tag, X, d, dir, scores = FALSE, low.num = 3) {
   n <- nrow(X)

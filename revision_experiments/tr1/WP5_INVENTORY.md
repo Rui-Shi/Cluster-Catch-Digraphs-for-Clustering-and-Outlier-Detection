@@ -112,7 +112,7 @@ change the "n/a" outcome, only waste 3–4 core-hours each (probe-measured:
 
 **Cost estimate if letter/mnist RK or NN tables ever needed generating** (they
 don't, per above), using the measured cadence model from
-`revision_experiments/71_regen_nnd_alpha001.R` header (anchor: 396 s/iter at
+`revision_experiments/tr1/71_regen_nnd_alpha001.R` header (anchor: 396 s/iter at
 d=16, n=3200; NN cost ≈ n³·d/3, so `sec_per_iter ≈ 396 × (n/3200)³ × (d/16)`,
 niter=10000 for a 0.1% table): at n=1600, d=32 this gives ≈ 396 × (1600/3200)³ ×
 (32/16) = 99 s/iter × 10000 iters ≈ 275 h serial, ÷ 20 cores ≈ **13.8 h**. That

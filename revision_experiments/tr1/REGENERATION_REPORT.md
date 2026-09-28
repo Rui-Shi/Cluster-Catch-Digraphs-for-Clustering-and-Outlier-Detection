@@ -10,12 +10,12 @@ Configuration frozen in `BENCHMARK_EXPANSION_RULE.md`; assembled by
 > and is kept as written except for this note. Two parts are superseded:
 > (1) §4's "α saturation at d = 21" reading is withdrawn: the d = 21 `99%` and
 > `999%` NN tables were byte-identical (both the 1% run; see
-> `../DELETED_DUPLICATE_TABLES.md`), so identical results at the two levels
+> `DELETED_DUPLICATE_TABLES.md`), so identical results at the two levels
 > say nothing about saturation. A genuine 0.1% d = 21 table was installed
-> 2026-08-12 (`../INSTALLED_REGEN999_TABLES.md`). (2) The §2-§5 numbers use
+> 2026-08-12 (`INSTALLED_REGEN999_TABLES.md`). (2) The §2-§5 numbers use
 > S_min = 0.0625 and the pre-repair NND tables; the published configuration is
-> S_min = 0.05 with the repaired 0.1% tables (`../76_aggregate_after_alpha_fix.R`,
-> `../78_manuscript_tables_after_fix.R`), and the real-data comparison was
+> S_min = 0.05 with the repaired 0.1% tables (`76_aggregate_after_alpha_fix.R`,
+> `78_manuscript_tables_after_fix.R`), and the real-data comparison was
 > extended to 17 methods in WP4 (`../results/tr1/wp4/`).
 
 ---

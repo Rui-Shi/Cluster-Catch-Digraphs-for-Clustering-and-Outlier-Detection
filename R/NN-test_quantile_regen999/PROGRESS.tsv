@@ -23,7 +23,7 @@
 2026-08-11T16:33:56	CHUNK	d=12	chunk=12/12	iter=826	secs=2298.7	eta_h=0.00
 2026-08-11T16:33:56	POOL	d=12	loading 12 chunks
 2026-08-11T16:34:09	DIMDONE	d=12	n=1452	files=4	zero_frac_999=0.0000
-2026-08-11T16:34:09	ALLDONE	staging=G:/Submissions/TR1/TR1_Neurocomputing_resubmit/Cluster-Catch-Digraphs-for-Clustering-and-Outlier-Detection/R/NN-test_quantile_regen999
+2026-08-11T16:34:09	ALLDONE	staging=R/NN-test_quantile_regen999
 2026-08-11T16:34:09	NEXT	Rscript revision_experiments/72_verify_regen999.R  (verify before installing)
 2026-08-11T16:34:50	RUNSTART	cores=22	niter=10000	engine=fast_stream	dims=21
 2026-08-11T16:34:50	ESTIMATE	total_wall_hours=81.7

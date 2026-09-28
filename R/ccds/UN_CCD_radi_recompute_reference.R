@@ -1,6 +1,6 @@
 # Verbatim copy of nnccd.radi() from R/ccds/UN_CCD.R as it stood before the
 # incremental nearest-neighbour update (2026-09-23), renamed nnccd.radi.recompute.
-# Kept only as the reference for revision_experiments/tr1/92_validate_incremental_radi.R.
+# Kept only as the reference for revision_experiments/tr1/92b_validate_incremental_radi.R.
 # Nothing in the detectors sources this file.
 
 nnccd.radi.recompute <- function(dx, quantile="lower", method="ascend", low.num, quant, simul=NULL, niter, scores=F){

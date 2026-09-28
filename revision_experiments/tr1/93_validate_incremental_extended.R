@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 # 93_validate_incremental_extended.R -- extended check that the incremental
 # nearest-neighbour radius search (R/ccds/UN_CCD.R, 2026-09-23) changes no
-# result. Extends 92_validate_incremental_radi.R in two ways:
+# result. Extends 92b_validate_incremental_radi.R in two ways:
 #
 #  Part R (radii): nnccd.radi() new vs the verbatim earlier version
 #    (R/ccds/UN_CCD_radi_recompute_reference.R) over 5 seeds x 7 dimensions

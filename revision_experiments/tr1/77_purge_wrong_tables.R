@@ -41,8 +41,8 @@
 # fail loudly instead of silently returning a 1% table under a 0.1% name.
 #
 # Usage:
-#   Rscript revision_experiments/77_purge_wrong_tables.R           # dry run
-#   Rscript revision_experiments/77_purge_wrong_tables.R --apply
+#   Rscript revision_experiments/tr1/77_purge_wrong_tables.R           # dry run
+#   Rscript revision_experiments/tr1/77_purge_wrong_tables.R --apply
 
 suppressMessages(library(here))
 source(here::here("revision_experiments/shared/harness.R"))
@@ -50,7 +50,7 @@ source(here::here("revision_experiments/tr1/wp0_mccd_methods.R"))
 
 APPLY <- "--apply" %in% commandArgs(trailingOnly = TRUE)
 NNDIR <- here::here("R/NN-test_quantile")
-MANI  <- here::here("revision_experiments/DELETED_DUPLICATE_TABLES.md")
+MANI  <- here::here("revision_experiments/tr1/DELETED_DUPLICATE_TABLES.md")
 load1 <- function(p) { e <- new.env(); load(p, envir = e); get("simul", envir = e) }
 
 inv   <- read.csv(here::here("revision_experiments/results/tr1/dataset_inventory.csv"),

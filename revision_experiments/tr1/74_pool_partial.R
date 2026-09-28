@@ -23,15 +23,15 @@
 # was. That is the same discipline the whole work package exists to restore.
 #
 # Usage:
-#   Rscript revision_experiments/74_pool_partial.R <d> [max_chunks]
-#   e.g.  Rscript revision_experiments/74_pool_partial.R 21
-#         Rscript revision_experiments/74_pool_partial.R 21 10   # cap at 10
+#   Rscript revision_experiments/tr1/74_pool_partial.R <d> [max_chunks]
+#   e.g.  Rscript revision_experiments/tr1/74_pool_partial.R 21
+#         Rscript revision_experiments/tr1/74_pool_partial.R 21 10   # cap at 10
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "01i_nn_multiquant_table.R"))
+source(here::here("revision_experiments", "tr1", "01i_nn_multiquant_table.R"))
 
 args <- commandArgs(trailingOnly = TRUE)
-if (!length(args)) stop("Usage: Rscript revision_experiments/74_pool_partial.R <d> [max_chunks]")
+if (!length(args)) stop("Usage: Rscript revision_experiments/tr1/74_pool_partial.R <d> [max_chunks]")
 D    <- as.integer(args[[1]])
 MAXC <- if (length(args) >= 2) as.integer(args[[2]]) else NA_integer_
 

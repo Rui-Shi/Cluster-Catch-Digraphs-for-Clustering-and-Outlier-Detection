@@ -6,13 +6,13 @@
 # at ~948 s, above the 600 s subagent tool cap.
 
 $ErrorActionPreference = "Continue"
-$Root = "G:\Submissions\TR1\TR1_Neurocomputing_resubmit\Cluster-Catch-Digraphs-for-Clustering-and-Outlier-Detection"
+$Root = (Resolve-Path (Join-Path $PSScriptRoot "..\..")).Path
 Set-Location $Root
 
 $env:WP0_GATE_OUT_CSV     = "$Root\revision_experiments\results\tr1\regen_proposed_wilt_nn.csv"
 $env:WP0_GATE_TIMEOUT_SEC = "5400"
 
-$R   = "C:\Program Files\R\R-4.6.1\bin\Rscript.exe"
+$R   = if ($env:RSCRIPT) { $env:RSCRIPT } else { "Rscript.exe" }
 $Log = "$Root\revision_experiments\results\tr1\regen_wilt_nn.log"
 
 "=== wilt NN half started $(Get-Date -Format 'yyyy-MM-dd HH:mm:ss') ===" | Out-File -FilePath $Log -Encoding utf8

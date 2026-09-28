@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# revision_experiments/44_wp2a_smin_sweep16.R
+# revision_experiments/tr1/44_wp2a_smin_sweep16.R
 #
 # WP2(a) S_min sensitivity sweep, extended to all 16 real data sets.
 # Builds on 21_regen_smin_grid.R / 15_wp0_constant_smin.R / 16_wp0_su_highsmin.R

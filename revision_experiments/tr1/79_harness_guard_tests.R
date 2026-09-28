@@ -23,7 +23,7 @@ suppressMessages(library(here))
 source(here::here("revision_experiments/shared/harness.R"))
 source(here::here("revision_experiments/tr1/wp0_mccd_methods.R"))
 
-SCRATCH <- "C:/Users/shiru/AppData/Local/Temp/claude/G--Submissions-TR1-TR1-Neurocomputing-resubmit/672ac85e-3720-4f2e-bf2c-19ec764b119f/scratchpad"
+SCRATCH <- file.path(tempdir(), "79_harness_guard_tests")
 
 PASS <- 0L; FAIL <- 0L
 ok <- function(label, cond) {

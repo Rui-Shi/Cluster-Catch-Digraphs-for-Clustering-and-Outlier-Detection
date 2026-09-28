@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# revision_experiments/55_wp2c_simulation_arm.R
+# revision_experiments/tr1/55_wp2c_simulation_arm.R
 #
 # WP2(c), Step 3: the SIMULATION arm -- the actual deliverable.
 #
@@ -13,7 +13,7 @@
 # WHAT IS RE-RUN, AND HOW IT MAPS TO THE MANUSCRIPT
 # --------------------------------------------------------------------------
 # Generators: gen_uniform() and gen_gaussian() are lifted from
-# revision_experiments/09_wp3_synthetic.R lines 124-195, which in turn copies
+# revision_experiments/tr2/09_wp3_synthetic.R lines 124-195, which in turn copies
 # them verbatim from the first-cycle simulation drivers
 #   simulations/outlyingness_scores/RKCCD_OOS_IOS/Simulation/Uniform/10d/10d_2cls_n500_cont5%.R
 #   simulations/outlyingness_scores/RKCCD_OOS_IOS/Simulation/Gaussian/10d/10d_2cls_n500_cont5%.R

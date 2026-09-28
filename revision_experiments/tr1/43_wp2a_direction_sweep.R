@@ -371,7 +371,7 @@ build_summary <- function() {
   if (length(not_run)) cat(sprintf("\nNOT YET RUN (time budget): %s\n", paste(not_run, collapse = ", ")))
 
   # ---- findings.md ----
-  hdr <- paste(readLines(here::here("revision_experiments/43_wp2a_direction_sweep.R"), n = 87)[3:87], collapse = "\n")
+  hdr <- paste(readLines(here::here("revision_experiments/tr1/43_wp2a_direction_sweep.R"), n = 87)[3:87], collapse = "\n")
   md <- c(
     "# WP2(a) radius-search direction sweep (ascend vs descend) -- findings",
     "",

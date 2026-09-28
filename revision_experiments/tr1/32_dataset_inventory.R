@@ -9,7 +9,7 @@
 # it correctly -- and never on how any method scores. This script prints ONLY
 # those structural properties. No detector is run.
 #
-# Read-only. Writes results/dataset_inventory.csv.
+# Read-only. Writes results/tr1/dataset_inventory.csv.
 
 suppressMessages(library(here))
 source(here::here("revision_experiments", "shared", "harness.R"))

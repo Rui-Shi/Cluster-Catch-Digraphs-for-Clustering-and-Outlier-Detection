@@ -239,7 +239,7 @@ nnccd.silhouette_mutual1 <- function(graph, datax,ind=NULL, lenClimit=Inf, k=NUL
 # leaves (descending) the ball, so each step costs O(j). mean() and median() are
 # still taken over the same values in the same order, so the statistics, and
 # therefore the radii, are identical to the earlier version
-# (checked by revision_experiments/tr1/92_validate_incremental_radi.R against
+# (checked by revision_experiments/tr1/92b_validate_incremental_radi.R against
 # R/ccds/UN_CCD_radi_recompute_reference.R).
 
 # Ascending search for centre i: ball members o.d[2:j]; returns the radius.

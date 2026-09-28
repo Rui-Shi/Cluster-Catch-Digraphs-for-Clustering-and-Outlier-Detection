@@ -5,7 +5,7 @@
 # (see REGEN_SPEC.md). DIAGNOSIS ONLY -- this script never modifies harness.R,
 # wp0_mccd_methods.R, 13_wp0_gate.R, published_realdata_truth.csv, or anything
 # under methods/, R/, data/, simulations/. It writes only to its own CSV shard,
-# results/diag_waveform_ecoli.csv.
+# results/tr1/diag_waveform_ecoli.csv.
 #
 # Investigates why waveform and ecoli fail to reproduce Section 6 published
 # TPR/TNR/BA/F2 for all four proposed detectors (U-MCCD, SU-MCCD, UN-MCCD,

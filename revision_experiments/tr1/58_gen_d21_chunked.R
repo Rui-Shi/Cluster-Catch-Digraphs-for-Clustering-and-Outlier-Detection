@@ -30,13 +30,13 @@
 # basename, so sourcing does not trigger its CLI.
 #
 # Usage:
-#   Rscript revision_experiments/58_gen_d21_chunked.R [n_chunks] [iter_per_chunk] [cores]
+#   Rscript revision_experiments/tr1/58_gen_d21_chunked.R [n_chunks] [iter_per_chunk] [cores]
 #   defaults: 16 chunks x 125 iterations = 2000, 14 cores
 #
 # Resume: completed chunk files are skipped. Safe to re-invoke after any failure.
 
 suppressMessages(library(here))
-source(here::here("revision_experiments", "01i_nn_multiquant_table.R"))
+source(here::here("revision_experiments", "tr1", "01i_nn_multiquant_table.R"))
 
 args    <- commandArgs(trailingOnly = TRUE)
 NCHUNK  <- if (length(args) >= 1) as.integer(args[[1]]) else 16L

@@ -1,5 +1,5 @@
 #!/usr/bin/env Rscript
-# revision_experiments/49_wp2a_rk_saturation.R
+# revision_experiments/tr1/49_wp2a_rk_saturation.R
 #
 # WP2a (Neurocomputing revision): does the RK spatial-randomness test's
 # quantile envelope saturate with dimension, and does that saturation explain
@@ -20,7 +20,7 @@
 # Part 2 (behavioural): run U-MCCD and SU-MCCD at n=200 over d in
 #   {2,3,5,10,20,35,50,100} and alpha in {0.10,0.05,0.01,0.001}, on both the
 #   uniform-cluster and Gaussian-cluster generators from
-#   revision_experiments/09_wp3_synthetic.R (gen_uniform / gen_gaussian),
+#   revision_experiments/tr2/09_wp3_synthetic.R (gen_uniform / gen_gaussian),
 #   generalised from their original fixed d=10,n=500 to arbitrary (d, n) --
 #   every other constant (cont=0.05, cls_dis=3, otl_dis=2, r_min=0.7,
 #   r_max=1.3, noise_level=0.01 for the Gaussian setting) is kept byte-for-
@@ -471,7 +471,7 @@ run_part2_parallel <- function(dims, n_reps = 20L, settings = c("gaussian", "uni
     # parallel's own PSOCK bootstrap, not --part1/--part2), so the dispatch
     # block at the bottom of this file falls through to the harmless "Usage:"
     # print and every function/variable/shadow-install above it still runs.
-    suppressMessages(source(here::here("revision_experiments", "49_wp2a_rk_saturation.R")))
+    suppressMessages(source(here::here("revision_experiments", "tr1", "49_wp2a_rk_saturation.R")))
     TRUE
   }))
   base_seeds <- c(gaussian = 123L, uniform = 123L)

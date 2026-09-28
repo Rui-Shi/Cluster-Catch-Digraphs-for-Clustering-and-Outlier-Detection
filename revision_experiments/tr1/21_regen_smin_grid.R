@@ -26,7 +26,7 @@
 # USAGE
 #   Rscript revision_experiments/tr1/21_regen_smin_grid.R
 #
-# Resumable: checkpoints to results/regen_smin_grid.csv via has_result(),
+# Resumable: checkpoints to results/tr1/regen_smin_grid.csv via has_result(),
 # keyed on (dataset, method, variant).
 
 source(here::here("revision_experiments/shared/harness.R"))

@@ -87,17 +87,17 @@
 # The estimator is unaffected; only the particular draws are.
 #
 # CLI
-#   Rscript revision_experiments/64_nn_provenance_gen.R <d,csv> <rep,csv> [n] [niter] [cores]
+#   Rscript revision_experiments/tr1/64_nn_provenance_gen.R <d,csv> <rep,csv> [n] [niter] [cores]
 #   defaults: n = 1013, niter = 250, cores = min(24, detectCores())
-#   e.g.  Rscript revision_experiments/64_nn_provenance_gen.R 9 1,2,3
-#         Rscript revision_experiments/64_nn_provenance_gen.R 6,7,8 1,2,3,4,5,6,7,8
+#   e.g.  Rscript revision_experiments/tr1/64_nn_provenance_gen.R 9 1,2,3
+#         Rscript revision_experiments/tr1/64_nn_provenance_gen.R 6,7,8 1,2,3,4,5,6,7,8
 
 suppressPackageStartupMessages({
   library(here)
   library(parallel)
 })
 
-source(here::here("revision_experiments/01i_nn_multiquant_table.R"))
+source(here::here("revision_experiments/tr1/01i_nn_multiquant_table.R"))
 
 OUTROOT   <- here::here("R/NN-test_quantile_provenance")
 MANIFEST  <- here::here("revision_experiments/results/tr1/wp2a_provenance_gen_manifest.csv")
@@ -196,7 +196,7 @@ run_cell <- function(d, r, n, niter, cores) {
 # ---------------------------------------------------------------------------
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) < 2) {
-  stop("Usage: Rscript revision_experiments/64_nn_provenance_gen.R <d,csv> <rep,csv> [n] [niter] [cores] [quants,csv]", call. = FALSE)
+  stop("Usage: Rscript revision_experiments/tr1/64_nn_provenance_gen.R <d,csv> <rep,csv> [n] [niter] [cores] [quants,csv]", call. = FALSE)
 }
 DS     <- as.integer(strsplit(args[[1]], ",")[[1]])
 REPS   <- as.integer(strsplit(args[[2]], ",")[[1]])

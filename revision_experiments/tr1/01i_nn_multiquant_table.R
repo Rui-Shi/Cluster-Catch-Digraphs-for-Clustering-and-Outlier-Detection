@@ -68,7 +68,7 @@
 # percentage rule so the names match what is actually on disk.
 #
 # CLI
-#   Rscript revision_experiments/01i_nn_multiquant_table.R \
+#   Rscript revision_experiments/tr1/01i_nn_multiquant_table.R \
 #       <d> <n> <niter> <cores> <outdir> [seed] [quants,csv] [engine]
 #   defaults: seed = 20260809 + d, quants = 0.90,0.95,0.99,0.999,
 #             engine = orig_list
@@ -262,7 +262,7 @@ write_nn_tables <- function(draws, quants, outdir, overwrite = FALSE) {
 if (.nn_mq_is_main()) {
   args <- commandArgs(trailingOnly = TRUE)
   if (length(args) < 5) {
-    stop("Usage: Rscript revision_experiments/01i_nn_multiquant_table.R <d> <n> <niter> <cores> <outdir> [seed] [quants,csv] [engine]",
+    stop("Usage: Rscript revision_experiments/tr1/01i_nn_multiquant_table.R <d> <n> <niter> <cores> <outdir> [seed] [quants,csv] [engine]",
          call. = FALSE)
   }
   d      <- as.integer(args[[1]])

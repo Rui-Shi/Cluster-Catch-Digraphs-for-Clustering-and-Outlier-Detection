@@ -17,7 +17,7 @@
 #   ODIN     defaults: k = round(sqrt(n)), threshold = round(n^(1/3))
 #   iForest  ntrees = 1000, sample_size = min(256, n), threshold 0.55, seed 1
 #
-# Writes results/final_baselines.csv, checkpointed on (dataset, method).
+# Writes results/tr1/final_baselines.csv, checkpointed on (dataset, method).
 
 suppressMessages(library(here))
 source(here::here("revision_experiments", "shared", "harness.R"))
