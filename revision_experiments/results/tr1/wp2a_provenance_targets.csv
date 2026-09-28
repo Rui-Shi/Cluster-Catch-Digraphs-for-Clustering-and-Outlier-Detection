@@ -1,0 +1,17 @@
+"dataset","n","d","tokens_on_disk","UN_token","SUN_token","same_table_for_UN_and_SUN","pair_identical","shipped_n_UN","shipped_n_SUN","covers_dataset_n"
+"hepatitis",74,19,"99/999","99","999",TRUE,TRUE,5001,5001,TRUE
+"lymphography",148,18,"99/999","99","999",TRUE,TRUE,5001,5001,TRUE
+"glass",213,9,"95/99","95","95",TRUE,TRUE,5001,5001,TRUE
+"WBC",223,9,"95/99","95","95",TRUE,TRUE,5001,5001,TRUE
+"vertebral",240,6,"95/99","95","95",TRUE,TRUE,5001,5001,TRUE
+"ecoli",336,7,"95/99","95","95",TRUE,TRUE,5001,5001,TRUE
+"stamps",340,9,"95/99","95","95",TRUE,TRUE,5001,5001,TRUE
+"WDBC",367,30,"999","999","999",TRUE,NA,5001,5001,TRUE
+"pima",555,8,"95/99","95","95",TRUE,TRUE,5001,5001,TRUE
+"shuffle",1013,9,"95/99","95","95",TRUE,TRUE,5001,5001,TRUE
+"vowels",1452,12,"99/999","99","999",TRUE,TRUE,5001,5001,TRUE
+"PenDigits",3200,16,"99/999","99","999",TRUE,TRUE,5001,5001,TRUE
+"waveform",3443,21,"99/999","999","999",TRUE,TRUE,5001,5001,TRUE
+"thyroid",3656,6,"95/99","95","95",TRUE,TRUE,5001,5001,TRUE
+"pageblocks",4795,10,"99/999","99","999",FALSE,FALSE,5001,5001,TRUE
+"wilt",4819,5,"90/95","95","95",TRUE,FALSE,5001,5001,TRUE

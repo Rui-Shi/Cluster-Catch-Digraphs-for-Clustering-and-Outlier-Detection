@@ -1,0 +1,17 @@
+"part","source","setting","d","method","reps","mean_BA_range","mean_jaccard","frac_identical"
+"B_effect","fresh","uniform",10,"UN-MCCD",20,0.00370370370370372,0.908686656480774,0.5
+"B_effect","fresh","uniform",10,"SUN-MCCD",20,0.000925925925925936,0.968939393939394,0.7
+"B_effect","fresh","uniform",20,"UN-MCCD",20,0.0167989417989418,0.716686715264301,0.35
+"B_effect","fresh","uniform",20,"SUN-MCCD",20,0.143518518518519,0.444276458440174,0.3
+"B_effect","fresh","gaussian",10,"UN-MCCD",20,0.0338624338624339,0.735250918447483,0
+"B_effect","fresh","gaussian",10,"SUN-MCCD",20,0.0175925925925926,0.764904391083804,0
+"B_effect","fresh","gaussian",20,"UN-MCCD",20,0.0551587301587302,0.733847495612618,0.05
+"B_effect","fresh","gaussian",20,"SUN-MCCD",20,0.111507936507937,0.6165553202325,0.2
+"B_effect","disk","uniform",10,"UN-MCCD",20,0.00370370370370372,0.901693649487767,0.5
+"B_effect","disk","uniform",10,"SUN-MCCD",20,0.000925925925925936,0.968939393939394,0.7
+"B_effect","disk","uniform",20,"UN-MCCD",20,0.0164021164021164,0.702903384028638,0.25
+"B_effect","disk","uniform",20,"SUN-MCCD",20,0.151058201058201,0.430915224978624,0.2
+"B_effect","disk","gaussian",10,"UN-MCCD",20,0.0395502645502645,0.713833399715646,0
+"B_effect","disk","gaussian",10,"SUN-MCCD",20,0.0169312169312169,0.776841293435814,0
+"B_effect","disk","gaussian",20,"UN-MCCD",20,0.0517195767195767,0.727854642390211,0.1
+"B_effect","disk","gaussian",20,"SUN-MCCD",20,0.102116402116402,0.64476083163431,0.2
