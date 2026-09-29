@@ -136,17 +136,18 @@ bounds, not results.
   Two groups of SU-MCCD simulation drivers were fixed and checked with `98`
   (`su_driver_fix/`):
   - the d = 3, n = 1000 drivers had set d = 2. Rerun at d = 3 (22
-    replicates): uniform TNR 1.000, F2 0.9998; Gaussian TNR 0.903, F2 0.736;
+    replicates): uniform TPR 1.000, TNR 0.99995 against 1.000 and 0.99984 in
+    the paper's line figures; Gaussian F2 0.736 against 0.731. The figure
+    points agree with the fixed drivers to three decimals and were kept;
   - the d = 50, n = 50 drivers had loaded the d = 2, 1% RK table; with that
     table the rerun reproduces those drivers' SLURM logs (uniform TNR 0.216).
     With the d = 50, 0.1% table (1000 replicates): uniform TNR 0.591,
-    F2 0.379; Gaussian TNR 0.588, F2 0.370.
-
-  The values in the paper's uniform and Gaussian line figures agree with the
-  fixed drivers, not with the logs of the unfixed ones: d = 50, n = 50
-  uniform TNR 0.568, F2 0.379 and Gaussian TNR 0.581, F2 0.386; d = 3,
-  n = 1000 uniform TNR 1.000, F2 1.000 and Gaussian TNR 0.903, F2 0.731.
-  The fix makes the committed drivers reproduce the published cells.
+    F2 0.379; Gaussian TNR 0.588, F2 0.369. The line figures had held
+    uniform TNR 0.568, F2 0.379 and Gaussian TNR 0.581, F2 0.386: F2 agrees,
+    but the TNR gap exceeds Monte Carlo error (standard error about 0.006),
+    so those points came from a run the committed code does not reproduce.
+    In the revised figures (2026-09-28) the two points hold the fixed-driver
+    values (`su_driver_fix/98_*_d50_n50_RK-test-simul_50d_999%_su.csv`).
 - **2026-09-27.** tr1 scripts consolidated in `tr1/`; results committed.
 - **2026-09-28.** Missing quantile tables are generated on the spot
   (`R/ccds/quantile_table.R`).
