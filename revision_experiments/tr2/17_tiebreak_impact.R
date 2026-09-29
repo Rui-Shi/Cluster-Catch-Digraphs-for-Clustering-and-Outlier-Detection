@@ -138,7 +138,7 @@ break_ties_within_clusters <- function(scores, vd, label) {
 
 #' One (dataset, method) cell: pay the construction once, return the parts.
 score_parts <- function(meth, X, d) {
-  tab <- if (startsWith(meth, "RKCCD")) get_simul("RK", d) else get_simul("NN", d)
+  tab <- if (startsWith(meth, "RKCCD")) get_simul("RK", d, rk_quant_label_paper(d)) else get_simul("NN", d, nn_quant_label_paper_UN(d))
   if (meth == "RKCCD-OOS") {
     RKCCD_OOS(datax = X, simul = tab$simul, d = d, quant = tab$quant, parts = TRUE)
   } else if (meth == "RKCCD-IOS") {

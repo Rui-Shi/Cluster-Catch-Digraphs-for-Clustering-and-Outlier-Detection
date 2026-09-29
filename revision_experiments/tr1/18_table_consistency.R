@@ -4,9 +4,16 @@
 # mismatch. Three TNR typos were already found by hand in the SUN-MCCD row;
 # this checks all 72 (method, dataset) pairs so none are missed.
 #
-# Reads the .tex directly. Writes nothing.
+# Reads the .tex directly. Writes nothing. The supplement source is not in this
+# repository: set TR1_MANUSCRIPT_DIR to the folder holding
+# SupplementaryMaterial.tex (default: a sibling folder TR1_Neurocomputing_resubmit).
 
-SM <- "G:/Submissions/TR1/TR1_Neurocomputing_resubmit/SupplementaryMaterial.tex"
+suppressMessages(library(here))
+MS_DIR <- Sys.getenv("TR1_MANUSCRIPT_DIR",
+                     file.path(dirname(here::here()), "TR1_Neurocomputing_resubmit"))
+SM <- file.path(MS_DIR, "SupplementaryMaterial.tex")
+if (!file.exists(SM)) stop("SupplementaryMaterial.tex not found in ", MS_DIR,
+                           "; set TR1_MANUSCRIPT_DIR to the manuscript folder.")
 tex <- readLines(SM, warn = FALSE)
 
 DATASETS <- c("hepatitis", "glass", "vertebral", "ecoli",

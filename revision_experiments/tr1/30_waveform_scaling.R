@@ -19,7 +19,7 @@
 # waveform under raw / z-score / MADN, re-reading the source .arff so the raw
 # variant is genuinely unscaled.
 #
-# Writes results/waveform_scaling.csv.
+# Writes results/tr1/waveform_scaling.csv.
 
 suppressMessages({
   library(here); library(foreign); library(dplyr)

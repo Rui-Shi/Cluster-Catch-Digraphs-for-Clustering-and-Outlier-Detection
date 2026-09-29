@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 source(here::here("methods/outlier_detection/SU-MCCDs.R"))
 source(here::here("R/general_functions/count.R"))
-load(here::here("R/RK-test_quantile/RK-test-simul_2d_99%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/RK-test_quantile/RK-test-simul_3d_99%.RData"))
 library(parallel)
 library(doParallel)
 library(MASS)
@@ -21,7 +21,7 @@ cores = detectCores()
 # iteN: number of experiments
 
 n = 1000
-d = 2
+d = 3
 cont = 0.05
 
 if(d<=5){

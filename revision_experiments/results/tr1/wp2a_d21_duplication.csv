@@ -1,0 +1,5 @@
+"test","ok","identical_avg","identical_med","max_abs_diff_avg","mean_abs_diff_avg","n_avg"
+"A shipped 99 vs 999",TRUE,TRUE,TRUE,0,0,5000
+"B same-draws 99 vs 999",TRUE,FALSE,FALSE,0.0739673286205028,0.0012436262989878,5000
+"C independent 99 vs 999",TRUE,FALSE,FALSE,0.124707496196976,0.00341960329508222,1000
+"D indep99 vs samedraws99",TRUE,FALSE,FALSE,0.0428296154973573,0.00149722479843495,1000

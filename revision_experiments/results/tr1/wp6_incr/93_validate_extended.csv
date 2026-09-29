@@ -1,0 +1,487 @@
+"part","case","n","d","direction","method","identical","note","t_old","t_new"
+"R","uniform_s1",150,2,"ascend","radii",TRUE,"",0.11,0.06
+"E","hepatitis",74,19,"ascend","UN-MCCD",TRUE,"BA=0.686 F2=0.446",0.11,0.05
+"E","hepatitis",74,19,"ascend","SUN-MCCD",TRUE,"BA=0.705 F2=0.469",0.05,0.03
+"E","hepatitis",74,19,"descend","UN-MCCD",TRUE,"BA=0.686 F2=0.446",0.4,0.11
+"E","hepatitis",74,19,"descend","SUN-MCCD",TRUE,"BA=0.705 F2=0.469",0.39,0.12
+"E","lymphography",148,18,"ascend","UN-MCCD",TRUE,"BA=0.930 F2=0.600",0.08,0.06
+"E","lymphography",148,18,"ascend","SUN-MCCD",TRUE,"BA=0.940 F2=0.638",0.04,0.06
+"R","uniform_s1",150,2,"descend","radii",TRUE,"",3.5,0.52
+"R","uniform_s2",150,2,"ascend","radii",TRUE,"",0.09,0.05
+"E","lymphography",148,18,"descend","UN-MCCD",TRUE,"BA=0.930 F2=0.600",4.14,0.67
+"R","uniform_s2",150,2,"descend","radii",TRUE,"",3.86,0.5
+"R","uniform_s3",150,2,"ascend","radii",TRUE,"",0.08,0.01
+"E","lymphography",148,18,"descend","SUN-MCCD",TRUE,"BA=0.940 F2=0.638",4,0.56
+"E","glass",213,9,"ascend","UN-MCCD",TRUE,"BA=0.493 F2=0.116",0.19,0.21
+"E","glass",213,9,"ascend","SUN-MCCD",TRUE,"BA=0.770 F2=0.324",0.16,0.12
+"R","uniform_s3",150,2,"descend","radii",TRUE,"",3.44,0.5
+"R","uniform_s4",150,2,"ascend","radii",TRUE,"",0.13,0.04
+"R","uniform_s4",150,2,"descend","radii",TRUE,"",3.64,0.52
+"R","uniform_s5",150,2,"ascend","radii",TRUE,"",0.18,0.05
+"R","uniform_s5",150,2,"descend","radii",TRUE,"",3.56,0.42
+"R","gaussian_s1",150,2,"ascend","radii",TRUE,"",0.11,0.03
+"R","gaussian_s1",150,2,"descend","radii",TRUE,"",3.61,0.44
+"R","gaussian_s2",150,2,"ascend","radii",TRUE,"",0.08,0.04
+"E","glass",213,9,"descend","UN-MCCD",TRUE,"BA=0.549 F2=0.197",13.1,1.31
+"R","gaussian_s2",150,2,"descend","radii",TRUE,"",3.72,0.39
+"R","gaussian_s3",150,2,"ascend","radii",TRUE,"",0.16,0.07
+"R","gaussian_s3",150,2,"descend","radii",TRUE,"",3.82,0.5
+"R","gaussian_s4",150,2,"ascend","radii",TRUE,"",0.11,0.06
+"R","gaussian_s4",150,2,"descend","radii",TRUE,"",3.88,0.53
+"R","gaussian_s5",150,2,"ascend","radii",TRUE,"",0.14,0.06
+"E","glass",213,9,"descend","SUN-MCCD",TRUE,"BA=0.549 F2=0.197",13.43,1.39
+"E","WBC",223,9,"ascend","UN-MCCD",TRUE,"BA=0.749 F2=0.318",0.19,0.22
+"E","WBC",223,9,"ascend","SUN-MCCD",TRUE,"BA=0.782 F2=0.350",0.51,0.47
+"R","gaussian_s5",150,2,"descend","radii",TRUE,"",3.54,0.46
+"R","ties_s1",150,2,"ascend","radii",TRUE,"both error: missing value where TRUE/FALSE needed",0.03,0.02
+"R","ties_s1",150,2,"descend","radii",TRUE,"",3.86,0.56
+"R","ties_s2",150,2,"ascend","radii",TRUE,"",0.07,0.03
+"R","ties_s2",150,2,"descend","radii",TRUE,"",4.01,0.55
+"R","ties_s3",150,2,"ascend","radii",TRUE,"",0.07,0.07
+"R","ties_s3",150,2,"descend","radii",TRUE,"",3.77,0.48
+"R","ties_s4",150,2,"ascend","radii",TRUE,"both error: missing value where TRUE/FALSE needed",0.06,0.04
+"E","WBC",223,9,"descend","UN-MCCD",TRUE,"BA=0.749 F2=0.318",15.17,1.39
+"R","ties_s4",150,2,"descend","radii",TRUE,"",3.87,0.42
+"R","ties_s5",150,2,"ascend","radii",TRUE,"",0.11,0.03
+"R","ties_s5",150,2,"descend","radii",TRUE,"",3.66,0.57
+"R","one_s1",150,2,"ascend","radii",TRUE,"",0.35,0.12
+"R","one_s1",150,2,"descend","radii",TRUE,"",3.31,0.33
+"R","one_s2",150,2,"ascend","radii",TRUE,"",0.17,0.06
+"R","one_s2",150,2,"descend","radii",TRUE,"",3.41,0.43
+"R","one_s3",150,2,"ascend","radii",TRUE,"",0.17,0.08
+"E","WBC",223,9,"descend","SUN-MCCD",TRUE,"BA=0.777 F2=0.345",15.66,2.01
+"E","vertebral",240,6,"ascend","UN-MCCD",TRUE,"BA=0.474 F2=0.036",0.21,0.18
+"E","vertebral",240,6,"ascend","SUN-MCCD",TRUE,"BA=0.514 F2=0.109",0.2,0.22
+"R","one_s3",150,2,"descend","radii",TRUE,"",3.59,0.43
+"R","one_s4",150,2,"ascend","radii",TRUE,"",0.31,0.11
+"R","one_s4",150,2,"descend","radii",TRUE,"",3.69,0.42
+"R","one_s5",150,2,"ascend","radii",TRUE,"",0.36,0.14
+"R","one_s5",150,2,"descend","radii",TRUE,"",3.39,0.44
+"R","five_s1",150,2,"ascend","radii",TRUE,"",0.09,0.05
+"R","five_s1",150,2,"descend","radii",TRUE,"",3.85,0.56
+"R","five_s2",150,2,"ascend","radii",TRUE,"",0.07,0.03
+"R","five_s2",150,2,"descend","radii",TRUE,"",3.83,0.47
+"R","five_s3",150,2,"ascend","radii",TRUE,"",0.08,0.04
+"E","vertebral",240,6,"descend","UN-MCCD",TRUE,"BA=0.405 F2=0.030",20.3,1.65
+"R","five_s3",150,2,"descend","radii",TRUE,"",4.05,0.58
+"R","five_s4",150,2,"ascend","radii",TRUE,"",0.06,0.05
+"R","five_s4",150,2,"descend","radii",TRUE,"",3.87,0.43
+"R","five_s5",150,2,"ascend","radii",TRUE,"",0.06,0.04
+"R","five_s5",150,2,"descend","radii",TRUE,"",3.95,0.58
+"R","dups_s1",150,2,"ascend","radii",TRUE,"",0.01,0.02
+"R","dups_s1",150,2,"descend","radii",TRUE,"",4.26,0.6
+"R","dups_s2",150,2,"ascend","radii",TRUE,"",0,0.02
+"R","dups_s2",150,2,"descend","radii",TRUE,"",4.09,0.58
+"R","dups_s3",150,2,"ascend","radii",TRUE,"",0.01,0.02
+"E","vertebral",240,6,"descend","SUN-MCCD",TRUE,"BA=0.464 F2=0.000",20.23,1.75
+"E","ecoli",336,7,"ascend","UN-MCCD",TRUE,"BA=0.773 F2=0.238",0.39,0.46
+"E","ecoli",336,7,"ascend","SUN-MCCD",TRUE,"BA=0.837 F2=0.333",0.39,0.36
+"R","dups_s3",150,2,"descend","radii",TRUE,"",4.06,0.55
+"R","dups_s4",150,2,"ascend","radii",TRUE,"",0,0.01
+"R","dups_s4",150,2,"descend","radii",TRUE,"",4.18,0.57
+"R","dups_s5",150,2,"ascend","radii",TRUE,"",0.02,0.03
+"R","dups_s5",150,2,"descend","radii",TRUE,"",3.95,0.59
+"R","uniform_s1",150,3,"ascend","radii",TRUE,"",0.06,0.03
+"R","uniform_s1",150,3,"descend","radii",TRUE,"",3.74,0.53
+"R","uniform_s2",150,3,"ascend","radii",TRUE,"",0.06,0.02
+"R","uniform_s2",150,3,"descend","radii",TRUE,"",3.83,0.44
+"R","uniform_s3",150,3,"ascend","radii",TRUE,"",0.06,0.05
+"R","uniform_s3",150,3,"descend","radii",TRUE,"",3.95,0.5
+"R","uniform_s4",150,3,"ascend","radii",TRUE,"",0.13,0.07
+"R","uniform_s4",150,3,"descend","radii",TRUE,"",3.54,0.45
+"R","uniform_s5",150,3,"ascend","radii",TRUE,"",0.06,0.05
+"R","uniform_s5",150,3,"descend","radii",TRUE,"",3.88,0.53
+"R","gaussian_s1",150,3,"ascend","radii",TRUE,"",0.1,0.1
+"R","gaussian_s1",150,3,"descend","radii",TRUE,"",3.81,0.47
+"R","gaussian_s2",150,3,"ascend","radii",TRUE,"",0.14,0.07
+"R","gaussian_s2",150,3,"descend","radii",TRUE,"",3.75,0.43
+"R","gaussian_s3",150,3,"ascend","radii",TRUE,"",0.08,0.03
+"R","gaussian_s3",150,3,"descend","radii",TRUE,"",3.82,0.57
+"R","gaussian_s4",150,3,"ascend","radii",TRUE,"",0.1,0.06
+"R","gaussian_s4",150,3,"descend","radii",TRUE,"",3.98,0.44
+"R","gaussian_s5",150,3,"ascend","radii",TRUE,"",0.09,0.05
+"R","gaussian_s5",150,3,"descend","radii",TRUE,"",3.85,0.46
+"R","ties_s1",150,3,"ascend","radii",TRUE,"",0.06,0.03
+"R","ties_s1",150,3,"descend","radii",TRUE,"",4.03,0.54
+"R","ties_s2",150,3,"ascend","radii",TRUE,"",0.09,0.03
+"R","ties_s2",150,3,"descend","radii",TRUE,"",4.18,0.57
+"R","ties_s3",150,3,"ascend","radii",TRUE,"",0.07,0.05
+"R","ties_s3",150,3,"descend","radii",TRUE,"",4.1,0.48
+"R","ties_s4",150,3,"ascend","radii",TRUE,"",0.09,0.06
+"R","ties_s4",150,3,"descend","radii",TRUE,"",3.97,0.41
+"R","ties_s5",150,3,"ascend","radii",TRUE,"",0.07,0.05
+"E","ecoli",336,7,"descend","UN-MCCD",TRUE,"BA=0.774 F2=0.240",72.83,3.59
+"R","ties_s5",150,3,"descend","radii",TRUE,"",3.9,0.58
+"R","one_s1",150,3,"ascend","radii",TRUE,"",0.1,0.03
+"R","one_s1",150,3,"descend","radii",TRUE,"",3.78,0.51
+"R","one_s2",150,3,"ascend","radii",TRUE,"",0.22,0.08
+"R","one_s2",150,3,"descend","radii",TRUE,"",3.8,0.51
+"R","one_s3",150,3,"ascend","radii",TRUE,"",0.06,0.06
+"R","one_s3",150,3,"descend","radii",TRUE,"",3.52,0.47
+"R","one_s4",150,3,"ascend","radii",TRUE,"",0.16,0.08
+"R","one_s4",150,3,"descend","radii",TRUE,"",3.57,0.43
+"R","one_s5",150,3,"ascend","radii",TRUE,"",0.23,0.11
+"R","one_s5",150,3,"descend","radii",TRUE,"",3.6,0.37
+"R","five_s1",150,3,"ascend","radii",TRUE,"",0.04,0.04
+"R","five_s1",150,3,"descend","radii",TRUE,"",4.04,0.5
+"R","five_s2",150,3,"ascend","radii",TRUE,"",0.04,0.04
+"R","five_s2",150,3,"descend","radii",TRUE,"",3.78,0.53
+"R","five_s3",150,3,"ascend","radii",TRUE,"",0.05,0.03
+"R","five_s3",150,3,"descend","radii",TRUE,"",3.86,0.55
+"R","five_s4",150,3,"ascend","radii",TRUE,"",0.06,0.02
+"R","five_s4",150,3,"descend","radii",TRUE,"",3.93,0.51
+"R","five_s5",150,3,"ascend","radii",TRUE,"",0.05,0.04
+"R","five_s5",150,3,"descend","radii",TRUE,"",3.85,0.45
+"R","dups_s1",150,3,"ascend","radii",TRUE,"",0.03,0.02
+"R","dups_s1",150,3,"descend","radii",TRUE,"",3.81,0.58
+"R","dups_s2",150,3,"ascend","radii",TRUE,"",0.02,0
+"R","dups_s2",150,3,"descend","radii",TRUE,"",3.82,0.49
+"R","dups_s3",150,3,"ascend","radii",TRUE,"",0.02,0.02
+"R","dups_s3",150,3,"descend","radii",TRUE,"",3.85,0.58
+"R","dups_s4",150,3,"ascend","radii",TRUE,"",0,0.01
+"R","dups_s4",150,3,"descend","radii",TRUE,"",3.8,0.56
+"R","dups_s5",150,3,"ascend","radii",TRUE,"",0.02,0
+"R","dups_s5",150,3,"descend","radii",TRUE,"",3.94,0.5
+"R","uniform_s1",150,5,"ascend","radii",TRUE,"",0.04,0.03
+"R","uniform_s1",150,5,"descend","radii",TRUE,"",3.63,0.42
+"R","uniform_s2",150,5,"ascend","radii",TRUE,"",0.05,0.03
+"E","ecoli",336,7,"descend","SUN-MCCD",TRUE,"BA=0.814 F2=0.292",70.64,3.56
+"E","stamps",340,9,"ascend","UN-MCCD",TRUE,"BA=0.648 F2=0.381",0.44,0.43
+"E","stamps",340,9,"ascend","SUN-MCCD",TRUE,"BA=0.700 F2=0.455",0.23,0.29
+"R","uniform_s2",150,5,"descend","radii",TRUE,"",3.7,0.55
+"R","uniform_s3",150,5,"ascend","radii",TRUE,"",0.06,0.03
+"R","uniform_s3",150,5,"descend","radii",TRUE,"",3.45,0.5
+"R","uniform_s4",150,5,"ascend","radii",TRUE,"",0.04,0.05
+"R","uniform_s4",150,5,"descend","radii",TRUE,"",3.66,0.47
+"R","uniform_s5",150,5,"ascend","radii",TRUE,"",0.06,0.04
+"R","uniform_s5",150,5,"descend","radii",TRUE,"",3.7,0.58
+"R","gaussian_s1",150,5,"ascend","radii",TRUE,"",0.08,0.04
+"R","gaussian_s1",150,5,"descend","radii",TRUE,"",3.55,0.41
+"R","gaussian_s2",150,5,"ascend","radii",TRUE,"",0.07,0.03
+"R","gaussian_s2",150,5,"descend","radii",TRUE,"",3.95,0.5
+"R","gaussian_s3",150,5,"ascend","radii",TRUE,"",0.03,0.03
+"R","gaussian_s3",150,5,"descend","radii",TRUE,"",3.63,0.47
+"R","gaussian_s4",150,5,"ascend","radii",TRUE,"",0.03,0.03
+"R","gaussian_s4",150,5,"descend","radii",TRUE,"",3.86,0.49
+"R","gaussian_s5",150,5,"ascend","radii",TRUE,"",0.03,0.03
+"R","gaussian_s5",150,5,"descend","radii",TRUE,"",3.52,0.54
+"R","ties_s1",150,5,"ascend","radii",TRUE,"",0.06,0.05
+"R","ties_s1",150,5,"descend","radii",TRUE,"",3.73,0.55
+"R","ties_s2",150,5,"ascend","radii",TRUE,"",0.05,0.03
+"R","ties_s2",150,5,"descend","radii",TRUE,"",3.77,0.42
+"R","ties_s3",150,5,"ascend","radii",TRUE,"",0.04,0.03
+"R","ties_s3",150,5,"descend","radii",TRUE,"",3.75,0.55
+"R","ties_s4",150,5,"ascend","radii",TRUE,"",0.06,0.05
+"R","ties_s4",150,5,"descend","radii",TRUE,"",3.88,0.42
+"R","ties_s5",150,5,"ascend","radii",TRUE,"",0.05,0.05
+"R","ties_s5",150,5,"descend","radii",TRUE,"",3.81,0.41
+"R","one_s1",150,5,"ascend","radii",TRUE,"",0.1,0.04
+"R","one_s1",150,5,"descend","radii",TRUE,"",3.49,0.37
+"R","one_s2",150,5,"ascend","radii",TRUE,"",0.09,0.06
+"R","one_s2",150,5,"descend","radii",TRUE,"",3.91,0.53
+"R","one_s3",150,5,"ascend","radii",TRUE,"",0.11,0.04
+"R","one_s3",150,5,"descend","radii",TRUE,"",3.74,0.43
+"R","one_s4",150,5,"ascend","radii",TRUE,"",0.07,0.04
+"R","one_s4",150,5,"descend","radii",TRUE,"",3.88,0.44
+"R","one_s5",150,5,"ascend","radii",TRUE,"",0.06,0.04
+"E","stamps",340,9,"descend","UN-MCCD",TRUE,"BA=0.481 F2=0.034",73.34,4.96
+"R","one_s5",150,5,"descend","radii",TRUE,"",3.73,0.48
+"R","five_s1",150,5,"ascend","radii",TRUE,"",0.03,0.03
+"R","five_s1",150,5,"descend","radii",TRUE,"",3.96,0.57
+"R","five_s2",150,5,"ascend","radii",TRUE,"",0.05,0.03
+"R","five_s2",150,5,"descend","radii",TRUE,"",3.97,0.48
+"R","five_s3",150,5,"ascend","radii",TRUE,"",0.03,0.03
+"R","five_s3",150,5,"descend","radii",TRUE,"",3.7,0.46
+"R","five_s4",150,5,"ascend","radii",TRUE,"",0.05,0.03
+"R","five_s4",150,5,"descend","radii",TRUE,"",3.83,0.51
+"R","five_s5",150,5,"ascend","radii",TRUE,"",0.03,0.02
+"R","five_s5",150,5,"descend","radii",TRUE,"",3.71,0.55
+"R","dups_s1",150,5,"ascend","radii",TRUE,"",0.03,0
+"R","dups_s1",150,5,"descend","radii",TRUE,"",3.99,0.51
+"R","dups_s2",150,5,"ascend","radii",TRUE,"",0.01,0.02
+"R","dups_s2",150,5,"descend","radii",TRUE,"",3.86,0.55
+"R","dups_s3",150,5,"ascend","radii",TRUE,"",0.03,0
+"R","dups_s3",150,5,"descend","radii",TRUE,"",3.98,0.5
+"R","dups_s4",150,5,"ascend","radii",TRUE,"",0.01,0.02
+"R","dups_s4",150,5,"descend","radii",TRUE,"",3.76,0.39
+"R","dups_s5",150,5,"ascend","radii",TRUE,"",0.02,0.01
+"R","dups_s5",150,5,"descend","radii",TRUE,"",3.66,0.54
+"R","uniform_s1",150,10,"ascend","radii",TRUE,"",0.05,0.03
+"R","uniform_s1",150,10,"descend","radii",TRUE,"",3.65,0.47
+"R","uniform_s2",150,10,"ascend","radii",TRUE,"",0.03,0.03
+"R","uniform_s2",150,10,"descend","radii",TRUE,"",4.05,0.56
+"R","uniform_s3",150,10,"ascend","radii",TRUE,"",0.06,0.05
+"R","uniform_s3",150,10,"descend","radii",TRUE,"",3.77,0.59
+"R","uniform_s4",150,10,"ascend","radii",TRUE,"",0.08,0.03
+"R","uniform_s4",150,10,"descend","radii",TRUE,"",3.76,0.53
+"R","uniform_s5",150,10,"ascend","radii",TRUE,"",0.08,0.06
+"R","uniform_s5",150,10,"descend","radii",TRUE,"",3.87,0.5
+"R","gaussian_s1",150,10,"ascend","radii",TRUE,"",0.05,0.04
+"R","gaussian_s1",150,10,"descend","radii",TRUE,"",3.86,0.53
+"R","gaussian_s2",150,10,"ascend","radii",TRUE,"",0.05,0.03
+"R","gaussian_s2",150,10,"descend","radii",TRUE,"",3.87,0.58
+"R","gaussian_s3",150,10,"ascend","radii",TRUE,"",0.04,0.03
+"E","stamps",340,9,"descend","SUN-MCCD",TRUE,"BA=0.700 F2=0.455",72.66,3.84
+"E","WDBC",367,30,"ascend","UN-MCCD",TRUE,"BA=0.591 F2=0.146",0.64,0.63
+"E","WDBC",367,30,"ascend","SUN-MCCD",TRUE,"BA=0.662 F2=0.172",0.4,0.34
+"R","gaussian_s3",150,10,"descend","radii",TRUE,"",3.86,0.55
+"R","gaussian_s4",150,10,"ascend","radii",TRUE,"",0.06,0.04
+"E","pima",555,8,"ascend","UN-MCCD",TRUE,"BA=0.536 F2=0.232",1.61,1.3
+"E","pima",555,8,"ascend","SUN-MCCD",TRUE,"BA=0.721 F2=0.497",1.26,1.13
+"R","gaussian_s4",150,10,"descend","radii",TRUE,"",3.74,0.54
+"R","gaussian_s5",150,10,"ascend","radii",TRUE,"",0.06,0.05
+"R","gaussian_s5",150,10,"descend","radii",TRUE,"",3.83,0.59
+"R","ties_s1",150,10,"ascend","radii",TRUE,"",0.06,0.05
+"R","ties_s1",150,10,"descend","radii",TRUE,"",4.15,0.52
+"R","ties_s2",150,10,"ascend","radii",TRUE,"",0.04,0.03
+"R","ties_s2",150,10,"descend","radii",TRUE,"",3.92,0.58
+"R","ties_s3",150,10,"ascend","radii",TRUE,"",0.07,0.05
+"R","ties_s3",150,10,"descend","radii",TRUE,"",4.14,0.55
+"R","ties_s4",150,10,"ascend","radii",TRUE,"",0.08,0.04
+"E","shuffle",1013,9,"ascend","UN-MCCD",TRUE,"BA=0.855 F2=0.183",10.44,10.42
+"R","ties_s4",150,10,"descend","radii",TRUE,"",3.64,0.43
+"R","ties_s5",150,10,"ascend","radii",TRUE,"",0.07,0.07
+"R","ties_s5",150,10,"descend","radii",TRUE,"",3.73,0.52
+"R","one_s1",150,10,"ascend","radii",TRUE,"",0.08,0.05
+"E","shuffle",1013,9,"ascend","SUN-MCCD",TRUE,"BA=0.832 F2=0.162",4.64,5.12
+"R","one_s1",150,10,"descend","radii",TRUE,"",3.64,0.46
+"R","one_s2",150,10,"ascend","radii",TRUE,"",0.09,0.05
+"R","one_s2",150,10,"descend","radii",TRUE,"",4.22,0.49
+"R","one_s3",150,10,"ascend","radii",TRUE,"",0.06,0.05
+"R","one_s3",150,10,"descend","radii",TRUE,"",4.02,0.51
+"R","one_s4",150,10,"ascend","radii",TRUE,"",0.08,0.05
+"R","one_s4",150,10,"descend","radii",TRUE,"",3.79,0.55
+"R","one_s5",150,10,"ascend","radii",TRUE,"",0.09,0.05
+"R","one_s5",150,10,"descend","radii",TRUE,"",3.95,0.52
+"R","five_s1",150,10,"ascend","radii",TRUE,"",0.05,0.03
+"R","five_s1",150,10,"descend","radii",TRUE,"",3.8,0.48
+"R","five_s2",150,10,"ascend","radii",TRUE,"",0.03,0.01
+"R","five_s2",150,10,"descend","radii",TRUE,"",4,0.6
+"R","five_s3",150,10,"ascend","radii",TRUE,"",0.06,0.03
+"R","five_s3",150,10,"descend","radii",TRUE,"",4.05,0.56
+"R","five_s4",150,10,"ascend","radii",TRUE,"",0.04,0.05
+"R","five_s4",150,10,"descend","radii",TRUE,"",3.95,0.47
+"R","five_s5",150,10,"ascend","radii",TRUE,"",0.04,0.03
+"R","five_s5",150,10,"descend","radii",TRUE,"",3.61,0.56
+"R","dups_s1",150,10,"ascend","radii",TRUE,"",0.01,0.02
+"E","vowels",1452,12,"ascend","UN-MCCD",TRUE,"BA=0.771 F2=0.263",22.73,23.55
+"R","dups_s1",150,10,"descend","radii",TRUE,"",3.84,0.5
+"R","dups_s2",150,10,"ascend","radii",TRUE,"",0,0.01
+"R","dups_s2",150,10,"descend","radii",TRUE,"",3.68,0.4
+"R","dups_s3",150,10,"ascend","radii",TRUE,"",0.01,0
+"R","dups_s3",150,10,"descend","radii",TRUE,"",3.71,0.47
+"R","dups_s4",150,10,"ascend","radii",TRUE,"",0.02,0
+"R","dups_s4",150,10,"descend","radii",TRUE,"",3.85,0.48
+"R","dups_s5",150,10,"ascend","radii",TRUE,"",0.02,0.01
+"R","dups_s5",150,10,"descend","radii",TRUE,"",3.94,0.44
+"R","uniform_s1",150,20,"ascend","radii",TRUE,"",0.03,0.02
+"R","uniform_s1",150,20,"descend","radii",TRUE,"",3.91,0.59
+"R","uniform_s2",150,20,"ascend","radii",TRUE,"",0.04,0.03
+"R","uniform_s2",150,20,"descend","radii",TRUE,"",3.84,0.61
+"R","uniform_s3",150,20,"ascend","radii",TRUE,"",0.03,0.02
+"E","vowels",1452,12,"ascend","SUN-MCCD",TRUE,"BA=0.658 F2=0.194",14.44,14.86
+"R","uniform_s3",150,20,"descend","radii",TRUE,"",3.78,0.5
+"R","uniform_s4",150,20,"ascend","radii",TRUE,"",0.03,0.03
+"R","uniform_s4",150,20,"descend","radii",TRUE,"",3.89,0.47
+"R","uniform_s5",150,20,"ascend","radii",TRUE,"",0.01,0.03
+"R","uniform_s5",150,20,"descend","radii",TRUE,"",3.8,0.58
+"R","gaussian_s1",150,20,"ascend","radii",TRUE,"",0.02,0.03
+"R","gaussian_s1",150,20,"descend","radii",TRUE,"",3.5,0.5
+"R","gaussian_s2",150,20,"ascend","radii",TRUE,"",0.01,0.02
+"R","gaussian_s2",150,20,"descend","radii",TRUE,"",3.51,0.46
+"R","gaussian_s3",150,20,"ascend","radii",TRUE,"",0.02,0.03
+"R","gaussian_s3",150,20,"descend","radii",TRUE,"",3.7,0.44
+"R","gaussian_s4",150,20,"ascend","radii",TRUE,"",0.02,0.02
+"R","gaussian_s4",150,20,"descend","radii",TRUE,"",3.81,0.42
+"R","gaussian_s5",150,20,"ascend","radii",TRUE,"",0.03,0.02
+"R","gaussian_s5",150,20,"descend","radii",TRUE,"",3.86,0.43
+"R","ties_s1",150,20,"ascend","radii",TRUE,"",0.02,0.01
+"R","ties_s1",150,20,"descend","radii",TRUE,"",3.64,0.52
+"R","ties_s2",150,20,"ascend","radii",TRUE,"",0.03,0.03
+"R","ties_s2",150,20,"descend","radii",TRUE,"",3.87,0.55
+"R","ties_s3",150,20,"ascend","radii",TRUE,"",0.03,0
+"R","ties_s3",150,20,"descend","radii",TRUE,"",3.86,0.52
+"R","ties_s4",150,20,"ascend","radii",TRUE,"",0.03,0.03
+"R","ties_s4",150,20,"descend","radii",TRUE,"",3.47,0.42
+"R","ties_s5",150,20,"ascend","radii",TRUE,"",0.03,0.03
+"R","ties_s5",150,20,"descend","radii",TRUE,"",3.78,0.44
+"R","one_s1",150,20,"ascend","radii",TRUE,"",0.02,0.01
+"R","one_s1",150,20,"descend","radii",TRUE,"",3.72,0.52
+"R","one_s2",150,20,"ascend","radii",TRUE,"",0.03,0.03
+"R","one_s2",150,20,"descend","radii",TRUE,"",3.91,0.39
+"R","one_s3",150,20,"ascend","radii",TRUE,"",0.04,0.01
+"R","one_s3",150,20,"descend","radii",TRUE,"",3.8,0.53
+"R","one_s4",150,20,"ascend","radii",TRUE,"",0.05,0.01
+"R","one_s4",150,20,"descend","radii",TRUE,"",3.67,0.55
+"R","one_s5",150,20,"ascend","radii",TRUE,"",0.03,0.01
+"R","one_s5",150,20,"descend","radii",TRUE,"",3.42,0.41
+"R","five_s1",150,20,"ascend","radii",TRUE,"",0.03,0.01
+"R","five_s1",150,20,"descend","radii",TRUE,"",3.8,0.61
+"R","five_s2",150,20,"ascend","radii",TRUE,"",0.03,0.02
+"R","five_s2",150,20,"descend","radii",TRUE,"",3.98,0.53
+"R","five_s3",150,20,"ascend","radii",TRUE,"",0.01,0.02
+"R","five_s3",150,20,"descend","radii",TRUE,"",3.64,0.61
+"R","five_s4",150,20,"ascend","radii",TRUE,"",0.03,0.02
+"R","five_s4",150,20,"descend","radii",TRUE,"",3.65,0.6
+"R","five_s5",150,20,"ascend","radii",TRUE,"",0.02,0.03
+"R","five_s5",150,20,"descend","radii",TRUE,"",3.64,0.5
+"R","dups_s1",150,20,"ascend","radii",TRUE,"",0.01,0.02
+"R","dups_s1",150,20,"descend","radii",TRUE,"",3.53,0.45
+"R","dups_s2",150,20,"ascend","radii",TRUE,"",0.01,0
+"R","dups_s2",150,20,"descend","radii",TRUE,"",3.83,0.58
+"R","dups_s3",150,20,"ascend","radii",TRUE,"",0.02,0.02
+"R","dups_s3",150,20,"descend","radii",TRUE,"",3.61,0.43
+"R","dups_s4",150,20,"ascend","radii",TRUE,"",0.02,0.01
+"R","dups_s4",150,20,"descend","radii",TRUE,"",3.72,0.58
+"R","dups_s5",150,20,"ascend","radii",TRUE,"",0.02,0.03
+"R","dups_s5",150,20,"descend","radii",TRUE,"",3.95,0.45
+"R","uniform_s1",150,50,"ascend","radii",TRUE,"",0.02,0
+"R","uniform_s1",150,50,"descend","radii",TRUE,"",3.48,0.52
+"R","uniform_s2",150,50,"ascend","radii",TRUE,"",0.01,0.02
+"R","uniform_s2",150,50,"descend","radii",TRUE,"",3.97,0.6
+"R","uniform_s3",150,50,"ascend","radii",TRUE,"",0.02,0
+"R","uniform_s3",150,50,"descend","radii",TRUE,"",3.7,0.55
+"R","uniform_s4",150,50,"ascend","radii",TRUE,"",0.02,0.01
+"R","uniform_s4",150,50,"descend","radii",TRUE,"",3.67,0.61
+"R","uniform_s5",150,50,"ascend","radii",TRUE,"",0.02,0.01
+"R","uniform_s5",150,50,"descend","radii",TRUE,"",3.94,0.48
+"R","gaussian_s1",150,50,"ascend","radii",TRUE,"",0.01,0
+"R","gaussian_s1",150,50,"descend","radii",TRUE,"",3.84,0.6
+"R","gaussian_s2",150,50,"ascend","radii",TRUE,"",0.02,0.01
+"R","gaussian_s2",150,50,"descend","radii",TRUE,"",3.72,0.49
+"R","gaussian_s3",150,50,"ascend","radii",TRUE,"",0,0.02
+"R","gaussian_s3",150,50,"descend","radii",TRUE,"",3.94,0.56
+"R","gaussian_s4",150,50,"ascend","radii",TRUE,"",0.01,0.02
+"R","gaussian_s4",150,50,"descend","radii",TRUE,"",3.8,0.61
+"R","gaussian_s5",150,50,"ascend","radii",TRUE,"",0.01,0
+"R","gaussian_s5",150,50,"descend","radii",TRUE,"",3.83,0.42
+"R","ties_s1",150,50,"ascend","radii",TRUE,"",0.01,0.02
+"R","ties_s1",150,50,"descend","radii",TRUE,"",3.86,0.56
+"R","ties_s2",150,50,"ascend","radii",TRUE,"",0.02,0.01
+"R","ties_s2",150,50,"descend","radii",TRUE,"",4.1,0.59
+"R","ties_s3",150,50,"ascend","radii",TRUE,"",0.02,0.02
+"R","ties_s3",150,50,"descend","radii",TRUE,"",3.87,0.63
+"R","ties_s4",150,50,"ascend","radii",TRUE,"",0.02,0.01
+"R","ties_s4",150,50,"descend","radii",TRUE,"",4.13,0.48
+"R","ties_s5",150,50,"ascend","radii",TRUE,"",0.01,0.02
+"R","ties_s5",150,50,"descend","radii",TRUE,"",3.87,0.57
+"R","one_s1",150,50,"ascend","radii",TRUE,"",0.01,0.02
+"R","one_s1",150,50,"descend","radii",TRUE,"",3.72,0.57
+"R","one_s2",150,50,"ascend","radii",TRUE,"",0.02,0.01
+"R","one_s2",150,50,"descend","radii",TRUE,"",4.08,0.42
+"R","one_s3",150,50,"ascend","radii",TRUE,"",0.03,0
+"R","one_s3",150,50,"descend","radii",TRUE,"",3.97,0.53
+"R","one_s4",150,50,"ascend","radii",TRUE,"",0.01,0
+"R","one_s4",150,50,"descend","radii",TRUE,"",3.91,0.45
+"R","one_s5",150,50,"ascend","radii",TRUE,"",0.01,0.02
+"R","one_s5",150,50,"descend","radii",TRUE,"",3.55,0.5
+"R","five_s1",150,50,"ascend","radii",TRUE,"",0.01,0
+"R","five_s1",150,50,"descend","radii",TRUE,"",3.74,0.58
+"R","five_s2",150,50,"ascend","radii",TRUE,"",0.02,0
+"R","five_s2",150,50,"descend","radii",TRUE,"",3.23,0.41
+"R","five_s3",150,50,"ascend","radii",TRUE,"",0,0.02
+"R","five_s3",150,50,"descend","radii",TRUE,"",3.17,0.41
+"R","five_s4",150,50,"ascend","radii",TRUE,"",0.01,0
+"R","five_s4",150,50,"descend","radii",TRUE,"",3.19,0.39
+"R","five_s5",150,50,"ascend","radii",TRUE,"",0.01,0
+"R","five_s5",150,50,"descend","radii",TRUE,"",3.03,0.42
+"R","dups_s1",150,50,"ascend","radii",TRUE,"",0,0.02
+"R","dups_s1",150,50,"descend","radii",TRUE,"",3.21,0.4
+"R","dups_s2",150,50,"ascend","radii",TRUE,"",0,0.02
+"R","dups_s2",150,50,"descend","radii",TRUE,"",3.23,0.39
+"R","dups_s3",150,50,"ascend","radii",TRUE,"",0.02,0
+"R","dups_s3",150,50,"descend","radii",TRUE,"",3.15,0.41
+"R","dups_s4",150,50,"ascend","radii",TRUE,"",0,0.01
+"R","dups_s4",150,50,"descend","radii",TRUE,"",3.09,0.4
+"R","dups_s5",150,50,"ascend","radii",TRUE,"",0,0.02
+"R","dups_s5",150,50,"descend","radii",TRUE,"",3.14,0.37
+"R","uniform_s1",150,100,"ascend","radii",TRUE,"",0.01,0.02
+"R","uniform_s1",150,100,"descend","radii",TRUE,"",3.16,0.4
+"R","uniform_s2",150,100,"ascend","radii",TRUE,"",0,0.01
+"R","uniform_s2",150,100,"descend","radii",TRUE,"",3.13,0.42
+"R","uniform_s3",150,100,"ascend","radii",TRUE,"",0,0.01
+"R","uniform_s3",150,100,"descend","radii",TRUE,"",3.27,0.4
+"R","uniform_s4",150,100,"ascend","radii",TRUE,"",0,0.01
+"R","uniform_s4",150,100,"descend","radii",TRUE,"",3.1,0.39
+"R","uniform_s5",150,100,"ascend","radii",TRUE,"",0.02,0
+"R","uniform_s5",150,100,"descend","radii",TRUE,"",3.34,0.42
+"R","gaussian_s1",150,100,"ascend","radii",TRUE,"",0.01,0
+"R","gaussian_s1",150,100,"descend","radii",TRUE,"",3.55,0.58
+"R","gaussian_s2",150,100,"ascend","radii",TRUE,"",0.01,0.02
+"R","gaussian_s2",150,100,"descend","radii",TRUE,"",3.89,0.61
+"R","gaussian_s3",150,100,"ascend","radii",TRUE,"",0,0.01
+"R","gaussian_s3",150,100,"descend","radii",TRUE,"",3.86,0.61
+"R","gaussian_s4",150,100,"ascend","radii",TRUE,"",0.01,0
+"R","gaussian_s4",150,100,"descend","radii",TRUE,"",4.38,0.53
+"R","gaussian_s5",150,100,"ascend","radii",TRUE,"",0.01,0.02
+"R","gaussian_s5",150,100,"descend","radii",TRUE,"",3.94,0.54
+"R","ties_s1",150,100,"ascend","radii",TRUE,"",0.02,0.01
+"R","ties_s1",150,100,"descend","radii",TRUE,"",4.07,0.53
+"R","ties_s2",150,100,"ascend","radii",TRUE,"",0,0
+"R","ties_s2",150,100,"descend","radii",TRUE,"",3.74,0.56
+"R","ties_s3",150,100,"ascend","radii",TRUE,"",0,0.01
+"R","ties_s3",150,100,"descend","radii",TRUE,"",3.67,0.53
+"R","ties_s4",150,100,"ascend","radii",TRUE,"",0.02,0
+"R","ties_s4",150,100,"descend","radii",TRUE,"",4.06,0.56
+"R","ties_s5",150,100,"ascend","radii",TRUE,"",0.01,0
+"R","ties_s5",150,100,"descend","radii",TRUE,"",3.71,0.42
+"R","one_s1",150,100,"ascend","radii",TRUE,"",0.02,0
+"R","one_s1",150,100,"descend","radii",TRUE,"",3.91,0.55
+"R","one_s2",150,100,"ascend","radii",TRUE,"",0.02,0
+"R","one_s2",150,100,"descend","radii",TRUE,"",3.89,0.5
+"R","one_s3",150,100,"ascend","radii",TRUE,"",0.01,0
+"R","one_s3",150,100,"descend","radii",TRUE,"",3.65,0.46
+"R","one_s4",150,100,"ascend","radii",TRUE,"",0,0
+"R","one_s4",150,100,"descend","radii",TRUE,"",3.64,0.42
+"R","one_s5",150,100,"ascend","radii",TRUE,"",0,0.01
+"R","one_s5",150,100,"descend","radii",TRUE,"",3.75,0.53
+"R","five_s1",150,100,"ascend","radii",TRUE,"",0.02,0
+"R","five_s1",150,100,"descend","radii",TRUE,"",3.79,0.52
+"R","five_s2",150,100,"ascend","radii",TRUE,"",0,0.02
+"R","five_s2",150,100,"descend","radii",TRUE,"",4.08,0.5
+"R","five_s3",150,100,"ascend","radii",TRUE,"",0.02,0
+"R","five_s3",150,100,"descend","radii",TRUE,"",3.89,0.55
+"R","five_s4",150,100,"ascend","radii",TRUE,"",0.02,0.01
+"R","five_s4",150,100,"descend","radii",TRUE,"",3.8,0.59
+"R","five_s5",150,100,"ascend","radii",TRUE,"",0,0.02
+"R","five_s5",150,100,"descend","radii",TRUE,"",4.17,0.58
+"R","dups_s1",150,100,"ascend","radii",TRUE,"",0.01,0
+"R","dups_s1",150,100,"descend","radii",TRUE,"",4.07,0.61
+"R","dups_s2",150,100,"ascend","radii",TRUE,"",0,0.02
+"R","dups_s2",150,100,"descend","radii",TRUE,"",3.68,0.58
+"R","dups_s3",150,100,"ascend","radii",TRUE,"",0,0.01
+"R","dups_s3",150,100,"descend","radii",TRUE,"",3.81,0.5
+"R","dups_s4",150,100,"ascend","radii",TRUE,"",0,0.02
+"R","dups_s4",150,100,"descend","radii",TRUE,"",3.56,0.47
+"R","dups_s5",150,100,"ascend","radii",TRUE,"",0,0.02
+"R","dups_s5",150,100,"descend","radii",TRUE,"",3.72,0.43
+"E","PenDigits",3200,16,"ascend","UN-MCCD",TRUE,"BA=0.552 F2=0.034",348.42,347.11
+"E","PenDigits",3200,16,"ascend","SUN-MCCD",TRUE,"BA=0.539 F2=0.033",175.89,178.69
+"E","waveform",3443,21,"ascend","UN-MCCD",TRUE,"BA=0.635 F2=0.199",304.25,306.08
+"E","waveform",3443,21,"ascend","SUN-MCCD",TRUE,"BA=0.641 F2=0.219",247.83,255.48
+"E","thyroid",3656,6,"ascend","UN-MCCD",TRUE,"BA=0.815 F2=0.261",363.83,362.83
+"E","thyroid",3656,6,"ascend","SUN-MCCD",TRUE,"BA=0.894 F2=0.389",280.8,278.82
+"E","pageblocks",4795,10,"ascend","UN-MCCD",TRUE,"BA=0.511 F2=0.100",1321.3,1295.57
+"E","pageblocks",4795,10,"ascend","SUN-MCCD",TRUE,"BA=0.732 F2=0.526",960.45,1010.69
+"E","wilt",4819,5,"ascend","UN-MCCD",TRUE,"BA=0.519 F2=0.118",1153.97,1145.58
+"E","wilt",4819,5,"ascend","SUN-MCCD",TRUE,"BA=0.555 F2=0.206",962.64,1023.75
+"E","letter",1598,32,"ascend","UN-MCCD",TRUE,"BA=0.629 F2=0.310",44.58,44.06
+"E","letter",1598,32,"ascend","SUN-MCCD",TRUE,"BA=0.584 F2=0.286",22.62,22.02
+"E","mnist",1000,100,"ascend","UN-MCCD",TRUE,"BA=0.697 F2=0.454",12.51,12.19
+"E","mnist",1000,100,"ascend","SUN-MCCD",TRUE,"BA=0.767 F2=0.524",5.2,5.16
+"E","musk",1000,166,"ascend","UN-MCCD",TRUE,"BA=0.640 F2=0.187",13.51,13.11
+"E","musk",1000,166,"ascend","SUN-MCCD",TRUE,"BA=0.547 F2=0.154",5.59,5.5
+"E","arrhythmia",452,274,"ascend","UN-MCCD",TRUE,"BA=0.695 F2=0.548",1.91,2.03
+"E","arrhythmia",452,274,"ascend","SUN-MCCD",TRUE,"BA=0.695 F2=0.548",0.82,0.78
+"E","sim_uniform",200,10,"descend","UN-MCCD",TRUE,"",10.53,1.08
+"E","sim_uniform",200,10,"descend","SUN-MCCD",TRUE,"",9.4,1.05
+"E","sim_gaussian",200,10,"descend","UN-MCCD",TRUE,"",10,0.9
+"E","sim_gaussian",200,10,"descend","SUN-MCCD",TRUE,"",9.83,0.96
+"E","sim_uniform",200,20,"descend","UN-MCCD",TRUE,"",10.11,1.25
+"E","sim_uniform",200,20,"descend","SUN-MCCD",TRUE,"",9.98,1.05
+"E","sim_gaussian",200,20,"descend","UN-MCCD",TRUE,"",10.42,1.07
+"E","sim_gaussian",200,20,"descend","SUN-MCCD",TRUE,"",9.9,1.05
+"E","sim_uniform",200,50,"descend","UN-MCCD",TRUE,"",9.72,1.14
+"E","sim_uniform",200,50,"descend","SUN-MCCD",TRUE,"",10.45,1.22
+"E","sim_gaussian",200,50,"descend","UN-MCCD",TRUE,"",10.56,1.31
+"E","sim_gaussian",200,50,"descend","SUN-MCCD",TRUE,"",10.21,1.02

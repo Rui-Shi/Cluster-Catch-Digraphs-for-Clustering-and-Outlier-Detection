@@ -1,0 +1,162 @@
+wp0_mccd_methods.R: METHOD_REGISTRY now has 13 entries (RKCCD-OOS, RKCCD-IOS, UNCCD-OOS, UNCCD-IOS, LOF, DBSCAN, MST, ODIN, iForest, U-MCCD, SU-MCCD, UN-MCCD, SUN-MCCD); REAL_DATA_THRESHOLDS has 13.
+n= 100 d= 10 UN-MCCD  rep  1  scores identical=TRUE
+n= 100 d= 10 UN-MCCD  rep  2  scores identical=TRUE
+n= 100 d= 10 UN-MCCD  rep  3  scores identical=TRUE
+n= 100 d= 10 UN-MCCD  rep  4  scores identical=TRUE
+n= 100 d= 10 UN-MCCD  rep  5  scores identical=TRUE
+n= 100 d= 10 UN-MCCD  rep  6  scores identical=TRUE
+n= 100 d= 10 UN-MCCD  rep  7  scores identical=TRUE
+n= 100 d= 10 UN-MCCD  rep  8  scores identical=TRUE
+n= 100 d= 10 UN-MCCD  rep  9  scores identical=TRUE
+n= 100 d= 10 UN-MCCD  rep 10  scores identical=TRUE
+n= 100 d= 10 SUN-MCCD rep  1  scores identical=TRUE
+n= 100 d= 10 SUN-MCCD rep  2  scores identical=TRUE
+n= 100 d= 10 SUN-MCCD rep  3  scores identical=TRUE
+n= 100 d= 10 SUN-MCCD rep  4  scores identical=TRUE
+n= 100 d= 10 SUN-MCCD rep  5  scores identical=TRUE
+n= 100 d= 10 SUN-MCCD rep  6  scores identical=TRUE
+n= 100 d= 10 SUN-MCCD rep  7  scores identical=TRUE
+n= 100 d= 10 SUN-MCCD rep  8  scores identical=TRUE
+n= 100 d= 10 SUN-MCCD rep  9  scores identical=TRUE
+n= 100 d= 10 SUN-MCCD rep 10  scores identical=TRUE
+n= 250 d= 10 UN-MCCD  rep  1  scores identical=TRUE
+n= 250 d= 10 UN-MCCD  rep  2  scores identical=TRUE
+n= 250 d= 10 UN-MCCD  rep  3  scores identical=TRUE
+n= 250 d= 10 UN-MCCD  rep  4  scores identical=TRUE
+n= 250 d= 10 UN-MCCD  rep  5  scores identical=TRUE
+n= 250 d= 10 UN-MCCD  rep  6  scores identical=TRUE
+n= 250 d= 10 UN-MCCD  rep  7  scores identical=TRUE
+n= 250 d= 10 UN-MCCD  rep  8  scores identical=TRUE
+n= 250 d= 10 UN-MCCD  rep  9  scores identical=TRUE
+n= 250 d= 10 UN-MCCD  rep 10  scores identical=TRUE
+n= 250 d= 10 SUN-MCCD rep  1  scores identical=TRUE
+n= 250 d= 10 SUN-MCCD rep  2  scores identical=TRUE
+n= 250 d= 10 SUN-MCCD rep  3  scores identical=TRUE
+n= 250 d= 10 SUN-MCCD rep  4  scores identical=TRUE
+n= 250 d= 10 SUN-MCCD rep  5  scores identical=TRUE
+n= 250 d= 10 SUN-MCCD rep  6  scores identical=TRUE
+n= 250 d= 10 SUN-MCCD rep  7  scores identical=TRUE
+n= 250 d= 10 SUN-MCCD rep  8  scores identical=TRUE
+n= 250 d= 10 SUN-MCCD rep  9  scores identical=TRUE
+n= 250 d= 10 SUN-MCCD rep 10  scores identical=TRUE
+n= 500 d= 10 UN-MCCD  rep  1  scores identical=TRUE
+n= 500 d= 10 UN-MCCD  rep  2  scores identical=TRUE
+n= 500 d= 10 UN-MCCD  rep  3  scores identical=TRUE
+n= 500 d= 10 UN-MCCD  rep  4  scores identical=TRUE
+n= 500 d= 10 UN-MCCD  rep  5  scores identical=TRUE
+n= 500 d= 10 UN-MCCD  rep  6  scores identical=TRUE
+n= 500 d= 10 UN-MCCD  rep  7  scores identical=TRUE
+n= 500 d= 10 UN-MCCD  rep  8  scores identical=TRUE
+n= 500 d= 10 UN-MCCD  rep  9  scores identical=TRUE
+n= 500 d= 10 UN-MCCD  rep 10  scores identical=TRUE
+n= 500 d= 10 SUN-MCCD rep  1  scores identical=TRUE
+n= 500 d= 10 SUN-MCCD rep  2  scores identical=TRUE
+n= 500 d= 10 SUN-MCCD rep  3  scores identical=TRUE
+n= 500 d= 10 SUN-MCCD rep  4  scores identical=TRUE
+n= 500 d= 10 SUN-MCCD rep  5  scores identical=TRUE
+n= 500 d= 10 SUN-MCCD rep  6  scores identical=TRUE
+n= 500 d= 10 SUN-MCCD rep  7  scores identical=TRUE
+n= 500 d= 10 SUN-MCCD rep  8  scores identical=TRUE
+n= 500 d= 10 SUN-MCCD rep  9  scores identical=TRUE
+n= 500 d= 10 SUN-MCCD rep 10  scores identical=TRUE
+n=1000 d= 10 UN-MCCD  rep  1  scores identical=TRUE
+n=1000 d= 10 UN-MCCD  rep  2  scores identical=TRUE
+n=1000 d= 10 UN-MCCD  rep  3  scores identical=TRUE
+n=1000 d= 10 UN-MCCD  rep  4  scores identical=TRUE
+n=1000 d= 10 UN-MCCD  rep  5  scores identical=TRUE
+n=1000 d= 10 UN-MCCD  rep  6  scores identical=TRUE
+n=1000 d= 10 UN-MCCD  rep  7  scores identical=TRUE
+n=1000 d= 10 UN-MCCD  rep  8  scores identical=TRUE
+n=1000 d= 10 UN-MCCD  rep  9  scores identical=TRUE
+n=1000 d= 10 UN-MCCD  rep 10  scores identical=TRUE
+n=1000 d= 10 SUN-MCCD rep  1  scores identical=TRUE
+n=1000 d= 10 SUN-MCCD rep  2  scores identical=TRUE
+n=1000 d= 10 SUN-MCCD rep  3  scores identical=TRUE
+n=1000 d= 10 SUN-MCCD rep  4  scores identical=TRUE
+n=1000 d= 10 SUN-MCCD rep  5  scores identical=TRUE
+n=1000 d= 10 SUN-MCCD rep  6  scores identical=TRUE
+n=1000 d= 10 SUN-MCCD rep  7  scores identical=TRUE
+n=1000 d= 10 SUN-MCCD rep  8  scores identical=TRUE
+n=1000 d= 10 SUN-MCCD rep  9  scores identical=TRUE
+n=1000 d= 10 SUN-MCCD rep 10  scores identical=TRUE
+n=2000 d= 10 UN-MCCD  rep  1  scores identical=TRUE
+n=2000 d= 10 UN-MCCD  rep  2  scores identical=TRUE
+n=2000 d= 10 UN-MCCD  rep  3  scores identical=TRUE
+n=2000 d= 10 UN-MCCD  rep  4  scores identical=TRUE
+n=2000 d= 10 UN-MCCD  rep  5  scores identical=TRUE
+n=2000 d= 10 UN-MCCD  rep  6  scores identical=TRUE
+n=2000 d= 10 UN-MCCD  rep  7  scores identical=TRUE
+n=2000 d= 10 UN-MCCD  rep  8  scores identical=TRUE
+n=2000 d= 10 UN-MCCD  rep  9  scores identical=TRUE
+n=2000 d= 10 UN-MCCD  rep 10  scores identical=TRUE
+n=2000 d= 10 SUN-MCCD rep  1  scores identical=TRUE
+n=2000 d= 10 SUN-MCCD rep  2  scores identical=TRUE
+n=2000 d= 10 SUN-MCCD rep  3  scores identical=TRUE
+n=2000 d= 10 SUN-MCCD rep  4  scores identical=TRUE
+n=2000 d= 10 SUN-MCCD rep  5  scores identical=TRUE
+n=2000 d= 10 SUN-MCCD rep  6  scores identical=TRUE
+n=2000 d= 10 SUN-MCCD rep  7  scores identical=TRUE
+n=2000 d= 10 SUN-MCCD rep  8  scores identical=TRUE
+n=2000 d= 10 SUN-MCCD rep  9  scores identical=TRUE
+n=2000 d= 10 SUN-MCCD rep 10  scores identical=TRUE
+n= 500 d=  5 UN-MCCD  rep  1  scores identical=TRUE
+n= 500 d=  5 UN-MCCD  rep  2  scores identical=TRUE
+n= 500 d=  5 UN-MCCD  rep  3  scores identical=TRUE
+n= 500 d=  5 UN-MCCD  rep  4  scores identical=TRUE
+n= 500 d=  5 UN-MCCD  rep  5  scores identical=TRUE
+n= 500 d=  5 UN-MCCD  rep  6  scores identical=TRUE
+n= 500 d=  5 UN-MCCD  rep  7  scores identical=TRUE
+n= 500 d=  5 UN-MCCD  rep  8  scores identical=TRUE
+n= 500 d=  5 UN-MCCD  rep  9  scores identical=TRUE
+n= 500 d=  5 UN-MCCD  rep 10  scores identical=TRUE
+n= 500 d=  5 SUN-MCCD rep  1  scores identical=TRUE
+n= 500 d=  5 SUN-MCCD rep  2  scores identical=TRUE
+n= 500 d=  5 SUN-MCCD rep  3  scores identical=TRUE
+n= 500 d=  5 SUN-MCCD rep  4  scores identical=TRUE
+n= 500 d=  5 SUN-MCCD rep  5  scores identical=TRUE
+n= 500 d=  5 SUN-MCCD rep  6  scores identical=TRUE
+n= 500 d=  5 SUN-MCCD rep  7  scores identical=TRUE
+n= 500 d=  5 SUN-MCCD rep  8  scores identical=TRUE
+n= 500 d=  5 SUN-MCCD rep  9  scores identical=TRUE
+n= 500 d=  5 SUN-MCCD rep 10  scores identical=TRUE
+n= 500 d= 50 UN-MCCD  rep  1  scores identical=TRUE
+n= 500 d= 50 UN-MCCD  rep  2  scores identical=TRUE
+n= 500 d= 50 UN-MCCD  rep  3  scores identical=TRUE
+n= 500 d= 50 UN-MCCD  rep  4  scores identical=TRUE
+n= 500 d= 50 UN-MCCD  rep  5  scores identical=TRUE
+n= 500 d= 50 UN-MCCD  rep  6  scores identical=TRUE
+n= 500 d= 50 UN-MCCD  rep  7  scores identical=TRUE
+n= 500 d= 50 UN-MCCD  rep  8  scores identical=TRUE
+n= 500 d= 50 UN-MCCD  rep  9  scores identical=TRUE
+n= 500 d= 50 UN-MCCD  rep 10  scores identical=TRUE
+n= 500 d= 50 SUN-MCCD rep  1  scores identical=TRUE
+n= 500 d= 50 SUN-MCCD rep  2  scores identical=TRUE
+n= 500 d= 50 SUN-MCCD rep  3  scores identical=TRUE
+n= 500 d= 50 SUN-MCCD rep  4  scores identical=TRUE
+n= 500 d= 50 SUN-MCCD rep  5  scores identical=TRUE
+n= 500 d= 50 SUN-MCCD rep  6  scores identical=TRUE
+n= 500 d= 50 SUN-MCCD rep  7  scores identical=TRUE
+n= 500 d= 50 SUN-MCCD rep  8  scores identical=TRUE
+n= 500 d= 50 SUN-MCCD rep  9  scores identical=TRUE
+n= 500 d= 50 SUN-MCCD rep 10  scores identical=TRUE
+n= 500 d=100 UN-MCCD  rep  1  scores identical=TRUE
+n= 500 d=100 UN-MCCD  rep  2  scores identical=TRUE
+n= 500 d=100 UN-MCCD  rep  3  scores identical=TRUE
+n= 500 d=100 UN-MCCD  rep  4  scores identical=TRUE
+n= 500 d=100 UN-MCCD  rep  5  scores identical=TRUE
+n= 500 d=100 UN-MCCD  rep  6  scores identical=TRUE
+n= 500 d=100 UN-MCCD  rep  7  scores identical=TRUE
+n= 500 d=100 UN-MCCD  rep  8  scores identical=TRUE
+n= 500 d=100 UN-MCCD  rep  9  scores identical=TRUE
+n= 500 d=100 UN-MCCD  rep 10  scores identical=TRUE
+n= 500 d=100 SUN-MCCD rep  1  scores identical=TRUE
+n= 500 d=100 SUN-MCCD rep  2  scores identical=TRUE
+n= 500 d=100 SUN-MCCD rep  3  scores identical=TRUE
+n= 500 d=100 SUN-MCCD rep  4  scores identical=TRUE
+n= 500 d=100 SUN-MCCD rep  5  scores identical=TRUE
+n= 500 d=100 SUN-MCCD rep  6  scores identical=TRUE
+n= 500 d=100 SUN-MCCD rep  7  scores identical=TRUE
+n= 500 d=100 SUN-MCCD rep  8  scores identical=TRUE
+n= 500 d=100 SUN-MCCD rep  9  scores identical=TRUE
+n= 500 d=100 SUN-MCCD rep 10  scores identical=TRUE
+AB_DONE in 35.4 min

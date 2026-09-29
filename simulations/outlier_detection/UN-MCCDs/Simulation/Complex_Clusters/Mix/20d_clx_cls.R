@@ -4,7 +4,7 @@ source(here::here("R/ccds/UN_CCD.R"))
 source(here::here("R/ccds/mKNN_CCD_functions.R"))
 source(here::here("R/general_functions/count.R"))
 source(here::here("R/general_functions/Uni-Gau_cls.R"))
-load(here::here("R/NN-test_quantile/NN-test-simul_20d_999%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_20d_999%.RData"))
 source(here::here("R/general_functions/ratio3.R"))
 
 library(parallel)

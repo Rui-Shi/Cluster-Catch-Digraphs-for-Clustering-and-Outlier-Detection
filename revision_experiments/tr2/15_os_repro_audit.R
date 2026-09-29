@@ -94,7 +94,7 @@ for (ds in SETS) {
   dat <- load_real_dataset(ROBJ[[ds]])
   n0 <- sum(dat$Y == 0)
   cat(sprintf("\n== %s: n=%d, d=%d, n0=%d  (RK quant %s, NN quant %s)\n",
-              ds, dat$n, dat$d, n0, rk_quant_for_d(dat$d), nn_quant_for_d(dat$d)))
+              ds, dat$n, dat$d, n0, rk_quant_label_paper(dat$d), nn_quant_label_paper_UN(dat$d)))
 
   for (meth in METHODS) {
     t0 <- Sys.time()

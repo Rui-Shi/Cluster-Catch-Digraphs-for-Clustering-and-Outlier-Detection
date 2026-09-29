@@ -2,7 +2,7 @@
 source(here::here("R/ccds/UN_CCD.R"))
 source(here::here("methods/outlyingness_scores/UNCCD_OOS_IOS.R"))
 source(here::here("R/general_functions/count.R"))
-load(here::here("R/NN-test_quantile/NN-test-simul_2d_85%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_2d_85%.RData"))
 source(here::here("simulations/outlyingness_scores/UNCCD_OOS_IOS/Simulation/Complex_Clusters/Mix/Threshold.R"))
 source(here::here("R/general_functions/Uni-Gau_cls.R"))
 source(here::here("R/general_functions/ratio3.R"))

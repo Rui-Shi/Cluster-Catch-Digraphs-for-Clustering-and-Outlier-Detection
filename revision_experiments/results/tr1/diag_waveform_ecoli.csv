@@ -1,0 +1,11 @@
+"dataset","method","hypothesis","variant","quant_label","min_cls","n","d","n0","TPR","TNR","BA","F2","published_TPR","published_TNR","published_BA","published_F2","max_abs_diff","match_3dp","note","t_total","status","timestamp"
+"waveform","U-MCCD/SU-MCCD","H1-alpha-sweep","rk-table-probe-99","99",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"get_simul(RK,21,99) -> get_simul(): missing quantile table for variant=RK, d=21, quant=99.
+Expected file: R/RK-test_quantile/RK-test-simul_21d_99%.RData",NA,"missing_table","2026-08-08 21:55:13"
+"waveform","U-MCCD/SU-MCCD","H1-alpha-sweep","rk-table-probe-95","95",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"get_simul(RK,21,95) -> get_simul(): missing quantile table for variant=RK, d=21, quant=95.
+Expected file: R/RK-test_quantile/RK-test-simul_21d_95%.RData",NA,"missing_table","2026-08-08 21:55:13"
+"waveform","UN-MCCD/SUN-MCCD","H1-alpha-sweep","nn-table-probe-99","99",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"get_simul(NN,21,99) -> EXISTS",NA,"ok","2026-08-08 21:55:13"
+"waveform","UN-MCCD/SUN-MCCD","H1-alpha-sweep","nn-table-probe-95","95",NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"get_simul(NN,21,95) -> get_simul(): missing quantile table for variant=NN, d=21, quant=95.
+Expected file: R/NN-test_quantile/NN-test-simul_21d_95%.RData",NA,"missing_table","2026-08-08 21:55:13"
+"waveform",NA,"H4-preprocessing","madn-scale-check",NA,NA,3443,21,100,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"sd_ratio=1.1576; min_raw_mad=0.993342; any_raw_mad_zero=FALSE; any_scaled_inf_or_nan=FALSE",NA,"ok","2026-08-08 21:55:14"
+"ecoli",NA,"H3-label-definition","class-source-check",NA,NA,336,7,8,NA,NA,NA,NA,NA,NA,NA,NA,NA,NA,"n0=8; csv class table:  /   0   1  / 328   8 ; ecoli.mat names: X,y",NA,"ok","2026-08-08 21:55:14"
+"waveform","U-MCCD","H2-RK-radii","default-quant999","999",NA,3443,21,100,0.77,0.685013460963207,0.727506730481603,0.251633986928105,0.87,0.678,0.774,0.278,0.1,FALSE,"RK radii: n=1 zero_frac=0.0000 min=2.780705 median=2.780705 max=2.780705; unassigned_rows=0",389.661770105362,"ok","2026-08-08 22:02:31"

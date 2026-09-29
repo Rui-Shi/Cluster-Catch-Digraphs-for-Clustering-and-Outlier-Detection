@@ -1,7 +1,7 @@
 #!/usr/bin/env Rscript
 source(here::here("methods/outlier_detection/SUN-MCCD.R"))
 source(here::here("R/general_functions/count.R"))
-load(here::here("R/NN-test_quantile/NN-test-simul_20d_999%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_20d_999%.RData"))
 library(parallel)
 library(doParallel)
 library(MASS)

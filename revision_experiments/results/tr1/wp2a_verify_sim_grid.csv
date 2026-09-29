@@ -1,0 +1,8 @@
+"d","tokens","UN_token","SUN_token","UN_file_exists","SUN_file_exists","UN_file_duplicated"
+2,"80/85/90/95","85","85",TRUE,TRUE,FALSE
+3,"80/85/90","90","90",TRUE,TRUE,FALSE
+5,"90/95","95","95",TRUE,TRUE,FALSE
+10,"99/999","99","999",TRUE,TRUE,FALSE
+20,"99/999","999","999",TRUE,TRUE,FALSE
+50,"999","999","999",TRUE,TRUE,NA
+100,"999","999","999",TRUE,TRUE,NA

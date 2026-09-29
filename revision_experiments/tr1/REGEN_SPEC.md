@@ -28,7 +28,7 @@ are used as-is.
 - R: `C:\Program Files\R\R-4.6.1\bin\Rscript.exe`
 - **Invoke R from the PowerShell tool, not Bash** — R segfaults under this
   Bash environment.
-- Repo root: `G:/Submissions/TR1/TR1_Neurocomputing_resubmit/Cluster-Catch-Digraphs-for-Clustering-and-Outlier-Detection`
+- Repo root: the root of this repository's clone.
 - Run with the repo root as the working directory; scripts resolve paths via
   `here::here()`.
 - 24 cores, 63 GB RAM, but five other agents are running. Keep to **one R

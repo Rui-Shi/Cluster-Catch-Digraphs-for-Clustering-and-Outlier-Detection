@@ -3,22 +3,36 @@
 Source code, simulation scripts, and benchmark datasets accompanying the
 following work on Cluster Catch Digraphs:
 
+- Shi, R., Ceyhan, E., Billor, N. **Shape-Adaptive Outlier Detection Using
+  Cluster and Mutual Catch Digraphs.** *Neurocomputing* (in revision, 2026).
 - Shi, R., Ceyhan, E., Billor, N. **Outlyingness Scores with Cluster Catch
   Digraphs for Identifying High-Dimensional and Collective Outliers.**
   *Pattern Recognition* (in revision, 2026).
 - Shi, R., Ceyhan, E., Billor, N. **Outlier Detection with Cluster Catch
-  Digraphs.** arXiv:2409.11596, 2024.
-  <https://arxiv.org/abs/2409.11596>
+  Digraphs.** arXiv:2409.11596, 2024 (the preprint of the Neurocomputing
+  paper). <https://arxiv.org/abs/2409.11596>
 - Shi, R., Ceyhan, E. **Clustering with Uniformity- and Neighbor-Based
   Random Geometric Graphs.** arXiv:2501.06268, 2025.
   <https://arxiv.org/abs/2501.06268>
 
 The repository is structured so that any external researcher can locate
-and re-run the exact scripts and data used in the three works listed
+and re-run the exact scripts and data used in the four works listed
 above. Every `source()`, `load()`, `setwd()`, and `save.image()` call
 has been rewritten to use
 [`here::here()`](https://here.r-lib.org/), so the scripts run as-is from
 a fresh clone after `install.packages("here")`.
+
+### Revision experiments
+
+The experiments run for the journal revisions are in
+`revision_experiments/` (see its README):
+
+- `revision_experiments/tr1/` -- the Neurocomputing paper.
+  `revision_experiments/tr1/FINDINGS.md` maps every published table and
+  number to its script and result file.
+- `revision_experiments/tr2/` -- the Pattern Recognition paper; see
+  `revision_experiments/tr2/FINDINGS.md`. The code as used for that
+  revision is tagged: `git checkout pattern-recognition-revision`.
 
 > ### ⚠️ Files under `simulations/` that are **outputs**, not source
 >
@@ -52,7 +66,7 @@ a fresh clone after `install.packages("here")`.
 │
 ├── methods/                        method definitions / driver wrappers
 │   ├── clustering/                 RK-, UN-, KS-CCDs clustering wrappers (arXiv:2501.06268)
-│   ├── outlier_detection/          RU-, SU-, UN-, SUN-MCCDs (arXiv:2409.11596)
+│   ├── outlier_detection/          RU-, SU-, UN-, SUN-MCCDs (Neurocomputing; arXiv:2409.11596)
 │   └── outlyingness_scores/        OOS / IOS scoring wrappers (Pattern Recognition manuscript)
 │
 ├── simulations/                    Monte-Carlo experiments grouped by task
@@ -217,11 +231,10 @@ paths against the repository root (anchored by the `.git` directory),
 so this is independent of the current working directory at invocation
 time.
 
-**Heads-up**: every per-experiment script `load()`s a precomputed
-quantile table (`*.RData`) that is not committed to the repo (the
-files are large). Regenerate the table you need first by running the
-matching driver under `R/NN-test_quantile/` or `R/RK-test_quantile/`
-— see "Reading the precomputed quantile tables" below.
+**Quantile tables**: the scripts read Monte Carlo quantile tables
+(`*.RData`) that are not in the repository (the RK ones are 100-700 MB
+each). A missing table is generated on the spot the first time a script
+needs it, and cached; see "Quantile tables" below.
 
 ### Running an entire experiment family
 
@@ -236,14 +249,21 @@ runs. The folder layout typically reads:
 so a depth-first walk in `xargs Rscript` will reproduce the entire grid.
 Expect long run times (hours to days) for the high-dimensional settings.
 
-### Reading the precomputed quantile tables
+### Quantile tables
 
-`R/NN-test_quantile/`, `R/RK-test_quantile/`, and the analogous
-subfolders under `R/ccds/` hold the simulation drivers that produce the
-quantile-table `.RData` files referenced by the simulations. The
-`.RData` files themselves are large and were not committed; rerun the
-relevant `*.R` driver to regenerate them, then `load()` calls in the
-simulation scripts will resolve.
+The simulation and real-data scripts load their tables through
+`load_quantile_table()` in `R/ccds/quantile_table.R`. It loads the file
+when it is in `R/NN-test_quantile/` or `R/RK-test_quantile/`, exactly as
+`load()` did. Otherwise the table is generated on the spot with the
+original Monte Carlo estimator, at the size of the data it serves, and
+cached in `R/<RK|NN>-test_quantile/generated/`. A generated table
+reproduces published numbers up to Monte Carlo error, not bit for bit.
+Iterations, cores, seed and cache folder are set by environment
+variables listed under "Quantile tables" in `revision_experiments/README.md`,
+which also gives rough costs. The `*.R` scripts in `R/NN-test_quantile/`,
+`R/RK-test_quantile/` and the subfolders under `R/ccds/` are the original
+generator drivers. The only tables in the repository are five NN tables
+used by the Pattern Recognition revision (d = 166, 274 and 400, at 0.1%).
 
 ---
 

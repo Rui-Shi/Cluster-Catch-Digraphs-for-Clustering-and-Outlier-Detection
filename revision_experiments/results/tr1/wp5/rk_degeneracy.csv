@@ -1,0 +1,5 @@
+"d","quant_label","zero_frac","extent","source","file"
+32,"999",0.51276,5000,"production table","R/RK-test_quantile/RK-test-simul_32d_999%.RData"
+100,"999",0.914,1000,"production table","R/RK-test_quantile/RK-test-simul_100d_999%.RData"
+166,"999",1,1000,"probe table (niter=20)","revision_experiments/results/tr2/probes/RK-test-simul_166d_999%.RData"
+274,"999",1,1000,"probe table (niter=20)","revision_experiments/results/tr2/probes/RK-test-simul_274d_999%.RData"

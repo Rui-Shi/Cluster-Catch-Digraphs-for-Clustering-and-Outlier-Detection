@@ -3,20 +3,18 @@
 #
 # WP0: wires the paper's four MCCD detectors (U-MCCD, SU-MCCD, UN-MCCD,
 # SUN-MCCD) into the revision_experiments harness's METHOD_REGISTRY /
-# REAL_DATA_THRESHOLDS, by APPENDING to those lists. harness.R itself is
-# never modified (see CLAUDE.md hard rule); this file only reads it.
+# REAL_DATA_THRESHOLDS, by APPENDING to those lists.
 #
-# PARAMETER FIX (this revision): the wrapper defaults below used to fall
-# back silently to get_simul()'s rk_quant_for_d()/nn_quant_for_d() buckets
-# and to min.cls=0 whenever no override was supplied. Those buckets were
+# PARAMETER HISTORY. The wrapper defaults below once fell back silently to
+# harness.R's rk_quant_for_d()/nn_quant_for_d() buckets, which were
 # reverse-engineered from a DIFFERENT paper's RKCCD-OOS/UNCCD-OOS simulation
-# drivers (see harness.R's comment above get_simul()) and are wrong for the
-# RK-based methods here (and for SUN-MCCD's d>=10 case); min.cls=0 disables
-# SU-MCCD/SUN-MCCD's shape-adaptive step entirely. See the "Paper-faithful
-# parameter resolver" section below (added by this fix) for the real rule,
-# sourced from the manuscript itself (main text L880, L605; Supplementary
-# Material L655-677), and exposed as separately-callable, separately-named
-# functions so a reviewer can audit each one against the cited line.
+# drivers and disagreed with this manuscript at d = 10 for the RK-based
+# methods and for SUN-MCCD. That was fixed by defining paper-faithful
+# resolvers here; as of 2026-09-05 the fix is completed the other way round --
+# the buckets are DELETED and the three paper resolvers live in harness.R as
+# the single source of truth, which this file consumes (see the resolver
+# section below). min.cls stays an explicit, unresolved argument for the
+# reason given at mccd_min_cls_readings().
 #
 # Assumes revision_experiments/shared/harness.R has already been source()'d (for
 # get_simul(), evaluate(), METHOD_REGISTRY, REAL_DATA_THRESHOLDS, and the
@@ -139,55 +137,46 @@ mccd_translate <- function(detector_result, n) {
 }
 
 # ---------------------------------------------------------------------------
-# Paper-faithful parameter resolver (WP0 fix)
+# Paper-faithful parameter resolvers -- NOW DEFINED IN harness.R
 # ---------------------------------------------------------------------------
 #
-# Do NOT reuse harness.R's rk_quant_for_d()/nn_quant_for_d() buckets for the
-# RK-based methods (U-MCCD, SU-MCCD) or for SUN-MCCD's d>=10 case -- those
-# buckets were written for a different paper's methods (see harness.R's own
-# comment immediately above get_simul()). This paper's alpha schedule is
-# stated explicitly in:
-#   - Main text, line 880 (RK-based methods, U-MCCD & SU-MCCD)
-#   - Main text, line 605 (S_min "set to half the contamination level")
-#   - Supplementary Material, lines 655-677 (RK schedule restated; the full
-#     NND alpha(d) tables for UN-MCCD and SUN-MCCD, including the one point
-#     where they diverge)
+# MOVED 2026-09-05. rk_quant_label_paper(), nn_quant_label_paper_UN() and
+# nn_quant_label_paper_SUN() used to be defined here, while harness.R carried
+# its own rk_quant_for_d()/nn_quant_for_d() buckets that DISAGREED with them
+# at d = 10 (and nn_quant_label_paper_UN() was defined as a pass-through to
+# one of those buckets, so the paper schedule was not actually independent of
+# them). Two competing schedules in one session is exactly the kind of thing
+# that produces a mislabelled alpha column, so there is now exactly one
+# definition of each, in harness.R section 2, and the buckets are deleted.
+# This file consumes them; it does not redefine them. See harness.R for the
+# manuscript citations behind each rule.
 #
-# get_simul()'s own `quant` argument is a FILE-LABEL STRING ("99", "999",
-# "95", ...) matching the RData filename, not a bare probability. The
-# resolvers below return that label, so callers do
-#   get_simul(variant, d, quant = <label>)
-# and are guaranteed the loaded $simul table and the numeric quantile handed
-# to the RK-CCD internals come from the SAME file. This is not a style
-# preference: RUMCCD_outlier/SUMCCD_outlier pass `quant` straight through to
-# ccd.Kest.edge.quantile(), which indexes `simul$quan[[as.character(quant)]]`
-# -- and each RK-test-simul_*d_*%.RData file's $quan sub-list has EXACTLY
-# ONE key, matching only its own filename (verified directly: the 9d_99%
-# file's $quan has key "0.99" only; the 9d_999% file has "0.999" only).
-# Loading one file's table while telling the RK internals "this is quantile
-# X" for a different X returns NULL from that index, `any(NULL > y)` is
-# FALSE, and every point silently gets radius 0 -- a real failure mode this
-# resolver design rules out by construction, not a hypothetical. The NND
-# detectors (UNMCCD_outlier/SUNMCCD_outlier) have no analogous risk: they
-# take no separate `quant` scalar at all, so the quantile is controlled
-# entirely by which file's $average/$median vectors get loaded.
+# What has NOT changed: get_simul()'s `quant` argument is still a FILE-LABEL
+# STRING ("99", "999", "95", ...) matching the RData filename, not a bare
+# probability, and the resolvers still return that label. Callers do
+#   get_simul(variant, d, quant = <label>, n = nrow(X))
+# so the loaded $simul table and the numeric quantile handed to the RK-CCD
+# internals are guaranteed to come from the SAME file. That guarantee is not
+# a style preference: RUMCCD_outlier/SUMCCD_outlier pass `quant` straight
+# through to ccd.Kest.edge.quantile(), which indexes
+# `simul$quan[[as.character(quant)]]` -- and each RK-test-simul_*d_*%.RData
+# file's $quan sub-list has EXACTLY ONE key, matching only its own filename
+# (verified: the 9d_99% file's $quan has key "0.99" only; the 9d_999% file
+# has "0.999" only). Loading one file's table while telling the RK internals
+# "this is quantile X" for a different X returns NULL from that index,
+# `any(NULL > y)` is FALSE, and every point silently gets radius 0. The NND
+# detectors (UNMCCD_outlier/SUNMCCD_outlier) have no analogous risk: they take
+# no separate `quant` scalar at all, so the quantile is controlled entirely by
+# which file's $average/$median vectors get loaded.
+#
+# `n = nrow(X)` is new as well: get_simul() now refuses a table shorter than
+# the data set instead of letting nnccd.radi() pad the overrun with NA.
 
-#' RK-based methods (U-MCCD, SU-MCCD): main text line 880 / SM line 656.
-#' alpha = 1% for d<10, alpha = 0.1% for d>=10  =>  quant label "99"/"999".
-rk_quant_label_paper <- function(d) if (d < 10) "99" else "999"
-
-#' NND-based UN-MCCD: SM lines 657-667 (alpha = 15%,10%,5%,1%,0.1% at
-#' d=2,3,5,10,{20,50,100}). This coincides with harness.R's nn_quant_for_d()
-#' step rule -- confirmed correct for this paper, unlike the RK bucket -- so
-#' it is kept as an explicit, separately-named pass-through (not
-#' reimplemented independently) so the two definitions cannot silently
-#' drift apart.
-nn_quant_label_paper_UN <- function(d) nn_quant_for_d(d)
-
-#' NND-based SUN-MCCD: SM lines 668-677. Identical to UN-MCCD for d<10;
-#' forces alpha=0.1% ("999") already at d=10, one step earlier than
-#' UN-MCCD (which is still at alpha=1%, "99", at d=10..19).
-nn_quant_label_paper_SUN <- function(d) if (d < 10) nn_quant_for_d(d) else "999"
+stopifnot(
+  "wp0_mccd_methods.R: source revision_experiments/shared/harness.R first (it defines the alpha resolvers)" =
+    all(sapply(c("rk_quant_label_paper", "nn_quant_label_paper_UN",
+                 "nn_quant_label_paper_SUN", "get_simul"), exists))
+)
 
 #' S_min / min.cls ("set to half the contamination level", main text line
 #' 605) is genuinely ambiguous about which half-of-what to round and which
@@ -284,7 +273,7 @@ umccd_method <- function(X, d, Y = NULL, quant = NULL, ...) {
   rownames(X) <- as.character(seq_len(nrow(X)))
   quant_source <- if (is.null(quant)) "paper default (main text L880): d<10 -> 99%, d>=10 -> 999%" else "override"
   q_label <- if (is.null(quant)) rk_quant_label_paper(d) else quant
-  tab <- get_simul("RK", d, quant = q_label)
+  tab <- get_simul("RK", d, quant = q_label, n = nrow(X))
   t0 <- Sys.time()
   res <- RUMCCD_outlier(datax = X, simul = tab$simul, quant = tab$quant)
   t <- as.numeric(difftime(Sys.time(), t0, units = "secs"))
@@ -301,7 +290,7 @@ sumccd_method <- function(X, d, Y = NULL, quant = NULL, min.cls = 0, low.num = 2
   rownames(X) <- as.character(seq_len(nrow(X)))
   quant_source <- if (is.null(quant)) "paper default (main text L880): d<10 -> 99%, d>=10 -> 999%" else "override"
   q_label <- if (is.null(quant)) rk_quant_label_paper(d) else quant
-  tab <- get_simul("RK", d, quant = q_label)
+  tab <- get_simul("RK", d, quant = q_label, n = nrow(X))
   t0 <- Sys.time()
   res <- SUMCCD_outlier(datax = X, simul = tab$simul, min.cls = min.cls, low.num = low.num, quant = tab$quant)
   t <- as.numeric(difftime(Sys.time(), t0, units = "secs"))
@@ -316,9 +305,9 @@ sumccd_method <- function(X, d, Y = NULL, quant = NULL, min.cls = 0, low.num = 2
 unmccd_method <- function(X, d, Y = NULL, method = "ascend", quant = NULL, ...) {
   X <- as.matrix(X)
   rownames(X) <- as.character(seq_len(nrow(X)))
-  quant_source <- if (is.null(quant)) "paper default (SM L657-667; == harness nn_quant_for_d(), unchanged)" else "override"
+  quant_source <- if (is.null(quant)) "paper default (SM L657-667, harness nn_quant_label_paper_UN)" else "override"
   q_label <- if (is.null(quant)) nn_quant_label_paper_UN(d) else quant
-  tab <- get_simul("NN", d, quant = q_label)
+  tab <- get_simul("NN", d, quant = q_label, n = nrow(X))
   t0 <- Sys.time()
   res <- UNMCCD_outlier(datax = X, simul = tab$simul, method = method)
   t <- as.numeric(difftime(Sys.time(), t0, units = "secs"))
@@ -335,7 +324,7 @@ sunmccd_method <- function(X, d, Y = NULL, method = "ascend", min.cls = 0, low.n
   rownames(X) <- as.character(seq_len(nrow(X)))
   quant_source <- if (is.null(quant)) "paper default (SM L668-677): forces 999% at d>=10, unlike UN-MCCD" else "override"
   q_label <- if (is.null(quant)) nn_quant_label_paper_SUN(d) else quant
-  tab <- get_simul("NN", d, quant = q_label)
+  tab <- get_simul("NN", d, quant = q_label, n = nrow(X))
   t0 <- Sys.time()
   res <- SUNMCCD_outlier(datax = X, simul = tab$simul, min.cls = min.cls, method = method, low.num = low.num)
   t <- as.numeric(difftime(Sys.time(), t0, units = "secs"))

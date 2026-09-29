@@ -33,7 +33,7 @@
 #
 # QUANTILE TABLE: resolved by harness.R's get_simul("NN", d) exactly as the
 # registry's unccd_oos_method/unccd_ios_method already do internally
-# (nn_quant_for_d(166) = nn_quant_for_d(400) = "999", i.e.
+# (nn_quant_label_paper_UN(166) = nn_quant_label_paper_UN(400) = "999", i.e.
 # R/NN-test_quantile/NN-test-simul_{166,400}d_999%.RData). No override passed
 # here; this script does not touch that resolution logic.
 #

@@ -22,7 +22,7 @@
 #              recomputes them -- same LOF call, correct counting -- so that
 #              every cell of the 16x9 table now comes from this pipeline.
 #
-# Writes results/final_comparison.csv and prints the tables.
+# Writes results/tr1/final_comparison.csv and prints the tables.
 
 suppressMessages(library(here))
 RES <- here::here("revision_experiments/results/tr1")

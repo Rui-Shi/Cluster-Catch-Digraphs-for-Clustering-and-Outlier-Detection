@@ -23,7 +23,7 @@
 # This script runs UN-MCCD and SUN-MCCD on waveform at quant="99" and compares
 # against both the published row and our 999% result.
 #
-# Writes results/waveform_alpha.csv.
+# Writes results/tr1/waveform_alpha.csv.
 
 suppressMessages(library(here))
 source(here::here("revision_experiments", "shared", "harness.R"))
