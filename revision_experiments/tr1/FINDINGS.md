@@ -34,7 +34,7 @@ every script with its purpose and outputs.
 | `tab:Real_Data_Result_Summary` | F2 ranks over 17 methods | `34`, `78`, `82` | `final_comparison.csv`, `wp2c_manuscript_tables.csv`, `wp4/wp4_metrics_main.csv` | Mutual-kNN and SNN at k = round(sqrt(n)). |
 | `tab:Real_Data_Aggregate` | Mean/median F2 and BA, two method groups | `82`, `78` | `wp4/wp4_metrics_main.csv`, `wp2c_manuscript_tables.csv` | Label-chosen k rows: `MutualKNN-oracle`, `SNN-oracle`. |
 | `tab:wp5_highd` | Results above d = 21 (letter, mnist, musk, arrhythmia) | `84`, `84b` | `wp5/wp5_metrics_main.csv`, `wp5/wp5_highd_results.csv` | U-/SU-MCCD n/a at musk and arrhythmia. |
-| `tab:wp6_runtime` | Median time and memory | `91`, `91b`, `95` | `wp6/91_wp6_runtime_n.csv`, `wp6/91_wp6_runtime_d.csv`, `wp6/91b_wp6_runtime_py_summary.csv`, `wp6_incr/95_ab_runtime_n.csv`, `wp6_incr/95_ab_runtime_d.csv` | UN-/SUN-MCCD rows from `94`'s paired run through `95`. |
+| `tab:wp6_runtime` | Median time and memory | `91`, `91b`, `91c`, `95` | `wp6/91_wp6_runtime_n.csv`, `wp6/91_wp6_runtime_d.csv`, `wp6/91b_wp6_runtime_py_summary.csv`, `wp6/91c_wp6_runtime_ksqrt_summary.csv`, `wp6_incr/95_ab_runtime_n.csv`, `wp6_incr/95_ab_runtime_d.csv` | UN-/SUN-MCCD rows from `94`'s paired run through `95`. Mutual-kNN and SNN rows from `91c` (rule `ksqrt`, k = round(sqrt(n))). |
 | `tab:Complex_Cluster_Compact` | Neyman-Scott F2 ranks | legacy drivers; `97` | `ns_sun_d10/97_{Matern,Thomas,Mix}_d10_999_sun.csv` | SUN-MCCD at d = 10 only; other cells from the legacy logs. |
 | Wilcoxon, 5 of 32 | SUN-MCCD against 16 methods on F2 and BA, Holm per block | `92` | `wp3/wilcoxon_real.csv` | Significant: UN-MCCD on F2; DBSCAN, DIF, ODIN, MST on BA. |
 | Mutual-kNN, 11 of 16 | SUN-MCCD F2 above mutual-kNN (both k rules) | `82` | `wp4/wp4_metrics_main.csv`, `wp4/WP4_FINDINGS.md` | UN-MCCD above it on 7 of 16. |
@@ -74,7 +74,7 @@ bounds, not results.
 | `SM-tab:wp8-csr-alpha`, `wp8-csr-flagmatrix` | Departures from spatial randomness | `88` | `wp8/88_csr_violation_summary.csv` |
 | `SM-tab:wp7-ari`, `wp7-khat` | Clustering quality | `90` | `wp7/wp7_summary_metrics.csv`, `wp7/wp7_khat_table.csv`, `wp7/wp7_metrics_long.csv` |
 | `SM-tab:wp6-n-r`, `wp6-d-r` | Runtime of the R methods | `91`, `95` | `wp6/91_wp6_runtime_n.csv`, `wp6/91_wp6_runtime_d.csv`, `wp6_incr/95_ab_runtime_n.csv`, `wp6_incr/95_ab_runtime_d.csv` |
-| `SM-tab:wp6-n-py`, `wp6-d-py` | Runtime of the Python competitors | `91b` | `wp6/91b_wp6_runtime_py_summary.csv` |
+| `SM-tab:wp6-n-py`, `wp6-d-py` | Runtime of the Python competitors | `91b`, `91c` | `wp6/91b_wp6_runtime_py_summary.csv`; mutual-kNN and SNN rows from `wp6/91c_wp6_runtime_ksqrt_summary.csv` (rule `ksqrt`) |
 | `SM-tab:wp6-slope` | Log-log exponents | `91`, `95` | `wp6/91_wp6_slope.csv`, `wp6_incr/95_ab_slope.csv` |
 
 `SM-tab:focused-mc-settings` summarizes the legacy simulation settings.
