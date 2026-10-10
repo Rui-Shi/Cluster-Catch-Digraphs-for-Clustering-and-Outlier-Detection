@@ -95,6 +95,10 @@ bounds, not results.
   `wp2a_provenance_verify.csv` is the check after it.
 - `wp6_incr/94_ab_raw.csv` (paired timing) supersedes the `wp6_incr/91_*`
   re-timing of 2026-09-23, which ran on another day; `95` summarizes `94`.
+- `wp6/91c_wp6_runtime_ksqrt_summary.csv` (rule `ksqrt`, k = round(sqrt(n)))
+  supersedes the MutualKNN and SNN `k10` rows of
+  `wp6/91b_wp6_runtime_py_summary.csv` in `tab:wp6_runtime` and
+  `SM-tab:wp6-n-py` / `wp6-d-py`; `91b`'s k grid is kept as a record.
 - The tr1 table-provenance scripts (`62`-`78`) record which duplicated NN
   tables were deleted and which 0.1% tables were installed in
   `tr1/DELETED_DUPLICATE_TABLES.md` and `tr1/INSTALLED_REGEN999_TABLES.md`.
