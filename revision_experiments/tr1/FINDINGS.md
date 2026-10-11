@@ -54,6 +54,7 @@ bounds, not results.
 | `SM-tab:Real_Data_Result2.1`, `2.2` | TPR/TNR and BA/F2 of the nine original methods on 16 sets | `28`, `33`, `34`, `78` | `regen_final_*.csv`, `final_baselines.csv`, `regen_baselines.csv`, `final_comparison.csv`, `wp2c_manuscript_tables.csv`, `lof_original8.csv` |
 | `SM-tab:WP4_Aggregate17`, `WP4_T2`, `WP4_Result1`, `WP4_Result2`, `WP4_mkNN`, `WP4_native`, `WP4_seeds` | The 17-method comparison, at contamination 0.1 and at the true rate; native labels; DIF/LUNAR seed spread | `81`, `82`, `83` | `wp4/wp4_metrics_main.csv`, `wp4/wp4_metrics_long.csv`, `wp4/scores/`, `wp4/WP4_FINDINGS.md` |
 | `SM-tab:stability` | Label changes and BA spread under perturbation | `45` | `wp2b_stability_summary_smin005.csv`, `wp2b_determinism_smin005.csv`, `wp2b_seed_stability_smin005.csv` |
+| `SM-sec:stability` (paragraph "Determinism and perturbations") | UN-MCCD and SUN-MCCD rerun on NND tables built from new random draws: 25 comparisons, labels unchanged except 2 of 1452 on vowels (UN-MCCD), cluster counts unchanged | `99` | `table_seed/table_seed_summary.csv`, `table_seed/table_seed_comparisons.csv`, `table_seed/table_seed_cells.csv`, `table_seed/tables.csv` |
 | `SM-tab:alpha_rk_real` | RK-based detectors over the alpha range | `42`, `46`, `47` | `wp2a_alpha_sweep.csv`, `wp2a_alpha_summary.csv`, `wp2a_alpha_operating_range.csv` |
 | `SM-tab:alpha_nn_real` | NND-based detectors, wilt and pageblocks | `50` | `wp2a_nn_alpha_bigsets.csv` |
 | `SM-tab:rk_degeneracy` | Share of zero RK critical values, d = 5-50 | `49` | `wp2a_rk_table_degeneracy.csv` |
@@ -155,6 +156,14 @@ bounds, not results.
 - **2026-09-27.** tr1 scripts consolidated in `tr1/`; results committed.
 - **2026-09-28.** Missing quantile tables are generated on the spot
   (`R/ccds/quantile_table.R`).
+- **2026-10-10.** Table-seed stability (`99`, protocol
+  `TABLE_SEED_STABILITY_PROTOCOL.md`): five new 10,000-draw NND tables
+  at d = 18 and d = 19 and one at d = 12, plus, for UN-MCCD, the 1% table
+  from the draws behind the stored 0.1% table; 25 comparisons on
+  hepatitis, lymphography and vowels. Labels and cluster counts unchanged
+  except 2 of 1452 vowels labels under UN-MCCD (Jaccard 0.997, BA
+  -0.0007). Radii move for a few points (`radius_max_rel_change` up to 1).
+  The new tables are not committed (`R/NN-test_quantile_seedstab/`).
 
 ## 6. Protocols
 
