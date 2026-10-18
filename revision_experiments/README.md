@@ -202,7 +202,8 @@ Several tr1 scripts read tables from their own folders
 ## .venv/
 
 The pinned PyOD 3.6.1 / torch 2.13.0+cpu Python environment, used by tr2's
-`05_wp4_runtime_pyod.py` and `08_wp6_pyod_baselines.py`, and (since
+`02b_convert_highdim.py`, `05_wp4_runtime_pyod.py` and
+`08_wp6_pyod_baselines.py`, and (since
 2026-09-05) by tr1's `81_wp4_baselines.py`, `84a_wp5_fetch_convert.py`,
 `90b_wp7_hdbscan.py`, `91b_wp6_runtime_py.py` and (since 2026-10-09)
 `91c_wp6_runtime_ksqrt.py`. Unmoved by this reorg
@@ -263,17 +264,12 @@ The pinned PyOD 3.6.1 / torch 2.13.0+cpu Python environment, used by tr2's
   unpublished results. Both delete ignored files, which here means every
   uncommitted result, the `.venv`, and every quantile table (`*.RData` is
   ignored too).
-- `results/tr2/` -- tr2's result files (csv, `figures/`, `probes/`,
-  `wp4_data/`, `wp4_data2/`, `wp6_scores/`). CSVs and `figures/` stay directly
-  under `results/tr2/`.
-  - **`results/tr2/_logs/`** (new in this reorg) -- every `*.log`, `*.flag`
-    and `*DONE*` file that had accumulated directly under `results/tr2/`
-    (run logs, shutdown-watcher logs, completion flags) was moved here to
-    de-clutter the results directory. Nothing was deleted. CSVs, `.RData`,
-    `.err`, `.lock`, `.bak*` files and the subdirectories above were left in
-    place. A handful of `*_log.txt` text logs (e.g. `wp4_run_log.txt`,
-    `wp3_real_log.txt`) were not moved and remain directly under
-    `results/tr2/`.
+- `results/tr2/` -- tr2's result files. Only the ten tables behind the
+  published revision results are committed (force-added, as for tr1; listed
+  under "Published results" in the tr2 section below). Everything else a tr2
+  script writes stays local: raw per-replicate CSVs, diagnostics, `figures/`,
+  `probes/`, `wp4_data/`, `wp4_data2/`, `wp6_scores/`, and the console logs
+  in `results/tr2/_logs/`.
 
 ## tr1/
 
@@ -510,13 +506,47 @@ The RK tables were not rebuilt, so U-MCCD and SU-MCCD are not checked.
 
 ## tr2/
 
-PR-D-26-05767 revision-experiments pipeline. Scripts were renumbered to close
-the gap left by moving tr1's `13`-`35` range into `tr1/`: the two duplicate
-prefixes in the old flat layout (`01h_*` x2, `07_*` x2) were resolved, and the
-old `36`-`42` scripts (added after tr1's numbering was already in use) were
-renumbered down to `14`-`20`. Old name -> new name for every renamed file is
-in the reorg's commit/session history; every internal `source()`,
-`here::here()` and usage-comment path was updated to match.
+PR-D-26-05767 revision-experiments pipeline. The revised manuscript and its
+Supplementary Material were submitted in August 2026. The tag
+`pattern-recognition-revision` marks the code as used for them. Later
+commits on `main` changed the shared harness (see `shared/` above):
+`get_simul()` needs an explicit level, and RK-CCD at d = 10 resolves to the
+0.1% table, the level the published d = 10 runs used (`09` asserts it, `20`
+passes it). The harness at the tag defaulted to 1% there, so `09` stops at
+its own check when run from the tag (commits `961b51a`, `234d81e`).
+
+Scripts were renumbered on 2026-08-30 to close the gap left by moving tr1's
+`13`-`35` range into `tr1/`: the two duplicate prefixes in the old flat
+layout (`01h_*` x2, `07_*` x2) were resolved, and the old `36`-`42` scripts
+were renumbered down to `14`-`20`. Commit `f4046a6` holds every old -> new
+name.
+
+### Published results
+
+Table and figure numbers are those of the submitted revision; "S" marks
+the Supplementary Material. Script headers written before the supplement
+was split off call Section S4 "Appendix C" and Section S6 "Appendix D".
+Result files are under `results/tr2/`.
+
+| Manuscript item | Script | Committed result file |
+|---|---|---|
+| Section 2.1.1, collinearity sweep (rho in {0, 0.3, 0.5, 0.7, 0.9}, d = 10, 20 reps) | `20_wp_collinearity.R` | `wp_collinearity_agg.csv` |
+| Table 2 and Table S14, the four OS rows for glass | `13_glass_os_regen.R` | `glass_os_regen.csv` |
+| Table S2 (runtime vs n), Table S3 (runtime vs d) | `04_wp4_runtime.R`; `05_wp4_runtime_pyod.py` for the PyOD rows | `wp4_runtime2_n.csv`, `wp4_runtime2_d.csv` (column `mean_t_total`); `wp4_runtime2_pyod.csv` (`mean_fit_seconds`) |
+| Figure S1, cutoff sensitivity (synthetic and real panels) | `09_wp3_synthetic.R`, `10_wp3_real.R`; plotted by `11b`, `11c` | `wp3_sensitivity_synthetic.csv`, `wp3_sensitivity_real.csv` |
+| Table S12, high-dimensional datasets | `06_wp5_highdim.R`; Musk and Speech CCD rows by `07b_wp5_fulldata_ccd.R` | `wp5_highdim_metrics.csv`, `wp5_fulldata_raw.csv` |
+| Table S15, PyOD baselines on the real datasets | `08_wp6_pyod_baselines.py`, `08b_wp6_metrics.R` | `wp6_pyod_metrics.csv` (rows with `labeling == "contam_0.1"`) |
+
+Not in a committed file: the AUC column of Table S12, computed as the rank
+AUC of the cached score vectors in `results/scores_cache/` (not committed).
+In Table 2 and Table S14 the MCCD and baseline rows come from tr1's
+regeneration (`results/tr1/final_comparison.csv`, copied by
+`14_patch_manuscript_tables.ps1`), and the OS rows of the other nine
+datasets are carried over from the first submission;
+`15_os_repro_audit.R` records which of them reproduce under the current
+harness. The collinearity rows have n = 199, not the nominal 200: the
+generator, copied from `09_wp3_synthetic.R`, draws one point fewer in the
+second cluster (95 + 94 + 10).
 
 Run order (02b precedes 02: it produces the raw high-dimensional CSVs 02
 loads); purpose and main output condensed from each script's own header
@@ -540,7 +570,7 @@ comment:
 | `04_wp4_runtime.R` | WP4 wall-clock runtime/scalability grid (all 9 R methods, two grids over n and d). | `results/tr2/wp4_runtime2_{n,d}.csv` (+ `_raw`) |
 | `04b_validate_parallel_radii.R` | Bit-exactness check for the parallel `nnccd.radi` override used by `04_wp4_runtime.R`. | console only |
 | `05_wp4_runtime_pyod.py` | WP4 runtime grid for the PyOD baselines (ECOD/LUNAR/AutoEncoder fits, single-threaded). | `results/tr2/wp4_runtime2_pyod{,_raw}.csv` |
-| `06_wp5_highdim.R` | WP5 high-dimensional real data: baselines on all four datasets (Arrhythmia, InternetAds, Musk, Speech); UN-CCD OOS/IOS on Arrhythmia, Musk, Speech only (InternetAds deliberately excluded). | `results/tr2/wp5_highdim_{metrics,raw}.csv` |
+| `06_wp5_highdim.R` | WP5 high-dimensional real data: baselines on all four datasets (Arrhythmia, InternetAds, Musk, Speech); UN-CCD OOS/IOS on Arrhythmia, Musk, Speech only (InternetAds deliberately excluded). Its Musk and Speech CCD rows are NA; the published values come from `07b`. | `results/tr2/wp5_highdim_{metrics,raw}.csv` |
 | `07_wp5_subsample_ccd.R` | WP5 follow-up: UNCCD-OOS/IOS on n=1000 subsamples of Musk and Speech. | `results/tr2/wp5_subsample_raw.csv` |
 | `07b_wp5_fulldata_ccd.R` | Full-data Musk/Speech UNCCD via parallel radius search + spliced exact-n quantile tables. Supersedes the `07_*` n=1000 subsample workaround. | `results/tr2/wp5_fulldata_raw.csv`, cached `.rds` scores |
 | `08_wp6_pyod_baselines.py` | WP6: fits ECOD, LUNAR, AutoEncoder on all 14 real datasets (5 seeds for the two stochastic methods). | `results/tr2/wp6_scores/*.csv`, `wp6_fit_log.csv` |
@@ -548,8 +578,8 @@ comment:
 | `09_wp3_synthetic.R` | WP3 cutoff-sensitivity study, synthetic part (3 settings x 4 CCD-based OS methods, 18-point cutoff-multiplier grid). | `results/tr2/wp3_synthetic_raw.csv`, `wp3_sensitivity_synthetic.csv` |
 | `10_wp3_real.R` | WP3 cutoff-sensitivity study, real-data part (absolute cutoff grid; reproduces the WBC and Vowels manuscript rows as gates). | `results/tr2/wp3_sensitivity_real.csv` |
 | `11_wp3_lines_plots.R` | Renders the WP3 BA/F2-vs-cutoff line plots (one PNG per synthetic setting and per real dataset). | `results/tr2/figures/wp3_{synthetic,real}_*.png` |
-| `11b_wp3_synthetic_f2_plot.R` | Manuscript Appendix C figure: three-panel F2-only curve for the synthetic settings. | `results/tr2/figures/wp3_synthetic_F2.png` |
-| `11c_wp3_real_f2_plot.R` | Manuscript Appendix C figure: three-panel F2-only curve for the real datasets (WBC, Thyroid, vowels). | `results/tr2/figures/wp3_real_F2.png` |
+| `11b_wp3_synthetic_f2_plot.R` | Figure S1, synthetic panel: F2-only curves for the three synthetic settings. | `results/tr2/figures/wp3_synthetic_F2.png` |
+| `11c_wp3_real_f2_plot.R` | Figure S1, real-data panel: F2-only curves for WBC, Thyroid and vowels. | `results/tr2/figures/wp3_real_F2.png` |
 | `12_highd_madn_recheck.R` | Re-measures high-d synthetic cells under both the buggy and fixed `std_MADN`, to check whether the "IOS > OOS at high d" claim was a standardization artifact. | `results/tr2/highd_madn_recheck*.csv` |
 | `13_glass_os_regen.R` | Regenerates the four OS-method rows for glass only, using `evaluate()` (fixes the positional-scoring bug on glass's mis-sorted outliers). | `results/tr2/glass_os_regen.csv` |
 | `14_patch_manuscript_tables.ps1` | Replaces TR2's four MCCD rows in its two real-data tables with values regenerated for TR1 (one-time, author-authorized; see the script's own header for scope/authorization notes). | edits outside this repo |
@@ -557,7 +587,7 @@ comment:
 | `16_speech_ios_clusters.R` | Recovers per-cluster labels to explain why standardized IOS collapses to zero on 57% of Speech. | `results/tr2/speech_ios_clusters.csv` |
 | `17_tiebreak_impact.R` | Bounds how much the tie-breaking rule (legacy vs. manuscript Eq. 10, whole-dataset vs. per-cluster) moves the published real-data OS numbers. | `results/tr2/tiebreak_impact*.csv` |
 | `18_wp2_assumption_checks.R` | WP2 checklist: empty-outbound-neighbourhood handling, and similarity-equivariance of the radius search under a random rigid+scale transform. | `results/tr2/wp2_assumption_checks.csv` |
-| `19_musk_geometry_audit.R` | Provenance audit (Ceyhan checklist item 8), Musk half: confirms Appendix D numbers come from the same construction as the reported AUC. | `results/tr2/musk_geometry_audit.csv` |
+| `19_musk_geometry_audit.R` | Provenance audit (Ceyhan checklist item 8), Musk half: confirms the Section S6 numbers come from the same construction as the reported AUC. | `results/tr2/musk_geometry_audit.csv` |
 | `20_wp_collinearity.R` | Ad hoc collinearity-sensitivity sweep (equicorrelated Gaussian clusters, rho in {0, .3, .5, .7, .9}) backing the manuscript's collinearity-stability claim. | `results/tr2/wp_collinearity_{agg,raw}.csv` |
 | `test_outlyingness_density.R` | Regression test for the vicinity-density overflow fix (`(size/R^d)^(1/d)` -> `size^(1/d)/R`). | console only |
 | `test_std_madn.R` | Regression test for the `std_MADN` fallback (MADN=0 -> SD -> 0) behavior. | console only |
