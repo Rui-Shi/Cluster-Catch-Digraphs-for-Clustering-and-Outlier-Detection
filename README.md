@@ -31,10 +31,11 @@ The experiments run for the journal revisions are in
   `revision_experiments/tr1/FINDINGS.md` maps every published table and
   number to its script and result file.
 - `revision_experiments/tr2/` -- the Pattern Recognition paper. The tr2
-  section of `revision_experiments/README.md` maps each revised table and
-  figure to its script and result file; `revision_experiments/tr2/FINDINGS.md`
-  is the running log. The code as used for that revision is tagged:
-  `git checkout pattern-recognition-revision`.
+  section of `revision_experiments/README.md` maps the results of the
+  revision experiments to their scripts and committed result files;
+  `revision_experiments/tr2/FINDINGS.md` is the running log. Run the
+  scripts from `main`; the tag `pattern-recognition-revision` keeps a
+  snapshot of the code and result files as submitted.
 
 > ### ⚠️ Files under `simulations/` that are **outputs**, not source
 >
