@@ -106,7 +106,7 @@ The experiments run for the journal revisions are in
 | **SU-MCCDs** | Shape-adaptive variant of RU-MCCDs | `methods/outlier_detection/SU-MCCDs.R` | `simulations/outlier_detection/SU-MCCDs/` |
 | **SUN-MCCDs** | Shape-adaptive variant of UN-MCCDs | `methods/outlier_detection/SUN-MCCD.R` | `simulations/outlier_detection/SUN-MCCDs/` |
 | **OOS** | Outbound Outlyingness Score: ratio of mean neighbour-density to a point's vicinity density | `methods/outlyingness_scores/Outlyingness_Score.R` | `simulations/outlyingness_scores/RKCCD_OOS_IOS/`, `simulations/outlyingness_scores/UNCCD_OOS_IOS/` |
-| **IOS** | Inbound Outlyingness Score: inverse of cumulative inbound-neighbour influence; more resistant than OOS to masking when collective outliers receive less inbound support than cluster members | `methods/outlyingness_scores/Outlyingness_Score.R` (shared with OOS) | same as OOS |
+| **IOS** | Inbound Outlyingness Score: inverse of cumulative inbound-neighbour influence; substantially more resistant than OOS to masking when collective outliers receive less weighted inbound support than genuine cluster members | `methods/outlyingness_scores/Outlyingness_Score.R` (shared with OOS) | same as OOS |
 | **RKCCD-OOS / RKCCD-IOS** | OOS / IOS computed on the RK-CCD covering-ball digraph | `methods/outlyingness_scores/RKCCD_OOS_IOS.R` | `simulations/outlyingness_scores/RKCCD_OOS_IOS/` |
 | **UNCCD-OOS / UNCCD-IOS** | OOS / IOS computed on the UN-CCD covering-ball digraph | `methods/outlyingness_scores/UNCCD_OOS_IOS.R` | `simulations/outlyingness_scores/UNCCD_OOS_IOS/` |
 

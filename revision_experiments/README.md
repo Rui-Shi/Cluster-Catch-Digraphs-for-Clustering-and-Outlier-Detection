@@ -508,11 +508,12 @@ The RK tables were not rebuilt, so U-MCCD and SU-MCCD are not checked.
 
 PR-D-26-05767 revision-experiments pipeline. The revised manuscript and its
 Supplementary Material were submitted in August 2026. The tag
-`pattern-recognition-revision` marks the code as used for them; check it out
-to rerun with that code. Later commits on `main` changed the shared harness
-(see `shared/` above): `get_simul()` needs an explicit level, and RK-CCD at
-d = 10 now resolves to the 0.1% table, where the earlier harness default gave
-1% (commits `961b51a`, `234d81e`).
+`pattern-recognition-revision` marks the code as used for them. Later
+commits on `main` changed the shared harness (see `shared/` above):
+`get_simul()` needs an explicit level, and RK-CCD at d = 10 resolves to the
+0.1% table, the level the published d = 10 runs used (`09` asserts it, `20`
+passes it). The harness at the tag defaulted to 1% there, so `09` stops at
+its own check when run from the tag (commits `961b51a`, `234d81e`).
 
 Scripts were renumbered on 2026-08-30 to close the gap left by moving tr1's
 `13`-`35` range into `tr1/`: the two duplicate prefixes in the old flat
