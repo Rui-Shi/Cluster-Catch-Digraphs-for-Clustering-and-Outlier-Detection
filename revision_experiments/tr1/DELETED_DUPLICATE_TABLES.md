@@ -70,3 +70,19 @@ data set dimension or simulation grid point; that was re-checked here.
 | 27 | `NN-test-simul_27d_999%.RData` | 999 | 70,162 | `ba270693836676bf` | B: mislabelled singleton | was an identical pair until 70 removed its twin; holds the 1% run |
 | 28 | `NN-test-simul_28d_999%.RData` | 999 | 70,081 | `3070f0b2a2046313` | B: mislabelled singleton | was an identical pair until 70 removed its twin; holds the 1% run |
 
+
+## Restored 2026-10-18 (user request)
+
+The seven group-B tables are back under the names their generators gave the
+first computation, `NN-test-simul_<d>d_99%.RData` for d = 22-28, copied from
+the Pattern Recognition working copy. Each copy matches, in size and MD5, the
+`_99%` file that 70 deleted and the `_999%` file that 77 purged above.
+
+The reason 77 gave for deleting them still holds: their 1% level at d = 22-28
+is inferred (from the generator scripts and from the five identical pairs
+measured at d = 12, 16, 18, 19 and 21), not measured. They were restored so
+that a copy survives in this repository, not because the level was checked.
+No resolver asks for token "99" at d >= 20, so no result changes. `69` reports
+these dimensions as "duplicate removed" (one surviving file of a former pair),
+which is a pass.
+
