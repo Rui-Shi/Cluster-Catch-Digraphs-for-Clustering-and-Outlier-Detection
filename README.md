@@ -7,7 +7,7 @@ following work on Cluster Catch Digraphs:
   Cluster and Mutual Catch Digraphs.** *Neurocomputing* (in revision, 2026).
 - Shi, R., Ceyhan, E., Billor, N. **Outlyingness Scores with Cluster Catch
   Digraphs for Identifying High-Dimensional and Collective Outliers.**
-  *Pattern Recognition* (in revision, 2026).
+  *Pattern Recognition* (revision submitted, 2026).
 - Shi, R., Ceyhan, E., Billor, N. **Outlier Detection with Cluster Catch
   Digraphs.** arXiv:2409.11596, 2024 (the preprint of the Neurocomputing
   paper). <https://arxiv.org/abs/2409.11596>
@@ -30,9 +30,11 @@ The experiments run for the journal revisions are in
 - `revision_experiments/tr1/` -- the Neurocomputing paper.
   `revision_experiments/tr1/FINDINGS.md` maps every published table and
   number to its script and result file.
-- `revision_experiments/tr2/` -- the Pattern Recognition paper; see
-  `revision_experiments/tr2/FINDINGS.md`. The code as used for that
-  revision is tagged: `git checkout pattern-recognition-revision`.
+- `revision_experiments/tr2/` -- the Pattern Recognition paper. The tr2
+  section of `revision_experiments/README.md` maps each revised table and
+  figure to its script and result file; `revision_experiments/tr2/FINDINGS.md`
+  is the running log. The code as used for that revision is tagged:
+  `git checkout pattern-recognition-revision`.
 
 > ### ⚠️ Files under `simulations/` that are **outputs**, not source
 >
@@ -104,7 +106,7 @@ The experiments run for the journal revisions are in
 | **SU-MCCDs** | Shape-adaptive variant of RU-MCCDs | `methods/outlier_detection/SU-MCCDs.R` | `simulations/outlier_detection/SU-MCCDs/` |
 | **SUN-MCCDs** | Shape-adaptive variant of UN-MCCDs | `methods/outlier_detection/SUN-MCCD.R` | `simulations/outlier_detection/SUN-MCCDs/` |
 | **OOS** | Outbound Outlyingness Score: ratio of mean neighbour-density to a point's vicinity density | `methods/outlyingness_scores/Outlyingness_Score.R` | `simulations/outlyingness_scores/RKCCD_OOS_IOS/`, `simulations/outlyingness_scores/UNCCD_OOS_IOS/` |
-| **IOS** | Inbound Outlyingness Score: inverse of cumulative inbound-neighbour influence; robust to masking | `methods/outlyingness_scores/Outlyingness_Score.R` (shared with OOS) | same as OOS |
+| **IOS** | Inbound Outlyingness Score: inverse of cumulative inbound-neighbour influence; more resistant than OOS to masking when collective outliers receive less inbound support than cluster members | `methods/outlyingness_scores/Outlyingness_Score.R` (shared with OOS) | same as OOS |
 | **RKCCD-OOS / RKCCD-IOS** | OOS / IOS computed on the RK-CCD covering-ball digraph | `methods/outlyingness_scores/RKCCD_OOS_IOS.R` | `simulations/outlyingness_scores/RKCCD_OOS_IOS/` |
 | **UNCCD-OOS / UNCCD-IOS** | OOS / IOS computed on the UN-CCD covering-ball digraph | `methods/outlyingness_scores/UNCCD_OOS_IOS.R` | `simulations/outlyingness_scores/UNCCD_OOS_IOS/` |
 
@@ -124,7 +126,9 @@ The experiments run for the journal revisions are in
 The Neurocomputing paper's real-data study adds eight more competitors
 (ECOD, COPOD, DIF, LUNAR, HDBSCAN with GLOSH, OPTICS, mutual-kNN and SNN),
 run in Python by `revision_experiments/tr1/81_wp4_baselines.py`; see
-`revision_experiments/README.md`.
+`revision_experiments/README.md`. The Pattern Recognition paper adds three
+PyOD detectors (ECOD, LUNAR and a deep autoencoder), run by
+`revision_experiments/tr2/08_wp6_pyod_baselines.py`.
 
 ### Cutoff calibration (OOS / IOS thresholds)
 
@@ -146,7 +150,7 @@ variants and are kept for reference.
 
 ### Outlier-detection real datasets — `data/outlier_detection/`
 
-The 10 datasets used in the OOS/IOS manuscript are listed first; the
+The 13 datasets used in the OOS/IOS manuscript are listed first; the
 remaining datasets are archived alongside them and used in extended
 benchmarks for the MCCD-family methods (arXiv:2409.11596). The
 Neurocomputing paper uses 16 of them, all but Yeast. Its four data sets
@@ -168,6 +172,13 @@ above d = 21 (letter, mnist, musk, arrhythmia) are in
 | Vowels | `vowels.mat`, `Vowels_desc.pdf` |
 | Thyroid | `thyroid.mat`, `Thyroid_desc.pdf` |
 | Wilt | `Wilt_withoutdupl_05.arff` |
+| Arrhythmia | `arrhythmia.mat`, `arrhythmia_raw.csv` |
+| Musk | `musk.npz`, `musk_raw.csv` |
+| Speech | `speech.npz`, `speech_raw.csv` |
+
+The `*_raw.csv` files are written from the `.mat`/`.npz` originals by
+`revision_experiments/tr2/02b_convert_highdim.py`. `internetads.npz` is
+loaded by the same pipeline but not reported in the paper.
 
 **Additional datasets (extended MCCD benchmarks):**
 
