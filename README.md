@@ -99,7 +99,7 @@ The experiments run for the journal revisions are in
 | **UN-CCDs** | Clustering via Nearest-Neighbour Distance (NND) spatial-randomness test | `methods/clustering/UN-CCDs.R` | `simulations/clustering/UN_CCDs/` |
 | **KS-CCDs** | Clustering via Kolmogorov–Smirnov-type density statistic | `methods/clustering/KS-CCDs.R` | `simulations/clustering/KS_CCDs/` |
 | **D-MCGs** | Density-based Mutual Catch Graphs for single-cluster outlier detection | (defined inside the simulation tree) | `simulations/outlier_detection/D-MCGs/` |
-| **RU-MCCDs** | Rapid Uniformity-Based CCDs with Mutual Catch Graphs (RK-CCD + MCG) | `methods/outlier_detection/RU-MCCDs.R` | `simulations/outlier_detection/RU-MCCDs/` |
+| **RU-MCCDs** | Rapid Uniformity-Based CCDs with Mutual Catch Graphs (RK-CCD + MCG); called U-MCCD in the Neurocomputing paper | `methods/outlier_detection/RU-MCCDs.R` | `simulations/outlier_detection/RU-MCCDs/` |
 | **UN-MCCDs** | Uniformity- and Neighbour-based CCDs adapted for outlier detection | `methods/outlier_detection/UN-MCCD.R` | `simulations/outlier_detection/UN-MCCDs/` |
 | **SU-MCCDs** | Shape-adaptive variant of RU-MCCDs | `methods/outlier_detection/SU-MCCDs.R` | `simulations/outlier_detection/SU-MCCDs/` |
 | **SUN-MCCDs** | Shape-adaptive variant of UN-MCCDs | `methods/outlier_detection/SUN-MCCD.R` | `simulations/outlier_detection/SUN-MCCDs/` |
@@ -120,6 +120,11 @@ The experiments run for the journal revisions are in
 | Local Outlier Factor (LOF) | outlier detection | `simulations/outlier_detection/Algo_Compare_OutlierDetection/LOF/` |
 | Isolation Forest (iForest) | outlier detection | `simulations/outlier_detection/Algo_Compare_OutlierDetection/Isolation Forest/` |
 | ODIN (in-degree number) | outlier detection | `simulations/outlier_detection/Algo_Compare_OutlierDetection/ODIN/` |
+
+The Neurocomputing paper's real-data study adds eight more competitors
+(ECOD, COPOD, DIF, LUNAR, HDBSCAN with GLOSH, OPTICS, mutual-kNN and SNN),
+run in Python by `revision_experiments/tr1/81_wp4_baselines.py`; see
+`revision_experiments/README.md`.
 
 ### Cutoff calibration (OOS / IOS thresholds)
 
@@ -143,7 +148,11 @@ variants and are kept for reference.
 
 The 10 datasets used in the OOS/IOS manuscript are listed first; the
 remaining datasets are archived alongside them and used in extended
-benchmarks for the MCCD-family methods (arXiv:2409.11596).
+benchmarks for the MCCD-family methods (arXiv:2409.11596). The
+Neurocomputing paper uses 16 of them, all but Yeast. Its four data sets
+above d = 21 (letter, mnist, musk, arrhythmia) are in
+`revision_experiments/results/tr1/wp5/data/`, prepared by
+`revision_experiments/tr1/84a_wp5_fetch_convert.py`.
 
 **Used in the OOS/IOS manuscript:**
 

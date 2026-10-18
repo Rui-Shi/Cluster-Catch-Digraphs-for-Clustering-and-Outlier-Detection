@@ -44,9 +44,10 @@ Windows setup, `Rscript` must be launched from PowerShell, not Git-Bash/MSYS
 `revision_experiments/.venv` (interpreter at `.venv/python.exe`).
 
 The tr1 scripts follow the same rules: they run from the clone root, their R
-prerequisites are checked by `tr2/00_env_check.R`, and the four tr1 Python
+prerequisites are checked by `tr2/00_env_check.R`, and the five tr1 Python
 steps (`tr1/81_wp4_baselines.py`, `tr1/84a_wp5_fetch_convert.py`,
-`tr1/90b_wp7_hdbscan.py`, `tr1/91b_wp6_runtime_py.py`) use the same `.venv`.
+`tr1/90b_wp7_hdbscan.py`, `tr1/91b_wp6_runtime_py.py`,
+`tr1/91c_wp6_runtime_ksqrt.py`) use the same `.venv`.
 
 Reruns. The drivers write one row per finished cell (`append_result()`) and
 skip every cell already in their output (`has_result()`, or a keys-only
@@ -192,17 +193,19 @@ need the original RK tables. To use original tables, put them in
 `R/RK-test_quantile/` or `R/NN-test_quantile/` under their original names;
 a file on disk is always loaded as it is.
 
-Several tr1 WP2 scripts read tables from their own folders
+Several tr1 scripts read tables from their own folders
 (`R/NN-test_quantile_n200/`, `R/NN-test_quantile_d21_regen/`,
-`R/NN-test_quantile_provenance/`, `R/NN-test_quantile_regen999/`), written
-by `48`, `56`, `58`, `64`, `71` and `74`. These folders are not published.
+`R/NN-test_quantile_provenance/`, `R/NN-test_quantile_regen999/`,
+`R/NN-test_quantile_seedstab/`), written by `48`, `56`, `58`, `64`, `71`,
+`74` and `99`. These folders are not published.
 
 ## .venv/
 
 The pinned PyOD 3.6.1 / torch 2.13.0+cpu Python environment, used by tr2's
 `05_wp4_runtime_pyod.py` and `08_wp6_pyod_baselines.py`, and (since
 2026-09-05) by tr1's `81_wp4_baselines.py`, `84a_wp5_fetch_convert.py`,
-`90b_wp7_hdbscan.py` and `91b_wp6_runtime_py.py`. Unmoved by this reorg
+`90b_wp7_hdbscan.py`, `91b_wp6_runtime_py.py` and (since 2026-10-09)
+`91c_wp6_runtime_ksqrt.py`. Unmoved by this reorg
 (still `revision_experiments/.venv`).
 
 ## results/
@@ -232,6 +235,7 @@ The pinned PyOD 3.6.1 / torch 2.13.0+cpu Python environment, used by tr2's
     UN-/SUN-MCCD timings (`91` with `--resdir=wp6_incr`, `92b`-`96`).
   - `ns_sun_d10/` (`97`) and `su_driver_fix/` (`98`): the simulation-driver
     checks.
+  - `table_seed/` (`99`): the quantile-table seed stability check.
   - `cost_probe/` (`42 --cost`) and `_logs/` (console logs of the WP2
     background jobs): not committed.
 
@@ -469,6 +473,17 @@ Outcome: 42 + 420 radius cases and 66 end-to-end runs identical; paired timing (
 | `97_sun_ns_d10_rerun.R` | Reruns SUN-MCCD in the three Neyman-Scott settings (Matern, Thomas, mixed) at d = 10 with a chosen NN level: `--level=99` reproduces the published drivers, which load the 1% table; `--level=999` uses the 0.1% table of the stated schedule. Everything else is copied from the drivers. | `ns_sun_d10/97_<process>_d<d>_<level>_<variant>.csv` |
 | `98_su_mccd_driver_check.R` | Reruns one SU-MCCD two-cluster simulation cell with an explicit d and RK table, to check two groups of drivers that do not run what their file names say: the d = 3, n = 1000 drivers set d = 2, and the d = 50, n = 50 drivers load the 2d table, which has no 0.1% level. | `su_driver_fix/98_<setting>_d<d>_n<n>_<table>_<impl>.csv` |
 
+### Quantile-table seed stability
+
+| Script | Purpose | Main output |
+|---|---|---|
+| `99_table_seed_stability.R` | How much UN-MCCD and SUN-MCCD change when the NND quantile table is rebuilt from independent random draws, on hepatitis (d = 19), lymphography (d = 18) and vowels (d = 12). `--anchor` first checks that the production tables reproduce the published TPR/TNR/BA/F2 to three decimals; `--generate <d> <seeds>` builds the 1% and 0.1% tables from the same 10,000 draws, in resumable chunks; `--run` runs every available table; `--summary` writes the comparisons (labels, partition, cluster count, radii) and an md5 manifest. | `table_seed/table_seed_cells.csv`, `table_seed/table_seed_comparisons.csv`, `table_seed/table_seed_summary.csv`, `table_seed/tables.csv`; tables in `R/NN-test_quantile_seedstab/` (not committed) |
+
+Outcome: five independent tables at d = 18 and 19 and one at d = 12, 25
+comparisons. The number of clusters never changed, and no label changed
+except 2 of the 1452 vowels labels under UN-MCCD; per-point radii do move.
+The RK tables were not rebuilt, so U-MCCD and SU-MCCD are not checked.
+
 ### tr1 documents
 
 - `REGEN_SPEC.md` -- rules and output schema for the real-data regeneration
@@ -484,6 +499,8 @@ Outcome: 42 + 420 radius cases and 66 end-to-end runs identical; paired timing (
   verdicts and required changes.
 - `WP5_INVENTORY.md` -- reconnaissance of candidate real data sets above
   d = 21, made before WP5 ran.
+- `TABLE_SEED_STABILITY_PROTOCOL.md` -- the design of `99`, written before
+  its run.
 - `DELETED_DUPLICATE_TABLES.md` -- every NN table deleted by `70` and `77`:
   paths, sizes, MD5 sums, and the content comparison made at deletion.
 - `INSTALLED_REGEN999_TABLES.md` -- the 0.1% NN tables installed by `75`,
