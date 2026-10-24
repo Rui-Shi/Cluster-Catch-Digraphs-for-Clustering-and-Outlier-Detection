@@ -205,7 +205,8 @@ The pinned PyOD 3.6.1 / torch 2.13.0+cpu Python environment, used by tr2's
 
 - `results/datasets_csv/` -- 16 exported real-data CSVs + `manifest.csv`
   (two of the 16, `Musk_sub1000.csv` and `Speech_sub1000.csv`, come from the
-  WP5 subsample path, `07_wp5_subsample_ccd.R`, not the main loader). Written
+  WP5 subsample path, `07_wp5_subsample_ccd.R`, now on the archive branch,
+  not the main loader). Written
   by tr2; read by tr2 scripts that need a dataset as a flat CSV rather than
   through `load_real_dataset()`. tr1's regeneration pipeline does not read
   this directory -- it loads data only via `load_real_dataset()`, per
@@ -214,7 +215,8 @@ The pinned PyOD 3.6.1 / torch 2.13.0+cpu Python environment, used by tr2's
   `results/tr1/wp5/data/`. Not moved or touched by this reorg.
 - `results/scores_cache/` -- cached `.rds` score vectors keyed by
   `<dataset>_<method>.rds`. Shared in principle, written by tr2's
-  `06_wp5_highdim.R` / `07_wp5_subsample_ccd.R` / `07b_wp5_fulldata_ccd.R`
+  `06_wp5_highdim.R`, `07b_wp5_fulldata_ccd.R` and the archived
+  `07_wp5_subsample_ccd.R`,
   and read by `10_wp3_real.R`. Not moved or touched by this reorg.
 - `results/tr1/` -- tr1's result files. Layout:
   - Flat files: the real-data regeneration (`regen_*.csv`,
@@ -498,6 +500,13 @@ layout (`01h_*` x2, `07_*` x2) were resolved, and the old `36`-`42` scripts
 were renumbered down to `14`-`20`. Commit `f4046a6` holds every old -> new
 name.
 
+Scripts that no published number rests on were removed from `main` on
+2026-10-24: the quantile-generator probes and checks `01b`, `01c`, `01d`,
+`01f` and `01h`, the parallel-radius check `04b`, `07_wp5_subsample_ccd.R`
+(superseded by `07b`), `11_wp3_lines_plots.R` (superseded by `11b` and
+`11c`), and the audits `12`, `15`, `17` and `18`. All of them are on the
+branch `tr2-revision-experiments` (commit `8964125`).
+
 ### Published results
 
 Table and figure numbers are those of the submitted revision; "S" marks
@@ -519,11 +528,14 @@ AUC of the cached score vectors in `results/scores_cache/` (not committed).
 In Table 2 and Table S14 the MCCD and baseline rows come from tr1's
 regeneration (`results/tr1/final_comparison.csv`, copied by
 `14_patch_manuscript_tables.ps1`), and the OS rows of the other nine
-datasets are carried over from the first submission;
-`15_os_repro_audit.R` records which of them reproduce under the current
-harness. The collinearity rows have n = 199, not the nominal 200: the
-generator, copied from `09_wp3_synthetic.R`, draws one point fewer in the
-second cluster (95 + 94 + 10).
+datasets are carried over from the first submission (which of them
+reproduce under the current harness was checked by `15_os_repro_audit.R`,
+on the archive branch). The Musk and Speech paragraphs of Section S6 are
+recomputed from the cached radii and scores of the `07b` runs by
+`19_musk_geometry_audit.R` and `16_speech_ios_clusters.R`. The
+collinearity rows have n = 199, not the nominal 200: the generator,
+copied from `09_wp3_synthetic.R`, draws one point fewer in the second
+cluster (95 + 94 + 10).
 
 Run order (02b precedes 02: it produces the raw high-dimensional CSVs 02
 loads); purpose and main output condensed from each script's own header
@@ -533,37 +545,25 @@ comment:
 |---|---|---|
 | `00_env_check.R` | Load required packages; sanity-check the RK/NN quantile lookup tables; print `sessionInfo()`. | console only |
 | `01_gen_quantile_table.R` | Production RK/NN quantile-table generator (the numerically-stable RK override auto-selects at d >= 342). | `.RData` tables in `R/RK-test_quantile/`, `R/NN-test_quantile/` |
-| `01b_nn_component_probe.R` | Times the per-iteration cost components of the NN quantile generator at a given d, to size probes/extrapolate cost. | console only |
-| `01c_validate_rk_stable.R` | Validates the log-space-stable RK weight computation against the original at dimensions where both work. | console only |
-| `01d_nn_serial_iteration_probe.R` | Real-code-path timing check for NN at very high d (validates the component model from `01b`). | console only |
 | `01e_nn_fast.R` | Optimized NN generator override (sourced by `01_gen_quantile_table.R`, not run standalone). | n/a (sourced) |
-| `01f_validate_nn_fast.R` | Validates `01e_nn_fast.R`'s two optimizations against the original generator (correctness + timing + RAM). | console only |
 | `01g_nn_sizes_quant.R` | Size-targeted NN null-quantile generation (knot sizes + interpolation) for full-data Musk/Speech. | `.RData` tables |
-| `01h_nn_mc_yardstick.R` | Monte-Carlo-noise yardstick used to judge whether `01f`'s original-vs-fast differences are within seed noise. | console only |
 | `01i_nn_d500_quant.R` | NN(UN-CCD) quantile table for the WP4 grid-2 cell d=500 (n=500). | `.RData` table |
 | `02b_convert_highdim.py` | Converts raw ODDS/ADBench Musk/Speech/InternetAds (.npz) and Arrhythmia (.mat) into plain CSVs for `02_load_data.R`. | `data/outlier_detection/*_raw.csv` |
 | `02_load_data.R` | Loads the 10 existing real-data benchmarks plus 4 new high-dimensional ones; exports all 14 to CSV. | `results/datasets_csv/*.csv`, `manifest.csv` |
 | `03_smoke_test.R` | Smoke test + reproduction gate for the 9-method registry (WBC + synthetic Gaussian; Part C compares against the published manuscript table). | `results/tr2/smoke_wbc.csv`, `smoke_synthetic.csv` |
 | `04_wp4_runtime.R` | WP4 wall-clock runtime/scalability grid (all 9 R methods, two grids over n and d). | `results/tr2/wp4_runtime2_{n,d}.csv` (+ `_raw`) |
-| `04b_validate_parallel_radii.R` | Bit-exactness check for the parallel `nnccd.radi` override used by `04_wp4_runtime.R`. | console only |
 | `05_wp4_runtime_pyod.py` | WP4 runtime grid for the PyOD baselines (ECOD/LUNAR/AutoEncoder fits, single-threaded). | `results/tr2/wp4_runtime2_pyod{,_raw}.csv` |
 | `06_wp5_highdim.R` | WP5 high-dimensional real data: baselines on all four datasets (Arrhythmia, InternetAds, Musk, Speech); UN-CCD OOS/IOS on Arrhythmia, Musk, Speech only (InternetAds deliberately excluded). Its Musk and Speech CCD rows are NA; the published values come from `07b`. | `results/tr2/wp5_highdim_{metrics,raw}.csv` |
-| `07_wp5_subsample_ccd.R` | WP5 follow-up: UNCCD-OOS/IOS on n=1000 subsamples of Musk and Speech. | `results/tr2/wp5_subsample_raw.csv` |
 | `07b_wp5_fulldata_ccd.R` | Full-data Musk/Speech UNCCD via parallel radius search + spliced exact-n quantile tables. Supersedes the `07_*` n=1000 subsample workaround. | `results/tr2/wp5_fulldata_raw.csv`, cached `.rds` scores |
 | `08_wp6_pyod_baselines.py` | WP6: fits ECOD, LUNAR, AutoEncoder on all 14 real datasets (5 seeds for the two stochastic methods). | `results/tr2/wp6_scores/*.csv`, `wp6_fit_log.csv` |
 | `08b_wp6_metrics.R` | Computes TPR/TNR/BA/F2 from `08`'s raw PyOD scores, at two label thresholds. | `results/tr2/wp6_pyod_metrics.csv` |
 | `09_wp3_synthetic.R` | WP3 cutoff-sensitivity study, synthetic part (3 settings x 4 CCD-based OS methods, 18-point cutoff-multiplier grid). | `results/tr2/wp3_synthetic_raw.csv`, `wp3_sensitivity_synthetic.csv` |
 | `10_wp3_real.R` | WP3 cutoff-sensitivity study, real-data part (absolute cutoff grid; reproduces the WBC and Vowels manuscript rows as gates). | `results/tr2/wp3_sensitivity_real.csv` |
-| `11_wp3_lines_plots.R` | Renders the WP3 BA/F2-vs-cutoff line plots (one PNG per synthetic setting and per real dataset). | `results/tr2/figures/wp3_{synthetic,real}_*.png` |
 | `11b_wp3_synthetic_f2_plot.R` | Figure S1, synthetic panel: F2-only curves for the three synthetic settings. | `results/tr2/figures/wp3_synthetic_F2.png` |
 | `11c_wp3_real_f2_plot.R` | Figure S1, real-data panel: F2-only curves for WBC, Thyroid and vowels. | `results/tr2/figures/wp3_real_F2.png` |
-| `12_highd_madn_recheck.R` | Re-measures high-d synthetic cells under both the buggy and fixed `std_MADN`, to check whether the "IOS > OOS at high d" claim was a standardization artifact. | `results/tr2/highd_madn_recheck*.csv` |
 | `13_glass_os_regen.R` | Regenerates the four OS-method rows for glass only, using `evaluate()` (fixes the positional-scoring bug on glass's mis-sorted outliers). | `results/tr2/glass_os_regen.csv` |
 | `14_patch_manuscript_tables.ps1` | Replaces TR2's four MCCD rows in its two real-data tables with values regenerated for TR1 (one-time, author-authorized; see the script's own header for scope/authorization notes). | edits outside this repo |
-| `15_os_repro_audit.R` | Audits whether the four OS rows of the manuscript's real-data tables reproduce under the current harness, dataset by dataset. | `results/tr2/os_repro_audit.csv` |
 | `16_speech_ios_clusters.R` | Recovers per-cluster labels to explain why standardized IOS collapses to zero on 57% of Speech. | `results/tr2/speech_ios_clusters.csv` |
-| `17_tiebreak_impact.R` | Bounds how much the tie-breaking rule (legacy vs. manuscript Eq. 10, whole-dataset vs. per-cluster) moves the published real-data OS numbers. | `results/tr2/tiebreak_impact*.csv` |
-| `18_wp2_assumption_checks.R` | WP2 checklist: empty-outbound-neighbourhood handling, and similarity-equivariance of the radius search under a random rigid+scale transform. | `results/tr2/wp2_assumption_checks.csv` |
 | `19_musk_geometry_audit.R` | Provenance audit (Ceyhan checklist item 8), Musk half: confirms the Section S6 numbers come from the same construction as the reported AUC. | `results/tr2/musk_geometry_audit.csv` |
 | `20_wp_collinearity.R` | Ad hoc collinearity-sensitivity sweep (equicorrelated Gaussian clusters, rho in {0, .3, .5, .7, .9}) backing the manuscript's collinearity-stability claim. | `results/tr2/wp_collinearity_{agg,raw}.csv` |
 | `test_outlyingness_density.R` | Regression test for the vicinity-density overflow fix (`(size/R^d)^(1/d)` -> `size^(1/d)/R`). | console only |
