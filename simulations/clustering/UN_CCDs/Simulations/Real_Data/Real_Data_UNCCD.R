@@ -57,7 +57,7 @@ print(paste("seeds x UN-CCDs: the ARI is", ari, "the average silhouette index is
 
 
 ##### user_knowledge data #####
-source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_6d_95%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_5d_95%.RData"))
 method="ascend"
 
 n_col = ncol(user_knowledge)
@@ -81,7 +81,7 @@ print(paste("user_knowledge x UN-CCDs: the ARI is", ari, "the average silhouette
 
 
 ##### wholesale data #####
-source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_8d_95%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_6d_95%.RData"))
 method="ascend"
 
 n_col = ncol(wholesale)
