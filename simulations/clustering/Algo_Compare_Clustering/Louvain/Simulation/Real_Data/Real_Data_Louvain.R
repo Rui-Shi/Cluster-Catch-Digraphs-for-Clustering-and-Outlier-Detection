@@ -8,6 +8,7 @@ library(igraph)
 sigma = 2
 
 ##### iris data #####
+set.seed(1)
 n_col = ncol(iris)
 X = iris[, -n_col] # remove the class column for clustering
 Y = iris[, n_col] # true cluster labels
@@ -40,6 +41,7 @@ print(paste("iris x louvain: the ARI is", ari, "the average silhouette index is"
 
 
 ##### seeds data #####
+set.seed(1)
 n_col = ncol(seeds)
 X = seeds[, -n_col] # remove the class column for clustering
 Y = seeds[, n_col] # true cluster labels
@@ -72,6 +74,7 @@ print(paste("seeds x louvain: the ARI is", ari, "the average silhouette index is
 
 
 ##### user_knowledge data #####
+set.seed(1)
 n_col = ncol(user_knowledge)
 X = user_knowledge[, -n_col] # remove the class column for clustering
 Y = user_knowledge[, n_col] # true cluster labels
@@ -104,6 +107,7 @@ print(paste("user_knowledge x louvain: the ARI is", ari, "the average silhouette
 
 
 ##### wholesale data #####
+set.seed(1)
 n_col = ncol(wholesale)
 X = wholesale[, -n_col] # remove the class column for clustering
 Y = wholesale[, n_col] # true cluster labels
@@ -136,6 +140,7 @@ print(paste("wholesale x louvain: the ARI is", ari, "the average silhouette inde
 
 
 ##### breast_cancer data #####
+set.seed(1)
 n_col = ncol(breast_cancer)
 X = breast_cancer[, -n_col] # remove the class column for clustering
 Y = breast_cancer[, n_col] # true cluster labels
@@ -168,6 +173,7 @@ print(paste("breast_cancer x louvain: the ARI is", ari, "the average silhouette 
 
 
 ##### aggregation data #####
+set.seed(1)
 n_col = ncol(aggregation)
 X = aggregation[, -n_col] # remove the class column for clustering
 Y = aggregation[, n_col] # true cluster labels
@@ -200,6 +206,7 @@ print(paste("aggregation x louvain: the ARI is", ari, "the average silhouette in
 
 
 ##### asymmetric data #####
+set.seed(1)
 n_col = ncol(asymmetric)
 X = asymmetric[, -n_col] # remove the class column for clustering
 Y = asymmetric[, n_col] # true cluster labels
@@ -232,6 +239,7 @@ print(paste("asymmetric x louvain: the ARI is", ari, "the average silhouette ind
 
 
 ##### R15 data #####
+set.seed(1)
 n_col = ncol(R15)
 X = R15[, -n_col] # remove the class column for clustering
 Y = R15[, n_col] # true cluster labels
@@ -264,6 +272,7 @@ print(paste("R15 x louvain: the ARI is", ari, "the average silhouette index is",
 
 
 ##### D31 data #####
+set.seed(1)
 n_col = ncol(D31)
 X = D31[, -n_col] # remove the class column for clustering
 Y = D31[, n_col] # true cluster labels

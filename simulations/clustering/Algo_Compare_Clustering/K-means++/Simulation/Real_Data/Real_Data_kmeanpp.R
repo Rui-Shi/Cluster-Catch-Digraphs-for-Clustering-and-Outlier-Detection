@@ -8,13 +8,14 @@ library(foreach)
 library(doParallel)
 
 ##### iris data #####
+set.seed(1)
 k=3
 n_col = ncol(iris)
 X = iris[, -n_col] # remove the class column for clustering
 Y = iris[, n_col] # true cluster labels
 
 # construct kmean++ for clustering
-kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F)$clusters
+kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F, seed = 1)$clusters
 
 # number of clusters:
 n_clusters = length(unique(kmeanpp_label))
@@ -30,13 +31,14 @@ print(paste("iris x kmeanpp: the ARI is", ari, "the average silhouette index is"
 
 
 ##### seeds data #####
+set.seed(1)
 k=3
 n_col = ncol(seeds)
 X = seeds[, -n_col] # remove the class column for clustering
 Y = seeds[, n_col] # true cluster labels
 
 # construct kmean++ for clustering
-kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F)$clusters
+kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F, seed = 1)$clusters
 
 # number of clusters:
 n_clusters = length(unique(kmeanpp_label))
@@ -52,13 +54,14 @@ print(paste("seeds x kmeanpp: the ARI is", ari, "the average silhouette index is
 
 
 ##### user_knowledge data #####
+set.seed(1)
 k=4
 n_col = ncol(user_knowledge)
 X = user_knowledge[, -n_col] # remove the class column for clustering
 Y = user_knowledge[, n_col] # true cluster labels
 
 # construct kmean++ for clustering
-kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F)$clusters
+kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F, seed = 1)$clusters
 
 # number of clusters:
 n_clusters = length(unique(kmeanpp_label))
@@ -74,13 +77,14 @@ print(paste("user_knowledge x kmeanpp: the ARI is", ari, "the average silhouette
 
 
 ##### wholesale data #####
-k=6
+set.seed(1)
+k=3
 n_col = ncol(wholesale)
 X = wholesale[, -n_col] # remove the class column for clustering
 Y = wholesale[, n_col] # true cluster labels
 
 # construct kmean++ for clustering
-kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F)$clusters
+kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F, seed = 1)$clusters
 
 # number of clusters:
 n_clusters = length(unique(kmeanpp_label))
@@ -96,13 +100,14 @@ print(paste("wholesale x kmeanpp: the ARI is", ari, "the average silhouette inde
 
 
 ##### breast_cancer data #####
+set.seed(1)
 k=2
 n_col = ncol(breast_cancer)
 X = breast_cancer[, -n_col] # remove the class column for clustering
 Y = breast_cancer[, n_col] # true cluster labels
 
 # construct kmean++ for clustering
-kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F)$clusters
+kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F, seed = 1)$clusters
 
 # number of clusters:
 n_clusters = length(unique(kmeanpp_label))
@@ -118,13 +123,14 @@ print(paste("breast_cancer x kmeanpp: the ARI is", ari, "the average silhouette 
 
 
 ##### aggregation data #####
+set.seed(1)
 k=7
 n_col = ncol(aggregation)
 X = aggregation[, -n_col] # remove the class column for clustering
 Y = aggregation[, n_col] # true cluster labels
 
 # construct kmean++ for clustering
-kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F)$clusters
+kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F, seed = 1)$clusters
 
 # number of clusters:
 n_clusters = length(unique(kmeanpp_label))
@@ -140,13 +146,14 @@ print(paste("aggregation x kmeanpp: the ARI is", ari, "the average silhouette in
 
 
 ##### asymmetric data #####
+set.seed(1)
 k=5
 n_col = ncol(asymmetric)
 X = asymmetric[, -n_col] # remove the class column for clustering
 Y = asymmetric[, n_col] # true cluster labels
 
 # construct kmean++ for clustering
-kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F)$clusters
+kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F, seed = 1)$clusters
 
 # number of clusters:
 n_clusters = length(unique(kmeanpp_label))
@@ -162,13 +169,14 @@ print(paste("asymmetric x kmeanpp: the ARI is", ari, "the average silhouette ind
 
 
 ##### R15 data #####
+set.seed(1)
 k=15
 n_col = ncol(R15)
 X = R15[, -n_col] # remove the class column for clustering
 Y = R15[, n_col] # true cluster labels
 
 # construct kmean++ for clustering
-kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F)$clusters
+kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F, seed = 1)$clusters
 
 # number of clusters:
 n_clusters = length(unique(kmeanpp_label))
@@ -184,13 +192,14 @@ print(paste("R15 x kmeanpp: the ARI is", ari, "the average silhouette index is",
 
 
 ##### D31 data #####
+set.seed(1)
 k=31
 n_col = ncol(D31)
 X = D31[, -n_col] # remove the class column for clustering
 Y = D31[, n_col] # true cluster labels
 
 # construct kmean++ for clustering
-kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F)$clusters
+kmeanpp_label = KMeans_rcpp(X, clusters = k, initializer = "kmeans++", verbose = F, seed = 1)$clusters
 
 # number of clusters:
 n_clusters = length(unique(kmeanpp_label))

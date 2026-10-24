@@ -14,6 +14,7 @@ registerDoParallel(cl)
 thresh=2  # the range for threshes: the ratio to cut a edge when comparing its adjacent edges
 
 ##### iris data #####
+set.seed(1)
 n_col = ncol(iris)
 X = iris[, -n_col] # remove the class column for clustering
 Y = iris[, n_col] # true cluster labels
@@ -35,6 +36,7 @@ print(paste("iris x MST: the ARI is", ari, "the average silhouette index is", si
 
 
 ##### seeds data #####
+set.seed(1)
 n_col = ncol(seeds)
 X = seeds[, -n_col] # remove the class column for clustering
 Y = seeds[, n_col] # true cluster labels
@@ -56,6 +58,7 @@ print(paste("seeds x MST: the ARI is", ari, "the average silhouette index is", s
 
 
 ##### user_knowledge data #####
+set.seed(1)
 n_col = ncol(user_knowledge)
 X = user_knowledge[, -n_col] # remove the class column for clustering
 Y = user_knowledge[, n_col] # true cluster labels
@@ -77,6 +80,7 @@ print(paste("user_knowledge x MST: the ARI is", ari, "the average silhouette ind
 
 
 ##### wholesale data #####
+set.seed(1)
 n_col = ncol(wholesale)
 X = wholesale[, -n_col] # remove the class column for clustering
 Y = wholesale[, n_col] # true cluster labels
@@ -98,6 +102,7 @@ print(paste("wholesale x MST: the ARI is", ari, "the average silhouette index is
 
 
 ##### breast_cancer #####
+set.seed(1)
 n_col = ncol(breast_cancer)
 X = breast_cancer[, -n_col] # remove the class column for clustering
 Y = breast_cancer[, n_col] # true cluster labels
@@ -119,6 +124,7 @@ print(paste("breast_cancer x MST: the ARI is", ari, "the average silhouette inde
 
 
 ##### aggregation data #####
+set.seed(1)
 n_col = ncol(aggregation)
 X = aggregation[, -n_col] # remove the class column for clustering
 Y = aggregation[, n_col] # true cluster labels
@@ -140,6 +146,7 @@ print(paste("aggregation x MST: the ARI is", ari, "the average silhouette index 
 
 
 ##### asymmetric data #####
+set.seed(1)
 n_col = ncol(asymmetric)
 X = asymmetric[, -n_col] # remove the class column for clustering
 Y = asymmetric[, n_col] # true cluster labels
@@ -161,6 +168,7 @@ print(paste("asymmetric x MST: the ARI is", ari, "the average silhouette index i
 
 
 ##### R15 data #####
+set.seed(1)
 n_col = ncol(R15)
 X = R15[, -n_col] # remove the class column for clustering
 Y = R15[, n_col] # true cluster labels
@@ -182,6 +190,7 @@ print(paste("R15 x MST: the ARI is", ari, "the average silhouette index is", sil
 
 
 ##### D31 data #####
+set.seed(1)
 n_col = ncol(D31)
 X = D31[, -n_col] # remove the class column for clustering
 Y = D31[, n_col] # true cluster labels
