@@ -275,6 +275,9 @@ nnccd.radi.ascend.one <- function(i, ddx, o.d, n, low.num, env.ave, env.med) {
 # Descending search for centre i: ball members o.d[j:(n-1)]; returns the radius.
 # nn1.val/nn1.idx/nn2.val: each point's nearest and second-nearest distance to
 # any other point (computed once per data set), used to start the full ball in O(n).
+# Table entry m holds the quantiles for m points. At step j the ball has n-j members,
+# so the entry is n-j, i.e. env.*.rev[j+1]. Until 2026-10-23 the code read [j+2], the
+# entry for one point fewer; results of the descending search before then used that.
 nnccd.radi.descend.one <- function(i, ddx, o.d, n, low.num, env.ave.rev, env.med.rev,
                                    nn1.val, nn1.idx, nn2.val) {
   mem <- o.d[1:(n - 1)]                       # members at j = 1
@@ -292,7 +295,7 @@ nnccd.radi.descend.one <- function(i, ddx, o.d, n, low.num, env.ave.rev, env.med
     }
     r <- ddx[i, o.d[j]]
     cur <- nn[j:(n - 1)]
-    if (mean(cur) / r > env.ave.rev[j + 2] & median(cur) / r > env.med.rev[j + 2]) {
+    if (mean(cur) / r > env.ave.rev[j + 1] & median(cur) / r > env.med.rev[j + 1]) {
       return(r)
     }
   }

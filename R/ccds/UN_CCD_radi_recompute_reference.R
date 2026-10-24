@@ -2,6 +2,8 @@
 # incremental nearest-neighbour update (2026-09-23), renamed nnccd.radi.recompute.
 # Kept only as the reference for revision_experiments/tr1/92b_validate_incremental_radi.R.
 # Nothing in the detectors sources this file.
+# Since 2026-10-23 the descending search in UN_CCD.R reads table entry n-j ([j+1]);
+# this copy keeps the old [j+2], so descending radii no longer match it by design.
 
 nnccd.radi.recompute <- function(dx, quantile="lower", method="ascend", low.num, quant, simul=NULL, niter, scores=F){
   
