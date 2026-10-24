@@ -66,27 +66,18 @@ Order of the tr1 steps that depend on each other:
 - `90_wp7_clustering_quality.R` reads the WP8 cluster files uncompressed.
   Run `gunzip -k revision_experiments/results/tr1/wp8/*_clusters.csv.gz`
   first.
-- `18_table_consistency.R` and `39_verify_manuscript_tables.R` read the
-  manuscript sources, which are not in this repository. Set
-  `TR1_MANUSCRIPT_DIR` to the folder that holds them (default: a sibling
-  folder `TR1_Neurocomputing_resubmit`).
 
 Environment variables read by tr1 scripts:
 
 | Variable | Read by | Effect |
 |---|---|---|
-| `WP0_GATE_OUT_CSV` | `13_wp0_gate.R`; set by both `regen_wilt_*_launcher.ps1` | Output CSV (default `results/tr1/wp0_gate_v2.csv`). |
-| `WP0_GATE_TIMEOUT_SEC` | `13_wp0_gate.R`; set by both launchers | Per-cell timeout in seconds (default 600; the launchers set 5400). |
 | `REGEN_FINAL_OUT_CSV` | `28_regen_final.R` | Output CSV (default `results/tr1/regen_final.csv`). |
 | `FINAL_BASE_OUT_CSV` | `33_final_baselines.R` | Output CSV (default `results/tr1/final_baselines.csv`). |
 | `WP2A_SAT_SUFFIX` | `49_wp2a_rk_saturation.R` | Suffix added to its two saturation CSVs. |
 | `WP5_HIGHD_TIMEOUT_SEC` | `84_wp5_highd.R` | Per-cell timeout in seconds (default 540). |
-| `TR1_MANUSCRIPT_DIR` | `18_table_consistency.R`, `39_verify_manuscript_tables.R` | Folder with the manuscript sources. |
-| `RSCRIPT` | both launchers | Rscript executable (default `Rscript.exe`). |
 | `CCD_QUANTILE_*` | every loader of a quantile table | See "Quantile tables" below. |
 
 Several committed result files were written with an output variable set:
-`wp0_gate_v3.csv` and `regen_proposed_*.csv` by `13`, and
 `regen_final_<set>.csv` and `wp2c_rerun_alpha001.csv` by `28`.
 
 ## shared/
@@ -123,7 +114,8 @@ Several committed result files were written with an output variable set:
   `(Y, score)` jointly before counting; the positional helpers slice the
   first `n-n0` / last `n0` rows without checking `Y`, which is silently wrong
   whenever a loader's final `order(...)` call sorts by the wrong column (see
-  `tr1/26_loader_sort_audit.R`: glass and ecoli are MIS-SORTED this way).
+  `dataset_inventory.csv` from `tr1/32_dataset_inventory.R`: glass and ecoli
+  are MIS-SORTED this way).
 
 ## Quantile tables
 
@@ -225,15 +217,13 @@ The pinned PyOD 3.6.1 / torch 2.13.0+cpu Python environment, used by tr2's
   `06_wp5_highdim.R` / `07_wp5_subsample_ccd.R` / `07b_wp5_fulldata_ccd.R`
   and read by `10_wp3_real.R`. Not moved or touched by this reorg.
 - `results/tr1/` -- tr1's result files. Layout:
-  - Flat files: the WP0 gate and real-data regeneration (`wp0_gate_v2.csv`, `wp0_gate_v3.csv`,
-    `regen_*.csv`, `final_baselines.csv`, `final_comparison.csv`,
-    `lof_original8.csv`, `waveform_*.csv`, `diag_waveform_ecoli.csv`,
-    `dataset_inventory.csv`, `row_order_invariance.csv`), and the WP2 files
-    (`wp2a_*`, `wp2b_*`, `wp2c_*`: CSVs and `*_findings.md`).
-    `row_order_invariance.csv` has no writer among the present scripts.
+  - Flat files: the real-data regeneration (`regen_*.csv`,
+    `final_baselines.csv`, `final_comparison.csv`, `lof_original8.csv`,
+    `dataset_inventory.csv`), and the WP2 files (`wp2a_*`, `wp2b_*`,
+    `wp2c_*`: CSVs and `*_findings.md`).
   - `wp3/` .. `wp9/`: one folder per package (see the tr1 tables below).
     `wp6_incr/` holds the incremental radius search checks and the paired
-    UN-/SUN-MCCD timings (`91` with `--resdir=wp6_incr`, `92b`-`96`).
+    UN-/SUN-MCCD timings (`92b`-`96`).
   - `ns_sun_d10/` (`97`) and `su_driver_fix/` (`98`): the simulation-driver
     checks.
   - `table_seed/` (`99`): the quantile-table seed stability check.
@@ -250,8 +240,7 @@ The pinned PyOD 3.6.1 / torch 2.13.0+cpu Python environment, used by tr2's
   `versions.txt`, the converted WP5 data
   (`wp5/data/*.csv`), the WP6 timing inputs (`wp6/data/*.csv`, the rep-1
   data sets `91b` timed), the WP8 cluster files gzipped
-  (`wp8/*_clusters.csv.gz`), and one console log
-  (`wp6_incr/94_ab_run.log`). Not committed: console logs (`*.log`, `*.err`,
+  (`wp8/*_clusters.csv.gz`). Not committed: console logs (`*.log`, `*.err`,
   `*.DONE`, `_logs/`, `logs/`), checkpoint files (`*_done.csv`), smoke-test
   output (`smoke/`), scratch files (`wp7/tmp/`, `wp6/GO`), data a script
   rebuilds (`wp4/data/<set>.csv` from `80`, `wp5/data/raw/` from `84a`,
@@ -280,39 +269,30 @@ the Main output column are under `results/tr1/` unless they start with `R/`
 or `tr1/`. "(not committed)" marks files that are not in git; "console only"
 means the script prints and writes no file.
 
+On 2026-10-24 the scripts and files that no published result rests on were
+removed from `main`: the probes and audits that found the errors in the
+submitted real-data tables (`13`-`20`, `24`-`27`, `29`-`31` and the two wilt
+launchers), console-only checks of intermediate runs (`35`, `37`, `39`, `41`,
+`53`, `61`, `62`), the waveform d = 21 rerun `57`, their outputs, two files no
+script reads or writes (`published_datasets_truth.csv`,
+`row_order_invariance.csv`), superseded runs (`wp0_gate_v*.csv`,
+`regen_proposed_*.csv`, the `wp2b_*` files of the S_min = 0.0625 run, the
+`wp6_incr/91_*` re-timing) and the console log `wp6_incr/94_ab_run.log`. All
+of them are on the branch `tr1-revision-experiments` (commit `b9a77d7`).
+
 ### WP0: real-data regeneration pipeline
 
 | Script | Purpose | Main output |
 |---|---|---|
 | `wp0_mccd_methods.R` | Wires the four MCCD detectors (U-MCCD, SU-MCCD, UN-MCCD, SUN-MCCD) into the harness by appending to `METHOD_REGISTRY` and `REAL_DATA_THRESHOLDS`. Source it after `shared/harness.R`. | n/a (sourced) |
 | `published_realdata_truth.csv` | Input: published TPR/TNR/BA/F2 of the nine methods on the eight original real data sets, transcribed from the submitted supplement tables (288 rows). | n/a (input) |
-| `published_datasets_truth.csv` | Input: published n, d and outlier count of the eight original real data sets. No present script reads it. | n/a (input) |
-| `13_wp0_gate.R` | Runs the four MCCD detectors on real data sets and compares TPR/TNR/BA/F2 with `published_realdata_truth.csv` to 3 decimals; sweeps the S_min readings for SU-MCCD and SUN-MCCD. | `wp0_gate_v2.csv` (default, not committed); through `WP0_GATE_OUT_CSV`: `wp0_gate_v3.csv`, `regen_proposed_small.csv`, `regen_proposed_mid.csv` |
-| `regen_wilt_nn_launcher.ps1`, `regen_wilt_rk_launcher.ps1` | Run `13` on wilt with a 5400 s cell timeout, one for the NND-based pair (UN-MCCD, SUN-MCCD) and one for the RK-based pair (U-MCCD, SU-MCCD). | `regen_proposed_wilt_nn.csv`, `regen_proposed_wilt_rk.csv`; `regen_wilt_*.log` (not committed) |
-| `14_wp0_probe.R` | Two probes on small data sets: SUN-MCCD at the 1% NN table instead of 0.1%, and a constant S_min against the contamination-based readings. | console only |
-| `15_wp0_constant_smin.R` | Extends the constant-S_min probe to hepatitis, ecoli and vowels over a small grid. | console only |
-| `16_wp0_su_highsmin.R` | Tests whether SU-MCCD on glass and stamps reproduces the published rows at S_min above 0.0625. | console only |
-| `17_dataset_audit.R` | Prints n, d, n0 and contamination of the eight original real data sets as `load_real_dataset()` returns them. | console only |
-| `18_table_consistency.R` | Checks BA = (TPR + TNR)/2 over the two supplement result tables (72 method and data set pairs), reading the LaTeX source from `TR1_MANUSCRIPT_DIR`. | console only |
-| `19_baseline_recheck.R` | Reruns three internally inconsistent baseline rows (DBSCAN on wilt, LOF on ecoli and on vertebral). | console only |
-| `20_scale_audit.R` | Reports the feature scale of each data set after the loader's preprocessing. | console only |
 | `21_regen_smin_grid.R` | S_min sweep over {0.01, 0.02, 0.03, 0.05, 0.0625, 0.10, 0.15, 0.20} for SU-MCCD and SUN-MCCD on hepatitis, glass, vertebral, ecoli and stamps. | `regen_smin_grid.csv` |
 | `23_regen_baselines.R` | Label-free DBSCAN, MST, ODIN and iForest rows for the eight original data sets, plus reference rows that reproduce the published drivers (DBSCAN given the label column, oracle eps, per-set MST threshold). One data set per call. | `regen_baselines.csv` |
-| `24_diag_waveform_ecoli.R` | Diagnoses why waveform and ecoli did not reproduce the published rows; one task per call. | `diag_waveform_ecoli.csv` |
-| `25_smin_match.R` | Finds which S_min values of `21`'s grid reproduce the published rows. | console only |
-| `26_loader_sort_audit.R` | Measures the loader's mis-sort of glass and ecoli (sorted by a feature column instead of the label). | console only |
-| `27_positional_vs_correct.R` | Scores the same detector output on glass and ecoli both correctly (`evaluate()`) and positionally (`count_scores2()`), and compares both with the published rows. | console only |
 | `28_regen_final.R` | Runs the four MCCD detectors at one fixed S_min (third argument, default 0.0625). | `regen_final.csv` (default, not committed); through `REGEN_FINAL_OUT_CSV`: `regen_final_{small,vowels,waveform,wilt,new_small,pendigits,thyroid,pageblocks}.csv`, and `wp2c_rerun_alpha001.csv` (the six cells rerun with the repaired 0.1% NN tables, S_min 0.05) |
-| `29_waveform_alpha.R` | Runs UN-MCCD and SUN-MCCD on waveform at the 1% NN table, against the published row and the 0.1% run. | `waveform_alpha.csv` |
-| `30_waveform_scaling.R` | Runs U-MCCD and SUN-MCCD on waveform under raw, z-score and median/MADN scaling. | `waveform_scaling.csv` |
-| `31_headline_impact.R` | Compares the regenerated and published rows of the original eight data sets: change per method, and the winner per data set. | console only |
 | `32_dataset_inventory.R` | Structural inventory (n, d, contamination, sort correctness) of every data set the loader builds; runs no detector. | `dataset_inventory.csv` |
 | `33_final_baselines.R` | The five baselines at the configuration fixed in `BENCHMARK_EXPANSION_RULE.md`, on the eight added data sets. | `final_baselines.csv` |
 | `34_final_summary.R` | Assembles the real-data comparison of 16 data sets by 9 methods. | `final_comparison.csv` |
-| `35_print_tables.R` | Prints `final_comparison.csv` in the row and column order of the manuscript tables. | console only |
-| `37_arith_audit.R` | Checks BA = (TPR + TNR)/2 and rebuilds F2 from TPR, TNR, n and n0 for every row of the 16 by 9 table. | console only |
 | `38_lof_original8.R` | LOF on the original eight data sets with the published settings, scored with `evaluate()`. | `lof_original8.csv` |
-| `39_verify_manuscript_tables.R` | Parses the real-data tables back out of the LaTeX source (`TR1_MANUSCRIPT_DIR`) and compares them with `final_comparison.csv`. | console only |
 
 ### NN multi-quantile generator
 
@@ -325,7 +305,6 @@ means the script prints and writes no file.
 | Script | Purpose | Main output |
 |---|---|---|
 | `40_wp2a_tolerance_sweep.R` | Sweeps the tolerance of the KS-CCD connectivity search in `connected.ksccd.m()` (fixed at 0.01 in the code) through a copy of the function, and records the recovered delta and the flagged set per cell; `--summary`. | `wp2a_tolerance_sweep.csv`, `wp2a_tolerance_summary.csv` |
-| `41_verify_tolerance_sweep.R` | Checks `40`: recomputes stability from the raw rows, compares the tol = 0.01 rows with `final_comparison.csv`, and reruns with the unmodified function. | console only |
 | `42_wp2a_alpha_sweep.R` | Alpha sweep of the four MCCD detectors on the 16 real data sets. RK levels are derived from the raw draws `Kest.m` stored in the original RK tables; NN levels are limited to the tables on disk. Modes `--inventory`, `--summary`, `--cost`. | `wp2a_alpha_sweep.csv`, `wp2a_alpha_summary.csv`, `wp2a_alpha_findings.md`; `cost_probe/` (not committed) |
 | `43_wp2a_direction_sweep.R` | Ascending against descending radius search for UN-MCCD and SUN-MCCD on the real data sets. | `wp2a_direction_sweep.csv`, `wp2a_direction_findings.md` |
 | `44_wp2a_smin_sweep16.R` | S_min sweep for SU-MCCD and SUN-MCCD on all 16 real data sets over a 10-point grid, in chunks with a time budget; `--fill-not-run` records the cells not attempted. | `wp2a_smin_sweep16.csv` |
@@ -336,16 +315,14 @@ means the script prints and writes no file.
 | `50_wp2a_nn_alpha_bigsets.R` | Alpha sensitivity of UN-MCCD and SUN-MCCD on wilt (d = 5, levels 10% and 5%) and pageblocks (d = 10, 1% and 0.1%), the two real data sets whose two NN tables differ; refuses to run on identical tables. | `wp2a_nn_alpha_bigsets.csv` |
 | `51_wp2a_smin_bigfour.R` | Completes `44`: pageblocks, thyroid, waveform and wilt on a reduced 4-point grid, and the missing PenDigits points. | `wp2a_smin_bigfour.csv` |
 | `52_direction_summary.R` | Summarizes `43` from its per-cell CSV, after checking that the direction argument reached the radius search. | `wp2a_direction_summary.csv` |
-| `53_verify_nn_saturation.R` | Checks `48`: table distinctness by content, design completeness, effect sizes, and the replicate noise floor. | console only |
 | `56_verify_d21_duplication.R` | Tests at d = 21 whether the duplicate NN tables came from the generator or from a file copy: one set of draws reduced at two levels, and two independent runs. | `wp2a_d21_duplication.csv`; tables in `R/NN-test_quantile_d21_regen/` (not committed) |
-| `57_waveform_d21_rerun.R` | Reruns UN-MCCD and SUN-MCCD on waveform (d = 21) with a new same-draws 1%/0.1% NN pair and with the shipped table. | `wp2a_waveform_d21_rerun.csv` |
 | `58_gen_d21_chunked.R` | Generates the d = 21, n = 5000 same-draws NN pair in resumable chunks of raw draws, reduced once after pooling. | `R/NN-test_quantile_d21_regen/samedraws/` (not committed) |
 
 ### WP2b: stability
 
 | Script | Purpose | Main output |
 |---|---|---|
-| `45_wp2b_seed_stability.R` | Stability of the four MCCD detectors under the R random-number stream (`--determinism`) and under small data perturbations (jitter of 0.01 SD, leave 1% out; 50 reps), at S_min = 0.05; `--summary`. | `wp2b_determinism_smin005.csv`, `wp2b_seed_stability_smin005.csv`, `wp2b_stability_summary_smin005.csv`; the same names without `_smin005` hold the earlier run at S_min = 0.0625 |
+| `45_wp2b_seed_stability.R` | Stability of the four MCCD detectors under the R random-number stream (`--determinism`) and under small data perturbations (jitter of 0.01 SD, leave 1% out; 50 reps), at S_min = 0.05; `--summary`. | `wp2b_determinism_smin005.csv`, `wp2b_seed_stability_smin005.csv`, `wp2b_stability_summary_smin005.csv`; the earlier run at S_min = 0.0625 (the same names without `_smin005`) is on the archive branch |
 
 ### WP2c: label-free S_min
 
@@ -355,14 +332,12 @@ means the script prints and writes no file.
 | `55_wp2c_simulation_arm.R` | Simulation side: SU-MCCD and SUN-MCCD under the contamination-based S_min rule and each label-free candidate, paired on the same replicates (uniform and Gaussian clusters, d = 5 and 10, four contamination levels, n = 500, 100 reps). | `wp2c_simulation_arm.csv`, `wp2c_simulation_summary.csv` |
 | `59_verify_wp2c.R` | Checks `55` from the raw rows: pairing, paired differences, single-cluster collapse by rule, worst cell. | console only |
 | `60_wp2c_smin_zero_real.R` | S_min = 0 (the detectors' own default) on the 11 real data sets with n < 1500. | `wp2c_smin_zero_real.csv` |
-| `61_aggregate_impact_smin005.R` | Lists the printed aggregate values that change when the real-data S_min moves from 0.0625 to 0.05 (31 of 32 cells are identical). | console only |
 | `78b_rerun_sun_smin_fixed_tables.R` | Reruns the SUN-MCCD S_min cells with the repaired 0.1% NN tables: the 11 small sets at S_min in {0, 0.03, 0.05, 0.0625}, and waveform and PenDigits at {0.01, 0.05, 0.0625, 0.15, 0.30}. Supersedes the SUN-MCCD column of `wp2c_smin_zero_real.csv` and the SUN-MCCD waveform and PenDigits cells of `44` and `51` at those values. | `wp2c_sun_smin_rerun_fixed.csv` |
 
 ### Alpha provenance and NN table repair
 
 | Script | Purpose | Main output |
 |---|---|---|
-| `62_audit_nn_duplicates.R` | Audits NN table duplication per dimension by content (`$average`, `$median`), reporting every dimension. | console only |
 | `63_nn_provenance_recon.R` | For each affected dimension: the level token each method loads, the shipped table's extent, and whether the two shipped files differ. | `wp2a_provenance_targets.csv` |
 | `64_nn_provenance_gen.R` | Generates replicate clouds of fresh NN tables at the candidate levels for each duplicated dimension (one Monte Carlo run reduced at every level). | `wp2a_provenance_gen_manifest.csv`; tables in `R/NN-test_quantile_provenance/` (not committed) |
 | `65_nn_provenance_test.R` | Which level each shipped duplicated table holds: pointwise sign test against the replicate clouds, positive controls at d = 5, 10 and 20, and a behavioural check. | `wp2a_provenance_signtest.csv`, `wp2a_provenance_control.csv`, `wp2a_provenance_behavioural.csv`, `wp2a_provenance_behavioural_summary.csv` (`wp2a_provenance_findings.md` is written by hand from these) |
@@ -438,7 +413,7 @@ MST, ODIN and iForest.
 
 | Script | Purpose | Main output |
 |---|---|---|
-| `91_wp6_runtime.R` | Runtime and memory of the four MCCD detectors and five baselines on uniform two-cluster data (5% contamination): n in {100, 250, 500, 1000, 2000} at d = 10, and d in {5, 10, 50, 100} at n = 500; 10 reps, single thread. Refuses to start unless the machine is idle (`--idle-check`; `--force` overrides). Exports the rep-1 data sets for `91b`. `--summarize` writes per-cell medians and log-log slopes, and summarizes `91b`. Other options: `--grid=`, `--reps=`, `--methods=`, `--resdir=`, `--nn-direction=`, `--smoke`. | `wp6/91_wp6_runtime_raw.csv`, `wp6/91_wp6_runtime_n.csv`, `wp6/91_wp6_runtime_d.csv`, `wp6/91_wp6_slope.csv`, `wp6/91b_wp6_runtime_py_summary.csv`, `wp6/data/*.csv`; `wp6/91_wp6_runtime_done.csv` (not committed). With `--resdir=wp6_incr`: `wp6_incr/91_wp6_runtime_{raw,n,d}.csv` and `wp6_incr/91_wp6_slope.csv`, the UN-MCCD and SUN-MCCD re-timing of 2026-09-23, superseded by `94` |
+| `91_wp6_runtime.R` | Runtime and memory of the four MCCD detectors and five baselines on uniform two-cluster data (5% contamination): n in {100, 250, 500, 1000, 2000} at d = 10, and d in {5, 10, 50, 100} at n = 500; 10 reps, single thread. Refuses to start unless the machine is idle (`--idle-check`; `--force` overrides). Exports the rep-1 data sets for `91b`. `--summarize` writes per-cell medians and log-log slopes, and summarizes `91b`. Other options: `--grid=`, `--reps=`, `--methods=`, `--resdir=`, `--nn-direction=`, `--smoke`. | `wp6/91_wp6_runtime_raw.csv`, `wp6/91_wp6_runtime_n.csv`, `wp6/91_wp6_runtime_d.csv`, `wp6/91_wp6_slope.csv`, `wp6/91b_wp6_runtime_py_summary.csv`, `wp6/data/*.csv`; `wp6/91_wp6_runtime_done.csv` (not committed). With `--resdir=wp6_incr`: `wp6_incr/91_wp6_runtime_{raw,n,d}.csv` and `wp6_incr/91_wp6_slope.csv`, the UN-MCCD and SUN-MCCD re-timing of 2026-09-23, superseded by `94` (on the archive branch) |
 | `91b_wp6_runtime_py.py` | Runtime and memory of the eight WP4 competitors on `91`'s exported data sets, single-threaded; times `fit()` only, memory as the `tracemalloc` peak. | `wp6/91b_wp6_runtime_py_raw.csv`; `wp6/91b_wp6_runtime_py_done.csv` (not committed) |
 | `91c_wp6_runtime_ksqrt.py` | Mutual-kNN and SNN timed at k = round(sqrt(n)), the rule of the accuracy comparison, on the same data sets and with `91b`'s timed region; k = 10 is timed again in the same session as a control (within 3% of `91b`'s medians). These are the published rows; `91b`'s k grid {5,...,30} is kept as a record. | `wp6/91c_wp6_runtime_ksqrt_raw.csv`, `wp6/91c_wp6_runtime_ksqrt_summary.csv` |
 
@@ -450,7 +425,7 @@ as `R/ccds/UN_CCD_radi_recompute_reference.R`:
 |---|---|---|
 | `92b_validate_incremental_radi.R` | Checks that the incremental search returns exactly the radii of the per-step recomputation, in both directions, on synthetic and real data, and reports the speed-up. | `wp6_incr/92b_validate.csv` |
 | `93_validate_incremental_extended.R` | Extended check: radii over 5 seeds, d = 2-100 and six generators, both directions; end-to-end UN-MCCD and SUN-MCCD output on the 16 real data sets and the four above d = 21. | `wp6_incr/93_validate_extended.csv` |
-| `94_wp6_ab_old_vs_new.R` | Paired timing: each replicate times the per-step and the incremental search inside UN-MCCD and SUN-MCCD on the same data (cells and seeds of `91`, alternating order), and times the radius search alone. Supersedes the `wp6_incr/91_*` re-timing, which ran on another day. | `wp6_incr/94_ab_raw.csv`, `wp6_incr/94_ab_run.log` |
+| `94_wp6_ab_old_vs_new.R` | Paired timing: each replicate times the per-step and the incremental search inside UN-MCCD and SUN-MCCD on the same data (cells and seeds of `91`, alternating order), and times the radius search alone. Supersedes the `wp6_incr/91_*` re-timing, which ran on another day. | `wp6_incr/94_ab_raw.csv`; `wp6_incr/94_ab_run.log` (not committed) |
 | `95_wp6_incr_summary.R` | UN-MCCD and SUN-MCCD runtime rows from `94`'s paired run (arm `impl == "new"`, `part == "detector"`) with `91`'s definitions: median and CV of time and memory per cell, and log-log slopes over the d = 10 sweep. Also summarizes `96`. | `wp6_incr/95_ab_runtime_n.csv`, `wp6_incr/95_ab_runtime_d.csv`, `wp6_incr/95_ab_slope.csv`, `wp6_incr/95_direction_summary.csv` |
 | `96_wp6_direction_timing.R` | Ascending against descending radius search of UN-MCCD and SUN-MCCD at n = 500, d = 10 (cell and seeds of `91`), 10 reps, alternating order. | `wp6_incr/96_direction_raw.csv` |
 
@@ -483,7 +458,7 @@ The RK tables were not rebuilt, so U-MCCD and SU-MCCD are not checked.
 ### tr1 documents
 
 - `REGEN_SPEC.md` -- rules and output schema for the real-data regeneration
-  (`13`-`39`).
+  (`21`-`38`).
 - `BENCHMARK_EXPANSION_RULE.md` -- inclusion rule for the 16 real data sets
   and the baseline configuration, fixed before any result was computed.
 - `REGENERATION_REPORT.md` -- report of the 16 by 9 regeneration as of
