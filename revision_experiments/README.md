@@ -1,6 +1,6 @@
 # revision_experiments
 
-This directory is shared by two paper revisions that both build on the same
+This directory is shared by three paper revisions that all build on the same
 CCD/MCCD codebase (`data/`, `methods/`, `R/`, `simulations/` at the repo
 root):
 
@@ -8,7 +8,11 @@ root):
   and Mutual Catch Digraphs" (NEUCOM-D-26-15191).
 - **tr2/** -- Pattern Recognition, "Outlyingness Scores with Cluster Catch
   Digraphs..." (PR-D-26-05767).
-- **shared/** -- infrastructure both projects source.
+- **tr3/** -- the UN-CCD clustering paper, "Clustering with Uniformity- and
+  Neighbor-Based Random Geometric Graphs" (rejected by KBS,
+  KNOSYS-D-26-08010). Drivers and reproduction gate; see `tr3/README.md`.
+  Takes only `append_result()`/`has_result()` from `shared/harness.R`.
+- **shared/** -- infrastructure the projects source.
 
 Reorganized 2026-08-30 into a full split: each project's scripts and docs now
 live in their own subdirectory (`tr1/`, `tr2/`), not just their `results/`.
