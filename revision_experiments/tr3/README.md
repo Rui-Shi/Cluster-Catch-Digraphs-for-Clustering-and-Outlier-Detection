@@ -288,7 +288,7 @@ What changed, and why
    d_(i*) exactly. A first run with Eps = d_(i*) (the files before the factor) gave the same ARI, Sil
    and k_hat in all nine cells as the runs with the factor, to 17 digits; those files are in
    `results/tr3/_before_eps_margin_20261023/`.
-5. Louvain (sigma = 2) and MST (thresh = 2): only the seed. All five methods get the loader's data.
+5. Louvain (sigma = 2) and MST (thresh = 2): only the seed. (MST: a label-free threshold rule was tried the same day and not adopted; threshold 2 stays, see "MST threshold rule (2026-10-23)" at the end of this file.) All five methods get the loader's data.
    The loader z-scores (`scale`) iris, seeds, user_knowledge, wholesale, breast_cancer and asymmetric;
    it leaves aggregation, R15 and D31 raw (the `apply(X, 2, scale)` lines are commented out). Louvain
    therefore uses sigma = 2 on z-scores for the six scaled sets and on raw coordinates for the three
@@ -360,3 +360,59 @@ Follow-up of the same day (DBSCAN margin, driver changes)
 - `00_check_settings.R` passes (120 simulation drivers, 27 real-data blocks), and `20_gate.R` passes,
   87 of 87 (`_logs/check_settings_after_baseline_followups_20261023.log`,
   `_logs/gate_after_baseline_followups_20261023.log`).
+
+## MST threshold rule (2026-10-23)
+
+Tried and not adopted. The paper keeps MST with the fixed threshold 2 on every data set (the setting of
+the original script), citing Zahn's ratio criterion. How 2 was first chosen is not recorded: the
+supplement says it was "chosen after a trial-and-error process ... best overall performance", and nobody
+remembers the criterion, so class labels may have been used.
+
+What was done
+- The authors specified a label-free rule before any run: on each data set, the threshold is the value of
+  `seq(1.00, 3.00, by = 0.01)` (201 values) that maximizes the average silhouette index of the MST partition,
+  `mean(silhouette(label, dist(X))[,3])`; ties go to the first maximum (`which.max`); a partition with a
+  single cluster gets Sil = -Inf for the selection (so does k = n, where `cluster::silhouette()` returns
+  NULL; neither was ever chosen). No class labels.
+- The rule was implemented in `Real_Data_MST_silmax_cutoff.R` (a copy of `Real_Data_MST_fix_cutoff.R` with
+  `thresh_grid`, `mst_prep()`, `mst_cut()` and `mst_sil()` in the header; the pruning step split from
+  `MST_Clustering()` so that the adjacent-edge averages are computed once per data set). Its labels were
+  `identical()` to `MST_Clustering()`'s at the chosen threshold in every block, and on iris (all 201 grid
+  values), seeds (51), R15 (5), asymmetric (4) and D31 (3). Two runs on all nine data sets (two processes,
+  separate part files, exit codes 0 and 0) gave byte-identical files: ARI, Sil, k_hat and the threshold agree
+  to 17 digits. The script is kept as an exploratory file, with a header that says it was not adopted.
+- Result: it over-segments. Threshold, number of clusters and ARI / Sil, against threshold 2:
+
+| data set | thresh (Sil-max) | k_hat, thresh 2 | k_hat, Sil-max | ARI / Sil, thresh 2 | ARI / Sil, Sil-max |
+|---|---|---|---|---|---|
+| iris | 1.03 | 6 | 74 | 0.530 / -0.145 | 0.045 / 0.184 |
+| seeds | 1.03 | 4 | 101 | 0.000 / -0.364 | 0.036 / 0.179 |
+| user_knowledge | 1.04 | 3 | 130 | 0.004 / -0.089 | 0.021 / 0.168 |
+| wholesale | 1.00 | 13 | 227 | 0.005 / -0.491 | -0.000 / 0.103 |
+| breast_cancer | 1.00 | 6 | 226 | 0.003 / -0.276 | 0.017 / 0.020 |
+| aggregation | 1.00 | 12 | 404 | 0.786 / -0.081 | 0.014 / 0.212 |
+| asymmetric | 1.04 | 87 | 465 | 0.344 / -0.277 | 0.014 / 0.341 |
+| R15 | 1.00 | 65 | 282 | 0.536 / -0.071 | 0.077 / 0.346 |
+| D31 | 1.00 | 276 | 1495 | 0.511 / -0.199 | 0.032 / 0.332 |
+
+  The chosen threshold is the lower grid edge (1.00) on 5 of the 9 data sets (wholesale, breast_cancer,
+  aggregation, R15, D31); none is at 3.00. The grid was not widened. The undefined-silhouette grid values were
+  22 (iris), 41 (seeds), 57 (user_knowledge) and 0 on the other six.
+- Files kept for the record (`results/tr3/`): `real_baselines_fixed_mstrule_MST_run1.csv`, `_run2.csv` and
+  their `_params.csv` (param `thresh`), logs `_logs/real_baselines_fixed_mstrule_MST_run<1|2>.log`, exit
+  codes `_logs/real_baselines_fixed_mstrule_MST_exitcodes.txt`. The data of this experiment are in these
+  files only; they are not in `real_baselines_fixed*.csv`.
+
+What the repository has now
+- `Real_Data_MST_fix_cutoff.R` is the committed version (`thresh = 2`), unchanged by this experiment, and
+  `13_real_baselines.R` is unchanged too (the driver changes made for the experiment, a `thresh` params row
+  and a log field, were reverted: the committed script has no `thresh_op`).
+- The MST rows of `real_baselines_fixed.csv`, `real_baselines_fixed_run2.csv` and the params file are the
+  threshold-2 ones as before (restored from `_before_mst_rule_20261023/`, byte-identical to the files before
+  the experiment). A new MST run with the committed script, `real_baselines_fixed_mst2_after_revert_MST_run1.csv`
+  (exit code 0), equals the MST rows of `real_baselines_fixed.csv` in ARI, Sil, k_hat as 17-digit text on all
+  nine data sets. The other methods' rows were never changed.
+- `00_check_settings.R` and `20_gate.R` pass after the revert (`_logs/check_settings_after_mst_revert_20261023.log`,
+  `_logs/gate_after_mst_revert_20261023.log`).
+- The paper's Section S2 still says the threshold was chosen by trial and error; the text is the authors' to
+  change (Zahn's ratio criterion). The `.tex` files were not touched.
