@@ -153,7 +153,7 @@ print(paste("aggregation x UN-CCDs: the ARI is", ari, "the average silhouette in
 
 
 ##### asymmetric data #####
-source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_2d_80%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_2d_85%.RData"))
 method="ascend"
 
 n_col = ncol(asymmetric)
