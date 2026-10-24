@@ -131,6 +131,28 @@ and changing any of them is the authors' decision:
 - the "or" combination of the mean and median NND tests, where the paper
   describes Holm.
 
+## Descending search index (2026-10-24)
+
+Commit ff343d6 (cherry-picked from 3289f34): `nnccd.radi.descend.one` compares a ball of n-j points with
+`env.*.rev[j + 1]`, the quantile entry for n-j points (it read `[j + 2]`, the entry for one point fewer). Only the
+descending search (d >= 10) changes; ascending searches, all real-data UN-CCD blocks and the 2d to 5d cells are unaffected.
+`UN_CCD_radi_recompute_reference.R` keeps the old index as the historical reference.
+- Measured first, paired (same data and tables, only the index changed; the function overridden in the session): 36 cells
+  (n = 50, 100, 200) with 500 replicates, and the Gaussian n = 500 cells with the first 50 replicates. The as-is arm equalled
+  the published logs to 15 digits in all 36 cells. Scripts and raw outputs are outside the repo (the session's scratchpad `offbyone\`).
+- Rerun of the 48 UN-CCD cells with d = 10, 20 (Gaussian and Uniform, n = 50, 100, 200, 500, 2/3/5 clusters, 500 replicates) with
+  `10_sim.R UN-CCDs <dist> <d> <n>` (variant `published`; `TR3_CORES` 10 to 24, the results do not depend on it). Logs:
+  `_logs/descend_fix_*_20261023.log`. The old rows and files are in `_before_descend_fix_20261023/` (the n = 50 `published` rows
+  of these four folders were removed from `sim_replicates.csv` and `sim_done.csv` before the rerun; the `scripts-0.1%` rows,
+  also descending with the old index, were left). For the 42 cells the paired run covered, the rerun equals the paired
+  "fixed" arm replicate by replicate (ARI, Sil, k_hat exactly).
+- Against the published values at 3 decimals, 44 of the 48 cells change in at least one of ARI, Sil, SR. Median absolute change
+  0.003 (ARI), 0.001 (Sil), 0.004 (SR); the largest is uniform d = 20, n = 200, 5 clusters: ARI 0.750 to 0.856, Sil 0.460 to 0.490,
+  SR 0.284 to 0.516. At 3 decimals ARI rises in 24 cells, falls in 12 and is unchanged in 12.
+- `20_gate.R` holds no d >= 10 simulation cell and no descending real-data cell, so its expected values do not change; after the
+  fix `00_check_settings.R` passes and the gate passes, 87 of 87 (`_logs/*_after_descend_fix_20261024.log`).
+- Not rerun: the noise experiment (d = 3 and 10, no driver) and the alpha sweep's config A rows for seeds and breast_cancer (descending; superseded by config S).
+
 ## Gate
 
 2026-10-18: `20_gate.R` passes, 87 of 87 comparisons.
