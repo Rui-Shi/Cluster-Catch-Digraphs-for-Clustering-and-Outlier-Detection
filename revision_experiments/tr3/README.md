@@ -42,6 +42,7 @@ until the gate passes, and each one gets a `*_PROTOCOL.md` here before it runs.
 | `20_gate.R` | Compares the drivers with the original logs, the knit output and the manuscript. |
 | `ITEN500_PROTOCOL.md`, `21_iteN500_check.R` | Variant `iteN500`: RK-CCDs at d = 3, n = 500 with 500 repetitions, and its checks. |
 | `13_real_baselines.R` | Baseline rows of the real-data table (DBSCAN, MST, K-means++, Spectral, Louvain): runs each data-set block of the original script verbatim, once or over seeds. |
+| `23_noise.R` | The noise experiment (d = 3, 10; l = 3% to 20%), written 2026-10-24 because the original driver is lost. Its rows are in the paper; it does not reproduce the old table, see "Noise experiment (2026-10-24)". |
 | `ALPHA_PROTOCOL.md`, `14_alpha_tables.R`, `15_real_alpha.R`, `16_alpha_summary.R` | One α for UN-CCDs on all real data sets (20% to 1%): generates the missing NN tables, runs every cell, checks the reproduction and scores the levels. |
 
 ## Running
@@ -151,7 +152,9 @@ descending search (d >= 10) changes; ascending searches, all real-data UN-CCD bl
   SR 0.284 to 0.516. At 3 decimals ARI rises in 24 cells, falls in 12 and is unchanged in 12.
 - `20_gate.R` holds no d >= 10 simulation cell and no descending real-data cell, so its expected values do not change; after the
   fix `00_check_settings.R` passes and the gate passes, 87 of 87 (`_logs/*_after_descend_fix_20261024.log`).
-- Not rerun: the noise experiment (d = 3 and 10, no driver) and the alpha sweep's config A rows for seeds and breast_cancer (descending; superseded by config S).
+- The noise experiment (d = 3 and 10) was rerun with a new driver whose rows replace the published table; see
+  "Noise experiment (2026-10-24)".
+- Not rerun: the alpha sweep's config A rows for seeds and breast_cancer (descending; superseded by config S).
 
 ## Gate
 
@@ -438,3 +441,69 @@ What the repository has now
   `_logs/gate_after_mst_revert_20261023.log`).
 - The paper's Section S2 still says the threshold was chosen by trial and error; the text is the authors' to
   change (Zahn's ratio criterion). The `.tex` files were not touched.
+
+## Noise experiment (2026-10-24)
+
+Result: **the published noise table is not reproduced. On 2026-10-24 the authors decided to adopt this driver's rows for the
+paper** (d = 3 from `23_noise.R 3 published`; d = 10 from `23_noise.R 10 published`, the committed code). Both manuscript tables
+(`tab:Noise_Level_Clustering`, `tab:Noise_Level_Clustering_Apdx`), the settings in S1.3 and the text quoting the rows were updated, in red.
+
+New rows (ARI / Sil / SR at l = 3, 5, 10, 20%; 1000 replicates, 3 decimals):
+- d = 3: 0.973 / 0.617 / 0.998; 0.974 / 0.618 / 0.998; 0.975 / 0.619 / 0.998; 0.965 / 0.616 / 0.985.
+- d = 10: 0.953 / 0.384 / 0.971; 0.947 / 0.384 / 0.955; 0.948 / 0.383 / 0.958; 0.947 / 0.385 / 0.955.
+
+Why these settings (all are choices of this driver, not of the original run, which is lost; they are now stated in the paper):
+r_noise = 7 and the noise ball centred on the mean of the cluster centres (the demo figures suggest about 6; the d = 3, 20% row
+needs 7 or more to stay near the old values, d = 10 does not depend on it); cluster sizes 66/67/67 (the non-noise 3-cluster
+rule); ARI, Sil and the choice of k on the 200 cluster points only (the published Sil is flat in l, which the all-points
+silhouette does not give). The generator's noise branch (`uniform_cls`, `Gaussian_cls`) adds `colMeans(centers)` to an
+n_noise x d matrix by recycling, which misplaces the noise cloud unless all coordinates of the mean are equal (d = 3 and 10 here:
+they are not); `23_noise.R` draws the same random numbers but centres the noise with `sweep()` (`center = recycle` gives the
+generator's behaviour). `R/general_functions/` was not edited. The details of the search and the failed validation follow.
+
+- Driver: none exists. Searched: `simulations/clustering/`, `revision_experiments/`, all of `git log --all` (names with
+  noise/cont/contamination), SLURM logs. The only noise drivers (`simulations/outlier_detection/*/Simulation/Noise/`) belong to the
+  outlier-detection papers (contamination 5%, success and false-positive rates). `Gaussian_cls(noise = TRUE, r_noise, n_noise)`
+  in `R/general_functions/Uni-Gau_cls.R` is the generator, and no committed script calls it with `noise = TRUE`.
+  `23_noise.R` was written from Supplement S1.3. `CLUSTERING_REPRODUCTION_GUIDE.md` section 8.4 already noted the gap.
+- Settings. From S1.3: d = 3, 10; l = 3, 5, 10, 20% (n_noise = round(200 l)); 200 cluster points; 3 equal clusters; centres
+  (3,..,3), (9,3,..,3), (3,9,3,..,3); covariance Delta I, 1000 repetitions. From the non-noise driver
+  (`Gaussian/<d>d/<d>d_235clusters_n200.R`, via `settings_simulation.csv`): seed 2024, sigma 1, radius factor U[0.8, 1.2],
+  sizes 66/67/67, table `NN-test-simul_3d_90%` ascending at d = 3, `NN-test-simul_10d_99%` descending at d = 10, low.num 3,
+  niter 1000. Not stated anywhere, chosen: r_noise = 7, the noise ball centred on the mean of the cluster centres (`sweep`; the
+  generator as written recycles that vector down an n_noise x d matrix and misplaces the noise, available as `center = recycle`),
+  and the scoring (below). The 2-d demo figures suggest r_noise of about 6.
+- Scoring. The published Sil is flat in l (0.619 to 0.617 at d = 3) and ARI barely moves. The clustering runs on all points, but only
+  scoring on the 200 cluster points reproduces that: `nnccd.silhouette(ind = 1:200)` for the choice of k and for Sil, and ARI on the
+  200 points. With the silhouette over all points Sil falls from 0.60 to 0.51 (d = 3) as l goes 3% to 20%; with the noise as a fourth
+  class ARI falls to 0.72. Both are in the CSV (`sil_all`, `k_all`); no committed script uses `ind`, so this is an inference.
+- Validation (1000 replicates per cell, `results/tr3/noise_replicates.csv`; seeds of the published run unknown, so the criterion is
+  Monte Carlo error: z = difference / (SE sqrt 2), SE from the replicates, the published run taken to have the same size).
+  Same data for old and fixed index.
+
+  | cell | ARI mine (pub, z) | Sil mine (pub, z) | SR mine (pub, z) |
+  |---|---|---|---|
+  | d = 3, 3% | 0.973 (0.977, -2.0) | 0.617 (0.619, -1.1) | 0.998 (1.000, -1.0) |
+  | d = 3, 5% | 0.974 (0.977, -1.8) | 0.618 (0.619, -0.7) | 0.998 (1.000, -1.0) |
+  | d = 3, 10% | 0.975 (0.975, +0.1) | 0.619 (0.618, +0.9) | 0.998 (0.998, 0.0) |
+  | d = 3, 20% | 0.965 (0.971, -1.9) | 0.616 (0.617, -0.6) | 0.985 (0.982, +0.6) |
+  | d = 10 old index, 3% | 0.950 (0.959, -2.2) | 0.383 (0.386, -1.8) | 0.965 (0.973, -1.0) |
+  | d = 10 old index, 5% | 0.949 (0.961, -3.0) | 0.384 (0.384, +0.1) | 0.961 (0.977, -1.8) |
+  | d = 10 old index, 10% | 0.946 (0.954, -1.8) | 0.383 (0.384, -0.7) | 0.956 (0.960, -0.4) |
+  | d = 10 old index, 20% | 0.946 (0.947, -0.3) | 0.385 (0.385, -0.1) | 0.955 (0.942, +1.4) |
+
+  Verdict: not reproduced. ARI is below the published value in 7 of 8 cells (z -1.8 to -3.0 in 6), and at d = 10 the published SR
+  falls from 0.977 to 0.942 with l while this run stays near 0.96. Differences are small in size (ARI up to 0.012, SR up to 0.016).
+  Also the published d = 3, 3% row is above the published no-noise 3-cluster cell (0.972 / 0.618 / 0.996, `slurm-1451714.out`). The
+  d = 10 results hardly depend on r_noise (3% to 20% rows with r_noise 4 to 10, ARI 0.94 to 0.95 in all, old index); at d = 3 the 20%
+  row needs r_noise of 7 or more to match (r_noise 3: ARI 0.91). Exploration grid (r_noise 3 to 10, both centrings at d = 3, r_noise
+  4 to 10 asis at d = 10) was run with a scratch script outside the repo and is not saved here.
+- For information only, not for the manuscript: the same data with the committed (fixed) index, d = 10, l = 3/5/10/20%:
+  ARI 0.953 / 0.947 / 0.948 / 0.947, Sil 0.384 / 0.384 / 0.383 / 0.385, SR 0.971 / 0.955 / 0.958 / 0.955. Paired against the old
+  index, k_hat differs in 16 to 20 of 1000 replicates per level and the mean ARI changes by +0.002, -0.002, +0.001, +0.001 (SE 0.0017):
+  the index fix does not move the d = 10 noise row beyond Monte Carlo error.
+- Runs: `23_noise.R 3 published`, `23_noise.R 10 oldindex`, `23_noise.R 10 published` (defaults r_noise 7, sweep, 1000);
+  49 s, 5.1 min, 5.1 min on 24 cores. Logs `_logs/noise_d{3,10}_*_20261024.log`. The old index is an override of
+  `nnccd.radi.descend.one` in the global environment (`[j + 2]`), checked on the workers by a column in the output; `R/ccds/` is untouched.
+- An exact reproduction of the old table would need what the original run did (r_noise and centre, the scoring, the cluster
+  sizes and the seed); that is unknown, so the authors adopted this driver's rows instead (see the top of this section).

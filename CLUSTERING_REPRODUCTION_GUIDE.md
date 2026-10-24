@@ -21,7 +21,7 @@ Section numbers such as "Table S4" refer to that manuscript and supplement.
   2. `data/clustering/Real_Data_Collection.R` changes into a folder that no longer exists.
      Point it at `data/clustering/`.
   3. Four R packages were missing on this machine (installed 2026-10-19): `readxl` (the real-data loader), and `factoextra`, `ClusterR` and `kernlab` (the baselines).
-- The noise experiment (main-text noise table, Supplement S1.3) has no driver in the repository, and no figure script is in the repository (section 2).
+- The noise experiment (main-text noise table, Supplement S1.3) had no driver; `revision_experiments/tr3/23_noise.R` (2026-10-24) was written for it and its rows are now in the paper, but it does not reproduce the old table. No figure script is in the repository (section 2).
 - Several settings in the drivers differ from what the paper says (section 7).
   Reproduce the code as it is first; decide afterwards which side to change.
 
@@ -43,7 +43,7 @@ All paths are relative to the clone root.
 | RK-CCDs, Gaussian: Table S7, figure | `simulations/clustering/RK_CCDs/Simulations/Gaussian/<d>d/...` | same |
 | UN-CCDs, Gaussian: Table S8, figure | `simulations/clustering/UN_CCDs/Simulations/Gaussian/<d>d/...` | same |
 | Runtime table (`tab:runtime_comparison`, d = 5) | none; the values are the `Time difference` lines of the d = 5 uniform logs (KS-CCDs: the 145xxxx runs). Since 2026-10-18 all twelve match to two decimals. Before that, RK-CCDs n = 500 and KS-CCDs n = 200 and 500 were hours rounded to two decimals, then times 60 | `simulations/clustering/*_CCDs/Simulations/Uniform/5d/slurm-*.out` |
-| Noise experiment (`tab:Noise_Level_Clustering`, S1.3) | **no driver in the repository** | not in the repository |
+| Noise experiment (`tab:Noise_Level_Clustering`, S1.3) | none; rewritten as `revision_experiments/tr3/23_noise.R` (not a reproduction) | `revision_experiments/tr3/README.md`, "Noise experiment" |
 | Real data (`Real_Data_Result_Clustering`), CCD rows | `simulations/clustering/{KS,RK,UN}_CCDs/Simulations/Real_Data/Real_Data_{KSCCD,RKCCD,UNCCD}.R` | `Real_Data_KSCCD.html` (knit output) for KS-CCDs; none kept for RK and UN |
 | Real data, baseline rows | `simulations/clustering/Algo_Compare_Clustering/{DBSCAN,K-means++,Louvain,MST,Spectral_Clustering}/Simulation/Real_Data/*.R` | the `.html` knit output next to each script (from before the baseline fixes of 2026-10-23; the new numbers are in `revision_experiments/results/tr3/real_baselines_fixed.csv`, see `revision_experiments/tr3/README.md`) |
 | Line-plot figures (`Lineplots_Clustering_*.png`) | not in the repository; `G:\Submissions\TR3\TR3_10182026\figure_unused\Line_Plots_Clustering.ipynb` draws the same six figures (it saves them as `..._LargerFont.png`) | |
@@ -299,11 +299,13 @@ Each prints one line per data set: ARI, average silhouette and number of cluster
 
 ### 8.4 The noise experiment
 
-It has to be written.
-The supplement (S1.3) gives the settings: three Gaussian clusters with centres (3, ..., 3), (9, 3, ..., 3), (3, 9, 3, ..., 3), covariance Δ·I with Δ ~ U(0.8, 1.2), 200 cluster points plus 3%, 5%, 10% or 20% noise "randomly distributed within the scope of the entire dataset", d = 3 and 10, 1000 repetitions, UN-CCDs only.
-`Gaussian_cls(..., noise = TRUE, r_noise, n_noise)` generates such data, but the paper does not give `r_noise`, the level α, or the search direction used; ask the authors before treating any rerun as a reproduction.
-Note that the noise branch of both generators adds the mean centre with `+ center_noise` to an `n_noise` × d matrix; R recycles that vector down the columns, so unless all coordinates of the mean centre are equal the noise cloud is not centred where intended.
-`sweep(noise_data, 2, center_noise, "+")` does what was meant.
+The original driver is lost. `revision_experiments/tr3/23_noise.R <d> [published|oldindex] [r_noise] [center] [iteN]` (2026-10-24) replaces it; the authors adopted its rows for the paper.
+Settings from the supplement (S1.3): three Gaussian clusters with centres (3, ..., 3), (9, 3, ..., 3), (3, 9, 3, ..., 3), covariance Δ·I with Δ ~ U(0.8, 1.2), 200 cluster points plus 3%, 5%, 10% or 20% noise, d = 3 and 10, 1000 repetitions, UN-CCDs only.
+Taken from the non-noise Gaussian n = 200 drivers: seed 2024, sizes 66/67/67, the 3d_90% table (ascending) and 10d_99% table (descending).
+Chosen by the driver and stated in the paper: noise uniform in a ball of radius 7 around the mean of the cluster centres; ARI, Sil and the choice of k on the 200 cluster points only.
+It did not reproduce the old table within Monte Carlo error (details in `revision_experiments/tr3/README.md`, "Noise experiment (2026-10-24)").
+The noise branch of both generators (`uniform_cls`, `Gaussian_cls`) adds the mean centre with `+ center_noise` to an `n_noise` × d matrix; R recycles that vector down the columns, so unless all coordinates of the mean centre are equal the noise cloud is not centred where intended (here the mean is (5, 5, 3, ..., 3)).
+`23_noise.R` draws the same random numbers as `Gaussian_cls(noise = TRUE)` but centres the noise with `sweep(noise_data, 2, center_noise, "+")`; `center = recycle` reproduces the generator as it is. The generators themselves were not edited.
 
 ---
 
@@ -322,5 +324,5 @@ All checks were run on 2026-10-18 with R 4.6.1 on Windows, from this clone, with
 | RK-CCDs d = 3, n = 500 | `iteN = 50` in the original runs, confirmed by the script and the run times. Rerun with 500 on 2026-10-18: replicates 1-50 of the 2-cluster data reproduce both logs to 15 digits |
 | Real data, all nine data sets and all eight methods (2026-10-19) | CCDs: every paper cell except UN-CCDs on D31 (0.749 / 0.444 / 31 against 0.799 / 0.474 / 31, cause open). Baselines: several paper cells differ from the code. Details in `revision_experiments/tr3/README.md`, "Real-data rerun". The three UN-CCD cells whose table changed on 2026-10-23 (knowledge 0.147 / 0.165 / 2, wholesale -0.006 / 0.112 / 2, asymmetric 0.883 / 0.604 / 5) differ from the paper's table and were rerun; they equal the original script blocks and the α sweep to 15 digits. The seeds and breast cancer UN-CCD cells were rerun ascending on 2026-10-23 (seeds 0.239 / 0.286 / 2, breast cancer 0.049 / 0.034 / 34; before: 0.509 / 0.467 / 2 and 0.075 / 0.208 / 2); they equal the script blocks and the sweep's config S, level 5, to 15 digits |
 
-Not checked: the noise experiment (no driver). The 2026-10-18 audit reran n = 50 in all 30 simulation folders; the larger cells were compared with their logs, not rerun.
+Not checked: the noise experiment (the original driver is lost; see 8.4). The 2026-10-18 audit reran n = 50 in all 30 simulation folders; the larger cells were compared with their logs, not rerun.
 The exact matches show that the code changes made since the original runs (the `here::here()` paths, the on-the-spot table loader, and the incremental radius search) did not change these results.
