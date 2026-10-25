@@ -44,6 +44,7 @@ until the gate passes, and each one gets a `*_PROTOCOL.md` here before it runs.
 | `13_real_baselines.R` | Baseline rows of the real-data table (DBSCAN, MST, K-means++, Spectral, Louvain): runs each data-set block of the original script verbatim, once or over seeds. |
 | `23_noise.R` | The noise experiment (d = 3, 10; l = 3% to 20%), written 2026-10-24 because the original driver is lost. Its rows are in the paper; it does not reproduce the old table, see "Noise experiment (2026-10-24)". |
 | `24_alpha_supplement.R` | Supplement Section S2.1 (2026-10-25): writes `results/tr3/supp_alpha.tex`, the rows of the α-sweep table (config A, seeds from config S, the paper's current settings) and of the shipped-against-regenerated table (configs A and G, seeds left out), from `real_alpha.csv`; checks that the rule's cells equal `real.csv`. Nothing is rerun. |
+| `25_greedy_prefix.R` | Real data (2026-10-25): UN- or RK-CCDs with the shipped first greedy selection (`greedy2`, every point ranked) or stopped at the first covering prefix; see "Greedy selection as the code runs it (2026-10-25)". |
 | `22_runtime.R`, `22_runtime_run.ps1`, `22_runtime_monitor.ps1`, `22_runtime_summary.R` | Re-timing of `tab:runtime_comparison` (d = 5, uniform, n = 50 to 500, three methods) on this machine, with a load guard; see "Runtime comparison (2026-10-24)". |
 | `ALPHA_PROTOCOL.md`, `14_alpha_tables.R`, `15_real_alpha.R`, `16_alpha_summary.R` | One α for UN-CCDs on all real data sets (20% to 1%): generates the missing NN tables, runs every cell, checks the reproduction and scores the levels. |
 
@@ -572,3 +573,27 @@ launcher (Rscript.exe, cmd.exe, x64 Rscript.exe) as foreign, which the monitor n
 - The ordering UN < RK < KS holds in all four columns. At n = 500: RK/UN = 20, KS/UN = 361, KS/RK = 18 (published 18, 225 and 12.5).
 - The per-dataset d = 10, 20 timings quoted in Supplement S3 (`sim_replicates.csv`, `seconds`, one worker of a parallel run) are
   a different measurement and are not part of this table.
+
+## Greedy selection as the code runs it (2026-10-25)
+
+The paper described the CCD pipeline as: find an approximate minimum dominating set with the outdegree
+greedy algorithm, build the intersection graph of those balls, then select centers with the score-based
+greedy algorithm. The code does not run the first step as described.
+- All three wrappers (`methods/clustering/{UN,RK,KS}-CCDs.R`) pass `dom.method = "greedy2"`.
+  `dominate.mat.greedy2` (`R/ccds/ccdfunctions.R`) marks only the chosen vertex as covered, so it returns
+  every vertex ranked by outdegree. On a 12-vertex random digraph it returned all 12; the covering prefix
+  of the same ranking had 4.
+- `nnccd_clustering_quantile` (`UN_CCD.R`), `RKCCD_correct_quant` (`RK_CCD_New.R`) and `ksccd.clustering`
+  (`ccd_ks_NEW.R`) then build the intersection graph on all n balls and select centers with
+  `dominate.mat.ks(M.dom, score[D])`: the uncovered ball with the largest fixed score (points caught) is
+  taken and every ball sharing a point with it is marked covered.
+- `25_greedy_prefix.R` reruns the seven paper data sets with the shipped step and with the covering prefix
+  (the step as the paper described it), with `dominate.mat.greedy2` replaced in the global environment.
+  - UN-CCDs: identical labels on all seven; the shipped run equals `real.csv` within 5e-16. Centers passed
+    to the silhouette step shrink (iris 21 to 13, asymmetric 49 to 28, D31 162 to 152) without changing a
+    partition. The prefix only removes balls that `dominate.mat.ks` processes after all the others.
+  - RK-CCDs (prefix only): ARI and Sil equal the published rows of `real.csv` within 4.4e-16, same k-hat
+    on all seven (labels not compared).
+  - KS-CCDs: not run (the 200-value grid search takes hours); the code path is the same.
+- The manuscript now describes the step as the code runs it (manuscript commits c82e6de, 555666a).
+  Nothing in `R/` or `methods/` was edited.
