@@ -43,6 +43,7 @@ until the gate passes, and each one gets a `*_PROTOCOL.md` here before it runs.
 | `ITEN500_PROTOCOL.md`, `21_iteN500_check.R` | Variant `iteN500`: RK-CCDs at d = 3, n = 500 with 500 repetitions, and its checks. |
 | `13_real_baselines.R` | Baseline rows of the real-data table (DBSCAN, MST, K-means++, Spectral, Louvain): runs each data-set block of the original script verbatim, once or over seeds. |
 | `23_noise.R` | The noise experiment (d = 3, 10; l = 3% to 20%), written 2026-10-24 because the original driver is lost. Its rows are in the paper; it does not reproduce the old table, see "Noise experiment (2026-10-24)". |
+| `24_alpha_supplement.R` | Supplement Section S2.1 (2026-10-25): writes `results/tr3/supp_alpha.tex`, the rows of the α-sweep table (config A, seeds from config S, the paper's current settings) and of the shipped-against-regenerated table (configs A and G, seeds left out), from `real_alpha.csv`; checks that the rule's cells equal `real.csv`. Nothing is rerun. |
 | `22_runtime.R`, `22_runtime_run.ps1`, `22_runtime_monitor.ps1`, `22_runtime_summary.R` | Re-timing of `tab:runtime_comparison` (d = 5, uniform, n = 50 to 500, three methods) on this machine, with a load guard; see "Runtime comparison (2026-10-24)". |
 | `ALPHA_PROTOCOL.md`, `14_alpha_tables.R`, `15_real_alpha.R`, `16_alpha_summary.R` | One α for UN-CCDs on all real data sets (20% to 1%): generates the missing NN tables, runs every cell, checks the reproduction and scores the levels. |
 
