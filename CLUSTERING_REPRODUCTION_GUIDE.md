@@ -42,7 +42,7 @@ All paths are relative to the clone root.
 | KS-CCDs, Gaussian: Table S6, best density Table S5, figure | `simulations/clustering/KS_CCDs/Simulations/Gaussian/<d>d/...` | same |
 | RK-CCDs, Gaussian: Table S7, figure | `simulations/clustering/RK_CCDs/Simulations/Gaussian/<d>d/...` | same |
 | UN-CCDs, Gaussian: Table S8, figure | `simulations/clustering/UN_CCDs/Simulations/Gaussian/<d>d/...` | same |
-| Runtime table (`tab:runtime_comparison`, d = 5) | none; the values are the `Time difference` lines of the d = 5 uniform logs (KS-CCDs: the 145xxxx runs). Since 2026-10-18 all twelve match to two decimals. Before that, RK-CCDs n = 500 and KS-CCDs n = 200 and 500 were hours rounded to two decimals, then times 60 | `simulations/clustering/*_CCDs/Simulations/Uniform/5d/slurm-*.out` |
+| Runtime table (`tab:runtime_comparison`, d = 5) | `revision_experiments/tr3/22_runtime.R` (2026-10-24; see 8.5). The values published before were the `Time difference` lines of the d = 5 uniform logs (KS-CCDs: the 145xxxx runs) | `revision_experiments/tr3/README.md`, "Runtime comparison"; old values: `simulations/clustering/*_CCDs/Simulations/Uniform/5d/slurm-*.out` |
 | Noise experiment (`tab:Noise_Level_Clustering`, S1.3) | none; rewritten as `revision_experiments/tr3/23_noise.R` (not a reproduction) | `revision_experiments/tr3/README.md`, "Noise experiment" |
 | Real data (`Real_Data_Result_Clustering`), CCD rows | `simulations/clustering/{KS,RK,UN}_CCDs/Simulations/Real_Data/Real_Data_{KSCCD,RKCCD,UNCCD}.R` | `Real_Data_KSCCD.html` (knit output) for KS-CCDs; none kept for RK and UN |
 | Real data, baseline rows | `simulations/clustering/Algo_Compare_Clustering/{DBSCAN,K-means++,Louvain,MST,Spectral_Clustering}/Simulation/Real_Data/*.R` | the `.html` knit output next to each script (from before the baseline fixes of 2026-10-23; the new numbers are in `revision_experiments/results/tr3/real_baselines_fixed.csv`, see `revision_experiments/tr3/README.md`) |
@@ -261,7 +261,7 @@ Reproduce with the code as it is; these are for the authors to decide.
 | K-means++ on wholesale | k = 3 (the true number of clusters) | resolved 2026-10-23: `k = 3`; the script had `k = 6` |
 | MST threshold | S2: inconsistent-edge threshold 2, "chosen after a trial-and-error process ... best overall performance" | threshold 2 on every data set (`Real_Data_MST_fix_cutoff.R`, `thresh = 2`). Authors' decision 2026-10-23: keep 2, citing Zahn's ratio criterion; how 2 was first chosen is not recorded. A label-free rule (largest average silhouette over `seq(1.00, 3.00, by = 0.01)`) was tried and not adopted because it over-segments (74 to 1495 clusters, 1.00 chosen on 5 of 9 data sets): `Real_Data_MST_silmax_cutoff.R`, `revision_experiments/tr3/README.md` "MST threshold rule (2026-10-23)". The supplement wording ("trial-and-error") is to be updated to match |
 | Baseline seeds | not stated | Since 2026-10-23 every dataset block of the five baseline scripts starts with `set.seed(1)`, and K-means++ passes `seed = 1` to `KMeans_rcpp()`, so no cell depends on the block order |
-| Runtime hardware | Linux workstation, i9-13900K | the runtime table equals the run times in the SLURM job logs, and the original drivers read their files from `/mmfs1/home/...` |
+| Runtime hardware | Linux workstation, i9-13900K | the old table equals the run times in the SLURM job logs (cluster nodes with 2x Xeon Gold 6248R, author-confirmed; cores per job unknown). Since 2026-10-24 the table is re-timed on an Intel Core Ultra 7 270K Plus with 24 workers, and the paper names that machine |
 
 ---
 
@@ -306,6 +306,11 @@ Chosen by the driver and stated in the paper: noise uniform in a ball of radius 
 It did not reproduce the old table within Monte Carlo error (details in `revision_experiments/tr3/README.md`, "Noise experiment (2026-10-24)").
 The noise branch of both generators (`uniform_cls`, `Gaussian_cls`) adds the mean centre with `+ center_noise` to an `n_noise` × d matrix; R recycles that vector down the columns, so unless all coordinates of the mean centre are equal the noise cloud is not centred where intended (here the mean is (5, 5, 3, ..., 3)).
 `23_noise.R` draws the same random numbers as `Gaussian_cls(noise = TRUE)` but centres the noise with `sweep(noise_data, 2, center_noise, "+")`; `center = recycle` reproduces the generator as it is. The generators themselves were not edited.
+
+### 8.5 The runtime table
+
+`revision_experiments/tr3/22_runtime_run.ps1 -Reps 3` (PowerShell, from the repository root) times the 12 cells of `tab:runtime_comparison` with `22_runtime.R <method> <n> <rep>`, one fresh R process per run, KS-CCDs at n = 500 in the first pass only; `22_runtime_summary.R` gives the medians.
+It times what the old drivers timed (after table loading: data generation, three cluster start-ups, 3 × 500 clusterings, KS-CCDs' grid search) and needs an otherwise idle machine: a monitor stops or invalidates a run when another R process is running. The full pass took 17 h here (KS-CCDs at n = 500 alone 11.5 h).
 
 ---
 

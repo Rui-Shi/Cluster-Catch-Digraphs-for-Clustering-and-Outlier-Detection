@@ -43,6 +43,7 @@ until the gate passes, and each one gets a `*_PROTOCOL.md` here before it runs.
 | `ITEN500_PROTOCOL.md`, `21_iteN500_check.R` | Variant `iteN500`: RK-CCDs at d = 3, n = 500 with 500 repetitions, and its checks. |
 | `13_real_baselines.R` | Baseline rows of the real-data table (DBSCAN, MST, K-means++, Spectral, Louvain): runs each data-set block of the original script verbatim, once or over seeds. |
 | `23_noise.R` | The noise experiment (d = 3, 10; l = 3% to 20%), written 2026-10-24 because the original driver is lost. Its rows are in the paper; it does not reproduce the old table, see "Noise experiment (2026-10-24)". |
+| `22_runtime.R`, `22_runtime_run.ps1`, `22_runtime_monitor.ps1`, `22_runtime_summary.R` | Re-timing of `tab:runtime_comparison` (d = 5, uniform, n = 50 to 500, three methods) on this machine, with a load guard; see "Runtime comparison (2026-10-24)". |
 | `ALPHA_PROTOCOL.md`, `14_alpha_tables.R`, `15_real_alpha.R`, `16_alpha_summary.R` | One α for UN-CCDs on all real data sets (20% to 1%): generates the missing NN tables, runs every cell, checks the reproduction and scores the levels. |
 
 ## Running
@@ -507,3 +508,66 @@ generator's behaviour). `R/general_functions/` was not edited. The details of th
   `nnccd.radi.descend.one` in the global environment (`[j + 2]`), checked on the workers by a column in the output; `R/ccds/` is untouched.
 - An exact reproduction of the old table would need what the original run did (r_noise and centre, the scoring, the cluster
   sizes and the seed); that is unknown, so the authors adopted this driver's rows instead (see the top of this section).
+
+## Runtime comparison (2026-10-24)
+
+Re-timing of `tab:runtime_comparison` of the manuscript (total run time in minutes of the d = 5 uniform simulation, 500 repetitions,
+2/3/5 clusters, n = 50, 100, 200, 500; UN-, RK- and KS-CCDs).
+
+**Where the published times came from.** There was no timing script. The published values are the `Time difference` lines of the
+d = 5 uniform SLURM logs (`simulations/clustering/<M>_CCDs/Simulations/Uniform/5d/slurm-*.out`: UN 1443072-75, RK 1442240-42 and
+1443104, KS 1450264-67), which are in the repository since `82b22db` (2025-09-12), so they were produced with the code before the
+incremental radius search of `059c798` (2026-09-23); the UN-CCD row used the recompute search, RK- and KS-CCD code is unchanged
+since. The author confirmed on 2026-10-24 that these runs were on cluster nodes with 2x Intel Xeon Gold 6248R (24 cores per CPU, 48
+per node), not on the i9-13900K workstation that the manuscript named. The number of cores allocated to each job is unknown: the
+repository has no sbatch files, and the drivers start `detectCores()` workers whatever the allocation was.
+What the logs time: from `t1 = Sys.time()` (after the method, the packages and the quantile table are loaded) to the end of the driver:
+data generation, three `makeCluster(detectCores())` start-ups, the clustering of 3 x 500 data sets with ARI and Sil, and for KS-CCDs
+the 200-value grid search for each number of clusters. Table loading is excluded. The drivers use 2, 3 and 5 clusters (the text says
+"2 to 5").
+
+**Script.** `22_runtime.R <method> <n> <rep> [iteN]` runs that interval once in a fresh R process, with the settings of the driver's row
+in `settings_simulation.csv` and the methods called as the drivers call them (`UNCCD_clustering`, `RKCCD_clustering`,
+`KSCCD_clustering`). The RK table is loaded with its raw draws (`Kest.m`) and exported to the workers inside the timed interval, as in
+the drivers (`TR3_RUNTIME_DROP_KEST=1` drops them). It appends one row per run to `results/tr3/runtime_reps.csv` (seconds, split into data
+generation and the three clustering blocks, the means of ARI, Sil and SR, KS-CCDs' best delta, cores, R version, CPU, RAM, OS, power
+plan, `valid`). `22_runtime_monitor.ps1` runs beside it and samples every 3 s the R processes that are not the driver's (the driver,
+its launcher chain and the workers are excluded); the script stops at the start if one is running, and a run is `valid = FALSE`
+if one appears during it (none did). `22_runtime_run.ps1 -Reps 3` runs pass r over all 12 cells (cheapest first) before pass r + 1;
+KS-CCDs at n = 500 is run in pass 1 only (`-Once`, the author's decision). `22_runtime_summary.R` writes `runtime_summary.csv` (median, min,
+max, published value, ratio, and whether the means of ARI, Sil and SR, and KS's best delta, equal the log's).
+
+**Settings and machine.** 24 workers (`detectCores()`, as the drivers), one timing process at a time,
+nothing else running (checked by the monitor). Intel Core Ultra 7 270K Plus (24 cores, no hyper-threading), 64 GB RAM (63.5 GB usable), Windows 11 Pro
+10.0.26300, R 4.6.1 (2026-06-24 ucrt), power plan Balanced. Quantile tables from disk (`NN-test-simul_5d_95%`, `RK-test-simul_5d_99%`).
+Loop started 2026-10-24 02:27; pass 1 ran to 15:51 (KS-CCDs n = 500 alone took 11.5 h), passes 2 and 3 ended at 19:30. Log
+`_logs/runtime_run_20261024.log`; the first two start attempts were stopped by the guard because the monitor counted the Rscript.exe
+launcher (Rscript.exe, cmd.exe, x64 Rscript.exe) as foreign, which the monitor now handles.
+
+**Results (minutes; median of 3 runs, KS-CCDs n = 500 one run; the three runs in brackets; published = SLURM log).**
+
+| Method | n | new median | runs | published | new / published |
+|---|---|---|---|---|---|
+| UN-CCDs | 50 | 0.055 | 0.055, 0.055, 0.054 | 0.153 | 0.36 |
+| UN-CCDs | 100 | 0.088 | 0.088, 0.088, 0.087 | 0.294 | 0.30 |
+| UN-CCDs | 200 | 0.239 | 0.242, 0.239, 0.236 | 0.649 | 0.37 |
+| UN-CCDs | 500 | 1.921 | 1.926, 1.917, 1.921 | 4.379 | 0.44 |
+| RK-CCDs | 50 | 0.849 | 0.854, 0.849, 0.835 | 4.603 | 0.18 |
+| RK-CCDs | 100 | 1.277 | 1.330, 1.277, 1.277 | 6.457 | 0.20 |
+| RK-CCDs | 200 | 3.844 | 4.019, 3.825, 3.844 | 16.990 | 0.23 |
+| RK-CCDs | 500 | 39.283 | 39.613, 39.283, 39.207 | 78.848 | 0.50 |
+| KS-CCDs | 50 | 2.686 | 2.738, 2.686, 2.682 | 38.552 | 0.07 |
+| KS-CCDs | 100 | 9.285 | 9.465, 9.230, 9.285 | 41.297 | 0.22 |
+| KS-CCDs | 200 | 49.259 | 49.376, 49.133, 49.259 | 86.163 | 0.57 |
+| KS-CCDs | 500 | 692.699 | 692.699 | 987.513 | 0.70 |
+
+- Every valid run reproduces its log's mean ARI, Sil and SR (and KS-CCDs' best delta) to 12 digits: the speed changes, the results
+  do not (`runtime_summary.csv`, column `results_equal_log`, TRUE in all 12 cells).
+- The runs differ by at most 2% from the median except RK-CCDs n = 100 and n = 200 (first run 4% to 5% slower).
+- This machine is 1.4 to 14 times faster than the cluster runs. RK- and KS-CCD code is the same as then, so those ratios (0.07 to
+  0.70) measure the machine and the allocation, which is unknown; the UN-CCD ratios (0.30 to 0.44) also contain the incremental search
+  of 059c798 and cannot be split from them. The ratio rises with n (0.07 to 0.70 for KS-CCDs, 0.18 to 0.50 for RK-CCDs): the small
+  cells are dominated by the cluster start-ups and, on the cluster nodes, by the unknown allocation.
+- The ordering UN < RK < KS holds in all four columns. At n = 500: RK/UN = 20, KS/UN = 361, KS/RK = 18 (published 18, 225 and 12.5).
+- The per-dataset d = 10, 20 timings quoted in Supplement S3 (`sim_replicates.csv`, `seconds`, one worker of a parallel run) are
+  a different measurement and are not part of this table.
