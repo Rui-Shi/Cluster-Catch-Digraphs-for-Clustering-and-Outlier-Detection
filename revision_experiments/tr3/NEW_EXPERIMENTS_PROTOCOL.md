@@ -60,4 +60,15 @@ This one reads existing results only; it was verified and run before this protoc
 
 ## Outcome
 
-Filled in after the runs.
+Experiment 5 (run 2026-10-25, log `_logs/paired_tests_20261025.log`): 60 tests; Holm 0.05:
+UN vs RK 9 higher, 4 lower, 17 not significant (for d >= 10: 8 / 1 / 3); UN vs KS 3 higher
+(Gaussian, d = 20), 19 lower (15 with d <= 5), 8 not significant. The 90 cell means equal the
+supplement's n = 50 values. Supplement Table S14.
+
+Experiment 3 (run 2026-10-25, 1.7 min, log `_logs/ablation_direction_20261025.log`): 12 cells x
+500 replicates; the descending reruns of replicates 1-3 equal the stored rows in all 12 cells.
+Mean ARI difference (ascending minus descending) from -0.012 to 0.0045; descending higher in
+10 of 12; raw p < 0.05 in 5 cells, Holm-adjusted p >= 0.192 in all. The seconds columns are
+not comparable (the descending rows were timed in another run). Supplement Table S15.
+
+Experiments 1 and 2: to be filled in after the runs.
