@@ -80,4 +80,23 @@ d = 20). UN-CCDs on uniform data without clusters: P(k_hat = 1) 0.006-0.518 at n
 (0.065 for d >= 10). The silhouette refinement keeps any k >= 2 with positive silhouette, so
 UN-CCDs do not test for the presence of clusters. Supplement Tables S16 and S17.
 
-Experiment 1: to be filled in after the runs.
+Experiment 1 (run 2026-10-25 23:26 to 2026-10-26 00:39, one method at a time; logs
+`_logs/real_hd_<method>_20261025.log` and `_logs/real_hd_baselines_<method>_20261026.log`;
+exit codes 0 in `real_hd_exitcodes_20261025.csv` and `real_hd_baselines_exitcodes_20261026.csv`):
+UN-CCDs 11.1 min, RK-CCDs 1.7, KS-CCDs 58.0 (segmentation 54.5), the five baselines 1.8; 18 CCD
+and 30 baseline cells, all in the done files. Final n/d/k: hepatitis 80/19/2, lymphography
+148/18/4, wine 178/13/3, wdbc 569/30/2, vehicle 846/18/4, segmentation 2086/18/7 (224 duplicate
+rows removed). ARI of UN-CCDs: 0.112, -0.004, 0.342, 0.168, 0.069, 0.094 (same order); higher than
+RK-CCDs on wdbc, vehicle and segmentation, lower on the other three; higher than KS-CCDs on three.
+K-means++ has a higher ARI than UN-CCDs on all six, spectral clustering on five (not on wdbc); the
+best ARI is K-means++ on wine (0.915), lymphography (0.169) and wdbc (0.677), spectral clustering
+on hepatitis (0.430), vehicle (0.101) and segmentation (0.511). k_hat = k: KS-CCDs 3 (hepatitis,
+wine, wdbc), UN-CCDs 1 (wdbc), MST 1, Louvain 1, RK-CCDs 0, DBSCAN 0. RK-CCDs give 154 clusters on
+wdbc; DBSCAN one cluster plus noise on five sets and 11 on segmentation; MST one cluster on wine
+(Sil undefined); spectral clustering and KS-CCDs have equal ARI and Sil on wdbc to 17 digits
+(labels are not stored, so the partitions were not compared). UN-CCDs took 616.72 s on
+segmentation (one R process). Table 6 of the manuscript (`tex/new_realhd.tex`; manuscript
+commits 21ea0e9, d420d64).
+Correction to the facts written before the runs: hepatitis has 13 binary features of 19
+(attributes 3 to 14 and 20, counted by script), not 12. The lymphography count (18 features with 2
+to 8 values) was checked the same way.
