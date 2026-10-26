@@ -47,6 +47,14 @@ until the gate passes, and each one gets a `*_PROTOCOL.md` here before it runs.
 | `25_greedy_prefix.R` | Real data (2026-10-25): UN- or RK-CCDs with the shipped first greedy selection (`greedy2`, every point ranked) or stopped at the first covering prefix; see "Greedy selection as the code runs it (2026-10-25)". |
 | `22_runtime.R`, `22_runtime_run.ps1`, `22_runtime_monitor.ps1`, `22_runtime_summary.R` | Re-timing of `tab:runtime_comparison` (d = 5, uniform, n = 50 to 500, three methods) on this machine, with a load guard; see "Runtime comparison (2026-10-24)". |
 | `ALPHA_PROTOCOL.md`, `14_alpha_tables.R`, `15_real_alpha.R`, `16_alpha_summary.R` | One α for UN-CCDs on all real data sets (20% to 1%): generates the missing NN tables, runs every cell, checks the reproduction and scores the levels. |
+| `NEW_EXPERIMENTS_PROTOCOL.md` | Design, decisions and outcomes of the new experiments for the KBS rebuttal (2026-10-25): 1 real data with d ≥ 13, 2 Type I error, 3 search direction, 5 paired tests. See "New experiments (2026-10-25)". |
+| `30_hd_load.R`, `settings_realdata_hd.csv` | Experiment 1: `tr3_load_hd()` for wine, hepatitis, lymphography, wdbc, vehicle and segmentation (raw files in `revision_experiments/tr3_data/` and `data/clustering/`), and the CCD settings by the rule for d ≥ 10 (`30_hd_load.R settings` rewrites the CSV). |
+| `31_hd_real.R` | Experiment 1: UN-, RK- or KS-CCDs on those six sets (the counterpart of `11_real.R`). |
+| `32_hd_baselines.R` | Experiment 1: DBSCAN, MST, K-means++, Spectral or Louvain (or `all`) on those six sets: each original script's `seeds` block with the data object (and k) substituted. `check` reproduces `real_baselines_fixed.csv`; `show` prints the evaluated block. |
+| `33_type1.R` | Experiment 2: size of one MC-SRT under CSR (two nulls) and UN-CCDs on uniform data without clusters. |
+| `34_ablation_direction.R` | Experiment 3: ascending against descending radius search at d = 10 and 20, n = 200, 500 replicates. |
+| `35_paired_tests.R` | Experiment 5: paired Wilcoxon tests of UN- against RK- and KS-CCDs at n = 50 (reads existing results). |
+| `36_new_tables.R` | The LaTeX tabular bodies of experiments 1, 2, 3 and 5 (`results/tr3/tex/new_*.tex`), with checks; nothing is rerun. |
 
 ## Running
 
@@ -100,6 +108,12 @@ A rerun skips every finished cell; move a result file aside to recompute.
 | `real_baselines_fixed.csv`, `real_baselines_fixed_run2.csv`, `real_baselines_fixed_params.csv` | the baselines after the fixes of 2026-10-23: first run, second run (identical), and the Eps / sigma each block chose. Part files `real_baselines_fixed_<method>_run<1,2>[_params].csv` |
 | `real_verify_ccd.csv`, `real_verify_baselines.csv` | real-data rerun of 2026-10-19 against the paper and the knit output, per cell and metric |
 | `real_alpha.csv`, `alpha_summary.csv` | α sweep: config, level, data set (ARI, Sil, k_hat, table, source); the criteria per config and level. Generated tables in `alpha_tables/` |
+| `real_hd.csv`, `real_hd_done.csv`, `real_hd_ks_search.csv` | experiment 1, CCDs: variant (`hd`), method, data set, n, d, ari, sil, k_hat, seconds, param (KS: chosen m), table; KS grid value per data set: si |
+| `real_hd_baselines.csv`, `real_hd_baselines_params.csv`, `real_hd_baselines_done.csv` | experiment 1, baselines: method, data set, n, d, ari, sil, k_hat, seed, script; the Eps / sigma / bandwidth each block chose |
+| `type1_test.csv`, `type1_test_summary.csv`, `type1_ccd_replicates.csv`, `type1_ccd_summary.csv` | experiment 2: rejection counts per (d, m) and null; UN-CCDs per replicate on uniform data; summaries |
+| `ablation_direction_replicates.csv`, `ablation_direction_summary.csv`, `ablation_direction_repro.csv` | experiment 3: ascending replicates, the comparison per cell, the reproduction check of the descending rows |
+| `paired_tests.csv`, `paired_tests_check.csv` | experiment 5: one row per cell and comparison; cell means against the supplement |
+| `tex/new_*.tex` | output of `36_new_tables.R` |
 | `gate.csv` | gate comparison |
 
 Numbers are written with 17 significant digits, so means recomputed from the
@@ -365,7 +379,8 @@ S11 the cells that match at 3 decimals are: DBSCAN iris; MST iris, seeds, R15, D
 knowledge, asymmetric, R15, D31 (K-means++ wholesale is now 0.014 / 0.543 / 3 against the paper's
 -0.007 / 0.446 / 3); Spectral iris; Louvain iris, seeds, wholesale. The other cells differ. The 2026-10-19 bullets above (Baselines, paper cells the code does not give,
 code against Supplement S2) describe the code before these fixes. Left as it was: DBSCAN uses minPts = 5
-while the supplement says MinPts = 4; MST and Louvain are not changed.
+while the supplement said MinPts = 4 (the supplement was changed to MinPts 5 the same day, manuscript
+commit 1baffda); MST and Louvain are not changed.
 
 `20_gate.R` has no baseline check: it compares the CCD cells (simulation cells, iris, seeds and R15) with
 the logs, the knit output and the manuscript. That it passes, 87 of 87, after these changes
@@ -597,3 +612,36 @@ greedy algorithm. The code does not run the first step as described.
   - KS-CCDs: not run (the 200-value grid search takes hours); the code path is the same.
 - The manuscript now describes the step as the code runs it (manuscript commits c82e6de, 555666a).
   Nothing in `R/` or `methods/` was edited.
+
+## New experiments (2026-10-25)
+
+Experiments 1, 2, 3 and 5 of the revision plan, asked for by the authors on 2026-10-25 for the
+KBS rebuttal. Design, decisions and outcomes are in `NEW_EXPERIMENTS_PROTOCOL.md` (written before
+the runs). Each driver was written by one agent and checked by a separate verifier agent before
+its full run, and the experiments ran one at a time. The manuscript reports them in blue: Table 6
+(experiment 1) and Supplement Section S4 (experiments 2, 3 and 5).
+
+From the clone root, in PowerShell:
+
+```powershell
+$R = "C:\Program Files\R\R-4.6.1\bin\Rscript.exe"
+& $R revision_experiments/tr3/31_hd_real.R UN-CCDs             # or RK-CCDs, KS-CCDs; [datasets]
+& $R revision_experiments/tr3/32_hd_baselines.R all            # or one method; [datasets] [run|check|show]
+& $R revision_experiments/tr3/33_type1.R test                  # then ccd, then summary
+& $R revision_experiments/tr3/34_ablation_direction.R run      # [reps] [cells]; then summary
+& $R revision_experiments/tr3/35_paired_tests.R
+& $R revision_experiments/tr3/36_new_tables.R                  # tex/new_*.tex and a summary
+```
+
+- `TR3_OUT_DIR` sends the output of 31 to 36 to another folder (36 then reads its inputs there
+  too). `TR3_SMOKE_GRID` (31 only) runs KS-CCDs on a coarse grid and labels the rows `hd_smoke`;
+  31 stops if it is set while the output folder is `results/tr3`.
+- Experiment 1 data: `30_hd_load.R` reads wine, vehicle, segmentation and wdbc from
+  `revision_experiments/tr3_data/` (UCI downloads of 2026-10-25, md5 in `MANIFEST.csv`; the
+  folder is not tracked by git) and hepatitis and lymphography from `data/clustering/`.
+- Experiment 1 runs: the CCDs from 2026-10-25 23:26 to 2026-10-26 00:37 (UN-CCDs 11.1 min,
+  RK-CCDs 1.7, KS-CCDs 58.0), then the five baselines (1.8 min); all exit codes 0.
+  `32_hd_baselines.R ... check` reproduces `real_baselines_fixed.csv` on the nine older data sets.
+- DBSCAN's k_hat: the original block counts clusters as distinct labels minus one (the noise
+  label), so it would be one too low on a data set without noise points; all six new sets have
+  noise points.
