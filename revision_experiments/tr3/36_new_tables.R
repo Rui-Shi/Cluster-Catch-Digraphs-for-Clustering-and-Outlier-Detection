@@ -6,18 +6,27 @@
 #   ablation  ablation_direction_summary.csv (34_ablation_direction.R)
 #   paired    paired_tests.csv (35_paired_tests.R)
 #   type1     type1_test_summary.csv, type1_ccd_summary.csv (33_type1.R)
-#   realhd    real_hd.csv (31_hd_real.R), real_hd_baselines.csv (32_hd_baselines.R)
+#   realhd    real_hd.csv (31_hd_real.R), real_hd_baselines.csv (32_hd_baselines.R) and
+#             their *_done.csv (finished cells only, the last copy of each)
 # Checks: the ablation table has 12 cells of 500 replicates, and its descending
 # ARI and SR (3 decimals) equal the n = 200 rows of the supplement's UN-CCD
 # tables (SUPP_TEX, default the manuscript folder); the paired table has 60
 # tests (30 cells x 2 comparisons); the type1 tables have 35 (d, m) cells of
-# B = 10000 and 20 (d, n) cells of 500 replicates.
+# B = 10000 and 20 (d, n) cells of 500 replicates; the realhd table has one row
+# (variant "hd") per method and data set (8 x 6) with the n and d of
+# tr3_load_hd(), and K-means++ and spectral clustering return the true k.
 #
 # USAGE (from the clone root): Rscript revision_experiments/tr3/36_new_tables.R
 # OUTPUT: results/tr3/tex/new_<part>.tex (one tabular body each; the manuscript
-# wraps each tabular in \textcolor{blue}{...}) and a summary on stdout.
+# wraps each tabular in \textcolor{blue}{...}) and a summary on stdout. realhd
+# writes new_realhd.tex (data sets as columns, ordered by n) and
+# new_realhd_data.tex (n, d and k rows for the dataset tables).
+# TR3_OUT_DIR, as in the drivers, replaces results/tr3 for the inputs and the
+# tex folder (used for tests).
 
 source(here::here("revision_experiments/tr3/tr3_lib.R"))
+RES <- sub("[/\\\\]+$", "", Sys.getenv("TR3_OUT_DIR", TR3_RES))
+tr3_path <- function(name) file.path(RES, name)
 
 SUPP_TEX <- Sys.getenv("SUPP_TEX", "G:/Submissions/TR3/TR3_10182026/Supplementary_Material.tex")
 OUT <- tr3_path("tex")
@@ -139,4 +148,63 @@ if (have("type1_test_summary.csv", "type1_ccd_summary.csv")) {
     rows, "\\hline"))
   cat(sprintf("type1 ccd: P(k_hat = 1) %s at n = 50, %s at n >= 200; mean Sil %s\n",
               rng(t2$prop_k1[t2$n == "50"]), rng(t2$prop_k1[t2$n %in% c("200", "500")]), rng(t2$mean_si)))
+}
+
+# --- realhd: experiment 1, the six real data sets with d >= 13 ---------------
+if (have("real_hd.csv", "real_hd_done.csv", "real_hd_baselines.csv", "real_hd_baselines_done.csv")) {
+  source(here::here("revision_experiments/tr3/30_hd_load.R"))
+  ROWS <- c("KS-CCDs", "RK-CCDs", "UN-CCDs", "DBSCAN", "MST", "K-means++", "Spectral", "Louvain")
+  GIVEN_K <- c("K-means++", "Spectral")   # given the true k; k_hat marked with *, as in Table 5
+  NAME <- c(wine = "wine", hepatitis = "hepatitis", lymphography = "lymphography", wdbc = "WDBC",
+            vehicle = "vehicle", segmentation = "segmentation")
+  hd <- tr3_load_hd(TR3_HD_DATASETS, verbose = FALSE)
+  info <- data.frame(dataset = names(hd), n = sapply(hd, nrow), d = sapply(hd, ncol) - 1L,
+                     k = sapply(hd, function(m) length(unique(m[, ncol(m)]))), stringsAsFactors = FALSE)
+  info <- info[order(info$n), ]
+  cols <- c("method", "dataset", "n", "d", "ari", "sil", "k_hat")
+  ccd <- tr3_read_done(tr3_path("real_hd.csv"), tr3_path("real_hd_done.csv"), c("variant", "method", "dataset"))
+  ccd <- ccd[ccd$variant == "hd", ]
+  bas <- tr3_read_done(tr3_path("real_hd_baselines.csv"), tr3_path("real_hd_baselines_done.csv"), c("method", "dataset"))
+  r <- rbind(ccd[, cols], bas[, cols])
+  # one row per method and data set, with the n and d of the loaded data
+  stopifnot(nrow(r) == length(ROWS) * nrow(info),
+            setequal(paste(r$method, r$dataset), outer(ROWS, info$dataset, paste)))
+  i <- match(r$dataset, info$dataset)
+  g <- r$method %in% GIVEN_K
+  stopifnot(all(as.integer(r$n) == info$n[i]), all(as.integer(r$d) == info$d[i]),
+            all(as.integer(r$k_hat[g]) == info$k[i][g]))
+  cell <- function(meth, ds) r[r$method == meth & r$dataset == ds, ]
+  na3 <- function(x) ifelse(is.na(suppressWarnings(as.numeric(x))), "--", f3(x))
+  rows <- vapply(ROWS, function(meth) {
+    v <- vapply(info$dataset, function(ds) {
+      x <- cell(meth, ds)
+      sprintf("%s & %s & %s%s", na3(x$ari), na3(x$sil), x$k_hat, if (meth %in% GIVEN_K) "*" else "")
+    }, "")
+    sprintf("%s & %s \\\\ \\hline", meth, paste(v, collapse = " & "))
+  }, "")
+  emit("realhd", c("\\hline",
+    sprintf("\\multirow{2}*{} & %s \\\\ \\cline{2-%d}",
+            paste(sprintf("\\multicolumn{3}{|c|}{%s ($k$=%d)}", NAME[info$dataset], info$k), collapse = " & "),
+            1 + 3 * nrow(info)),
+    sprintf(" & %s \\\\ \\hline", paste(rep("\\textit{ARI} & \\textit{Sil} & $\\hat{k}$", nrow(info)), collapse = " & ")),
+    rows))
+  emit("realhd_data", sprintf("%s & %d & %d & %d \\\\ \\hline", NAME[info$dataset], info$n, info$d, info$k))
+  # summary for the text, on the values as printed (3 decimals)
+  a3 <- function(meth, ds) as.numeric(f3(cell(meth, ds)$ari))
+  cat("realhd: n/d/k", paste(sprintf("%s %d/%d/%d", info$dataset, info$n, info$d, info$k), collapse = "; "), "\n")
+  for (ds in info$dataset) {
+    v <- vapply(ROWS, a3, 0, ds = ds)
+    cat(sprintf("  %s: best ARI %.3f (%s); UN-CCDs rank %d of %d; k_hat %s\n", ds, max(v),
+                paste(ROWS[v == max(v)], collapse = ", "), rank(-v, ties.method = "min")[["UN-CCDs"]], length(ROWS),
+                paste(sprintf("%s %s", ROWS, vapply(ROWS, function(m) cell(m, ds)$k_hat, "")), collapse = ", ")))
+  }
+  for (o in setdiff(ROWS, "UN-CCDs")) {
+    s <- sign(vapply(info$dataset, function(ds) a3("UN-CCDs", ds) - a3(o, ds), 0))
+    cat(sprintf("  UN-CCDs vs %s: ARI higher in %d, lower in %d, equal in %d of %d\n",
+                o, sum(s > 0), sum(s < 0), sum(s == 0), length(s)))
+  }
+  est <- setdiff(ROWS, GIVEN_K)
+  ok <- vapply(est, function(m) sum(as.integer(vapply(info$dataset, function(ds) cell(m, ds)$k_hat, "")) == info$k), 0)
+  cat("  k_hat = k:", paste(sprintf("%s %d", est, ok), collapse = ", "), "of", nrow(info), "\n")
+  cat("  CCD seconds:", paste(sprintf("%s %s %s", ccd$method, ccd$dataset, ccd$seconds), collapse = "; "), "\n")
 }
