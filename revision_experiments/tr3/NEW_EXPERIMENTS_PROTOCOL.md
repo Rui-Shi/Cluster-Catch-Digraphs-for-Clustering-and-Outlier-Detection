@@ -71,4 +71,13 @@ Mean ARI difference (ascending minus descending) from -0.012 to 0.0045; descendi
 10 of 12; raw p < 0.05 in 5 cells, Holm-adjusted p >= 0.192 in all. The seconds columns are
 not comparable (the descending rows were timed in another run). Supplement Table S15.
 
-Experiments 1 and 2: to be filled in after the runs.
+Experiment 2 (run 2026-10-25, 15.2 min, log `_logs/type1_20261025.log`; part check: the table
+index replays the clustering's radii for 120 of 120 centres at d = 2 and d = 10). Size of one
+test divided by alpha (B = 10000): table null 1.30-1.56 for d <= 5, up to 3.50 at d = 20;
+radius-search null 0.88-1.48 for d <= 5, up to 2.70 at d = 20 (at most 35 rejections at
+d = 20). UN-CCDs on uniform data without clusters: P(k_hat = 1) 0.006-0.518 at n = 50, at most
+0.090 for n >= 200, where k_hat = 2 in 93.8% of replicates; mean silhouette at most 0.219
+(0.065 for d >= 10). The silhouette refinement keeps any k >= 2 with positive silhouette, so
+UN-CCDs do not test for the presence of clusters. Supplement Tables S16 and S17.
+
+Experiment 1: to be filled in after the runs.

@@ -10,7 +10,8 @@
 # Checks: the ablation table has 12 cells of 500 replicates, and its descending
 # ARI and SR (3 decimals) equal the n = 200 rows of the supplement's UN-CCD
 # tables (SUPP_TEX, default the manuscript folder); the paired table has 60
-# tests (30 cells x 2 comparisons).
+# tests (30 cells x 2 comparisons); the type1 tables have 35 (d, m) cells of
+# B = 10000 and 20 (d, n) cells of 500 replicates.
 #
 # USAGE (from the clone root): Rscript revision_experiments/tr3/36_new_tables.R
 # OUTPUT: results/tr3/tex/new_<part>.tex (one tabular body each; the manuscript
@@ -97,4 +98,45 @@ if (have("paired_tests.csv")) {
   cat(sprintf("paired: UN vs RK higher/lower/n.s. %s; UN vs KS %s; raw p < 0.05 in %d of 60, Holm in %d\n",
               paste(cnt(p, "UN vs RK"), collapse = "/"), paste(cnt(p, "UN vs KS"), collapse = "/"),
               sum(as.numeric(p$p) < 0.05), sum(as.numeric(p$p_holm) < 0.05)))
+}
+
+# --- type1: size of one MC-SRT under CSR, and k_hat of UN-CCDs on CSR data ---
+if (have("type1_test_summary.csv", "type1_ccd_summary.csv")) {
+  D <- c("2", "3", "5", "10", "20"); M <- c("5", "10", "20", "50", "100", "200", "500")
+  N <- c("50", "100", "200", "500")
+  t1 <- utils::read.csv(tr3_path("type1_test_summary.csv"), colClasses = "character")
+  stopifnot(nrow(t1) == 35, all(t1$B == "10000"), setequal(paste(t1$d, t1$m), outer(D, M, paste)))
+  f2 <- function(x) sprintf("%.2f", as.numeric(x))
+  pct <- function(a) sub("\\.?0+$", "", sprintf("%.1f", 100 * as.numeric(a)))
+  rows <- character(0)
+  for (d in D) {
+    s <- t1[t1$d == d, ]; s <- s[match(M, s$m), ]
+    rows <- c(rows,
+      sprintf("\\multirow{2}*{%s} & \\multirow{2}*{%s\\%%} & generator & %s \\\\ \\cline{3-10}", d, pct(s$alpha[1]),
+              paste(f2(s$rule_over_alpha), collapse = " & ")),
+      sprintf(" & & clustering & %s \\\\ \\hline", paste(f2(s$ball_rule_over_alpha), collapse = " & ")))
+  }
+  emit("type1_test", c("\\hline",
+    sprintf("$d$ & $\\alpha$ & null & %s \\\\ \\hline", paste(sprintf("$m=%s$", M), collapse = " & ")),
+    rows))
+  rng <- function(x) sprintf("%.2f to %.2f", min(as.numeric(x)), max(as.numeric(x)))
+  cat("type1 test: rule/alpha, generator null", rng(t1$rule_over_alpha), "; clustering null", rng(t1$ball_rule_over_alpha), "\n")
+  for (d in D) cat(sprintf("  d=%s: generator %s, clustering %s\n", d,
+                           rng(t1$rule_over_alpha[t1$d == d]), rng(t1$ball_rule_over_alpha[t1$d == d])))
+
+  t2 <- utils::read.csv(tr3_path("type1_ccd_summary.csv"), colClasses = "character")
+  stopifnot(nrow(t2) == 20, all(t2$n_reps == "500"), setequal(paste(t2$d, t2$n), outer(D, N, paste)))
+  rows <- character(0)
+  for (d in D) {
+    s <- t2[t2$d == d, ]; s <- s[match(N, s$n), ]
+    rows <- c(rows, sprintf("%s & %s & %s & %s \\\\", d, paste(f3(s$prop_k1), collapse = " & "),
+                            paste(f2(s$mean_k_hat), collapse = " & "), paste(f3(s$mean_si), collapse = " & ")))
+  }
+  hdr <- paste(sprintf("$n=%s$", N), collapse = " & ")
+  emit("type1_ccd", c("\\hline",
+    " & \\multicolumn{4}{c|}{Proportion with $\\hat{k}=1$} & \\multicolumn{4}{c|}{Mean $\\hat{k}$} & \\multicolumn{4}{c|}{Mean \\textit{Sil}} \\\\ \\cline{2-13}",
+    sprintf("$d$ & %s & %s & %s \\\\ \\hline", hdr, hdr, hdr),
+    rows, "\\hline"))
+  cat(sprintf("type1 ccd: P(k_hat = 1) %s at n = 50, %s at n >= 200; mean Sil %s\n",
+              rng(t2$prop_k1[t2$n == "50"]), rng(t2$prop_k1[t2$n %in% c("200", "500")]), rng(t2$mean_si)))
 }
