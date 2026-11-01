@@ -238,3 +238,18 @@ Use in the paper (fixed now, whatever the numbers): main Table 4 shows UN-CCDs u
 rule, the rule of the five baselines; Supplement Table S9 shows UN-CCDs under both rules; both
 documents state both rules. The abstract, highlights and conclusion take their noise claims from
 the all-points numbers.
+
+Outcome of experiment 8 (driver fde65e5; run 2026-10-31 21:53 to 22:00 with 24 workers, exit codes 0;
+log `_logs/noise_allpoints_20261031.log`; tables `_logs/new_tables_20261031b.log`):
+- Gate: in all 8000 replicates, data_fp, ari, sil, k_hat, sil_all and k_all equal the published
+  rows; `nlab_all` equals `k_all` in every replicate. Independent recomputation in Python (scratch
+  `check_exp8.py`) gives the same summaries.
+- UN-CCDs, k chosen on all points (ARI, Sil on the cluster points; SR), l = 3%, 5%, 10%, 20%:
+  d = 3: ARI 0.973, 0.974, 0.975, 0.963; SR 0.998, 0.997, 0.996, 0.967.
+  d = 10: ARI 0.951, 0.946, 0.939, 0.928; SR 0.967, 0.951, 0.935, 0.904.
+  Published choice (cluster points): d = 3 SR 0.998, 0.998, 0.998, 0.985; d = 10 SR 0.971, 0.955,
+  0.958, 0.955. The misses under the all-points choice are mostly too few clusters (d = 10, l = 20%:
+  94 below 3, 2 above).
+- Against the baselines that estimate k (same rule): DBSCAN SR at most 0.667, MST at most 0.284,
+  Louvain 0.092 to 0.563 at d = 3 and 0 at d = 10 (ARI at least 0.988). UN-CCDs keep ARI above 0.92
+  and SR above 0.90 at every level; no baseline that estimates k reaches SR 0.67.

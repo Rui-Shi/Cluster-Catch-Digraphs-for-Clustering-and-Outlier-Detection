@@ -10,8 +10,9 @@
 #             their *_done.csv (finished cells only, the last copy of each)
 #   simbase   simbase_replicates.csv and simbase_done.csv (37_sim_baselines.R, mode run), with
 #             the CCD values of the supplement's Tables S2-S4 and S6-S8 (SUPP_TEX)
-#   noisebase noisebase_replicates.csv, noisebase_done.csv (37_sim_baselines.R) and
-#             noise_replicates.csv, noise_done.csv (23_noise.R, UN-CCDs)
+#   noisebase noisebase_replicates.csv, noisebase_done.csv (37_sim_baselines.R),
+#             noise_replicates.csv, noise_done.csv (23_noise.R, UN-CCDs) and
+#             noise_allpoints_replicates.csv, noise_allpoints_done.csv (23_noise.R allpoints)
 # Checks: the ablation table has 12 cells of 500 replicates, and its descending
 # ARI and SR (3 decimals) equal the n = 200 rows of the supplement's UN-CCD
 # tables (SUPP_TEX, default the manuscript folder); the paired table has 60
@@ -21,8 +22,9 @@
 # tr3_load_hd(), and K-means++ and spectral clustering return the true k; simbase
 # has 120 cells x 500 replicates per baseline, one fingerprint per setting and
 # replicate across the five baselines, and 60 rows per CCD table of the
-# supplement; noisebase has 8 cells x 1000 replicates per method, and its UN-CCD
-# values equal the supplement's noise table.
+# supplement; noisebase has 8 cells x 1000 replicates per method, the experiment 8
+# rows passed their gate and repeat the published rows, and the supplement's noise
+# table is reported as in sync or not with the generated rows.
 #
 # USAGE (from the clone root): Rscript revision_experiments/tr3/36_new_tables.R
 # OUTPUT: results/tr3/tex/new_<part>.tex (one tabular body each; the manuscript
@@ -366,11 +368,14 @@ if (have("simbase_replicates.csv", "simbase_done.csv")) {
               sum(db$n_no_noise), sum(db$reps)))
 }
 
-# --- noisebase: experiment 7, the five baselines on the noise data ------------
+# --- noisebase: experiments 7 and 8, the five baselines and UN-CCDs on the noise data ---
 # Per d and noise level: mean ARI and Sil (on the 200 cluster points, over the defined values) and
-# SR (k_hat = 3) of the five baselines, next to UN-CCDs from noise_replicates.csv (published,
-# r_noise 7, sweep), whose values must equal the supplement's noise table at 3 decimals. Writes
-# noisebase_summary.csv and new_noisebase.tex.
+# SR (k_hat = 3) of the five baselines and of UN-CCDs with k chosen on all points
+# (noise_allpoints_replicates.csv, experiment 8), and of UN-CCDs with the published choice on the
+# 200 cluster points (noise_replicates.csv: published, r_noise 7, sweep). Writes
+# noisebase_summary.csv, new_noisebase.tex (main Table 4: UN-CCDs with k on all points and the five
+# baselines) and new_noise_supp.tex (Table S9: UN-CCDs under both choices), and reports whether the
+# supplement's Table S9 has the generated rows.
 if (have("noisebase_replicates.csv", "noisebase_done.csv", "noise_replicates.csv", "noise_done.csv")) {
   LV <- c("0.03", "0.05", "0.1", "0.2"); ND <- c("3", "10")
   y <- tr3_read_done(tr3_path("noisebase_replicates.csv"), tr3_path("noisebase_done.csv"),
@@ -382,13 +387,29 @@ if (have("noisebase_replicates.csv", "noisebase_done.csv", "noise_replicates.csv
                      c("variant", "d", "noise_level", "r_noise", "center"), row_key = "rep")
   u <- u[u$variant == "published" & u$r_noise == "7" & u$center == "sweep", ]
   u$noise_level <- as.character(as.numeric(u$noise_level))
-  u$method <- "UN-CCDs"; u$error <- ""
-  NM <- c("UN-CCDs", SB_M)
+  u$method <- "UN-CCDs (cluster points)"; u$error <- ""
+  # experiment 8 (23_noise.R allpoints): k chosen by the silhouette over all points, scored as the
+  # baselines (ARI and Sil on the 200 cluster points, k_hat = distinct labels over all points).
+  # This is "UN-CCDs" in main Table 4; the published choice (silhouette on the 200 cluster points)
+  # is "UN-CCDs (cluster points)", shown next to it in Table S9.
+  stopifnot(have("noise_allpoints_replicates.csv", "noise_allpoints_done.csv"))
+  a <- tr3_read_done(tr3_path("noise_allpoints_replicates.csv"), tr3_path("noise_allpoints_done.csv"),
+                     c("variant", "d", "noise_level", "r_noise", "center"), row_key = "rep")
+  a <- a[a$variant == "allpoints" & a$r_noise == "7" & a$center == "sweep", ]
+  a$noise_level <- as.character(as.numeric(a$noise_level))
+  stopifnot(nrow(a) == 8000, all(a$gate == "equal"))
+  ka <- paste(a$d, a$noise_level, a$rep); ku <- paste(u$d, u$noise_level, u$rep)
+  stopifnot(setequal(ka, ku), identical(a$ari[match(ku, ka)], u$ari), identical(a$k_hat[match(ku, ka)], u$k_hat),
+            identical(a$data_fp[match(ku, ka)], u$data_fp))
+  a <- data.frame(method = "UN-CCDs", d = a$d, noise_level = a$noise_level, rep = a$rep, ari = a$ari_all,
+                  sil = a$sil200_all, k_hat = a$nlab_all, error = "", stringsAsFactors = FALSE)
+  NM <- c("UN-CCDs", SB_M)                          # main Table 4
+  NU <- c("UN-CCDs", "UN-CCDs (cluster points)")    # Table S9
   cols <- c("method", "d", "noise_level", "rep", "ari", "sil", "k_hat", "error")
-  z <- rbind(u[, cols], y[, cols])
+  z <- rbind(a[, cols], u[, cols], y[, cols])
   idn <- paste(z$method, z$d, z$noise_level)
   tab <- table(idn)
-  stopifnot(setequal(names(tab), outer(outer(NM, ND, paste), LV, paste)), all(tab == 1000))
+  stopifnot(setequal(names(tab), outer(outer(c(NM, NU[2]), ND, paste), LV, paste)), all(tab == 1000))
   nb <- do.call(rbind, lapply(split(seq_len(nrow(z)), idn), function(i) {
     w <- z[i, ]; e <- !is.na(w$error) & nzchar(w$error); a <- sb_num(w$ari); s <- sb_num(w$sil)
     data.frame(method = w$method[1], d = w$d[1], noise_level = w$noise_level[1], reps = nrow(w),
@@ -396,20 +417,7 @@ if (have("noisebase_replicates.csv", "noisebase_done.csv", "noise_replicates.csv
                n_sil_na = sum(is.na(s) & !e), sr = sum(sb_num(w$k_hat) == 3, na.rm = TRUE) / nrow(w),
                stringsAsFactors = FALSE)
   }))
-  nb <- nb[order(match(nb$d, ND), match(nb$method, NM), match(nb$noise_level, LV)), ]
-  # UN-CCDs must repeat the supplement's noise table (3 decimals)
-  tex <- readLines(SUPP_TEX, warn = FALSE)
-  end <- grep("\\label{tab:Noise_Level_Clustering_Apdx}", tex, fixed = TRUE); stopifnot(length(end) == 1)
-  beg <- max(grep("\\begin{table}", tex[seq_len(end)], fixed = TRUE))
-  for (d in ND) {
-    L <- grep(sprintf("{$d=%s$}", d), tex[beg:end], fixed = TRUE, value = TRUE); stopifnot(length(L) == 1)
-    v <- trimws(strsplit(gsub("\\\\textcolor\\{red\\}\\{([^}]*)\\}", "\\1", sub("\\\\\\\\.*$", "", L)), "&")[[1]])[-1]
-    w <- nb[nb$method == "UN-CCDs" & nb$d == d, ]; w <- w[match(LV, w$noise_level), ]
-    got <- as.vector(rbind(f3(w$mean_ari), f3(w$mean_sil), f3(w$sr)))
-    if (!identical(got, v)) stop("noisebase: UN-CCDs d=", d, " differ from the supplement (",
-                                 paste(got, collapse = "/"), " vs ", paste(v, collapse = "/"), ")")
-  }
-  cat("check passed: UN-CCDs on the noise data equal the supplement's noise table (24 values)\n")
+  nb <- nb[order(match(nb$d, ND), match(nb$method, c(NM, NU[2])), match(nb$noise_level, LV)), ]
   sb_csv(nb, "noisebase_summary.csv")
   L <- c("\\hline",
     sprintf("\\multirow{2}*{$d$} & \\multirow{2}*{Method} & %s \\\\ \\cline{3-14}",
@@ -423,7 +431,27 @@ if (have("noisebase_replicates.csv", "noisebase_done.csv", "noise_replicates.csv
                       if (m == NM[length(NM)]) "\\hline" else "\\cline{2-14}"))
   }
   emit("noisebase", L)
-  for (d in ND) for (m in NM) {
+  # Table S9: UN-CCDs under both choices of k; then report whether the supplement has these rows
+  S9 <- c("\\hline",
+    sprintf("\\multirow{2}*{$d$} & \\multirow{2}*{$\\hat{k}$ chosen on} & %s \\\\ \\cline{3-14}",
+            paste(sprintf("\\multicolumn{3}{c|}{$l=%s\\%%$}", c("3", "5", "10", "20")), collapse = " & ")),
+    sprintf(" & & %s \\\\ \\hline", paste(rep("\\textit{ARI} & \\textit{Sil} & \\textit{SR}", 4), collapse = " & ")))
+  for (d in ND) for (m in NU) {
+    w <- nb[nb$method == m & nb$d == d, ]; w <- w[match(LV, w$noise_level), ]
+    v <- paste(sb_na3(w$mean_ari), sb_na3(w$mean_sil), f3(w$sr), sep = " & ")
+    S9 <- c(S9, sprintf("%s & %s & %s \\\\ %s", if (m == NU[1]) sprintf("\\multirow{2}*{%s}", d) else "",
+                        if (m == NU[1]) "all points" else "cluster points", paste(v, collapse = " & "),
+                        if (m == NU[2]) "\\hline" else "\\cline{2-14}"))
+  }
+  emit("noise_supp", S9)
+  tex <- readLines(SUPP_TEX, warn = FALSE)
+  end <- grep("\\label{tab:Noise_Level_Clustering_Apdx}", tex, fixed = TRUE); stopifnot(length(end) == 1)
+  beg <- max(grep("\\begin{table}", tex[seq_len(end)], fixed = TRUE))
+  norm <- function(s) trimws(gsub("\\s+", " ", gsub("\\\\textcolor\\{red\\}\\{([^}]*)\\}", "\\1", s)))
+  body <- norm(tex[beg:end]); want <- norm(S9[grepl("points &", S9, fixed = TRUE)])
+  cat(sprintf("Table S9 in the supplement has the %d generated UN-CCD rows: %s\n", length(want),
+              all(want %in% body)))
+  for (d in ND) for (m in c(NM, NU[2])) {
     w <- nb[nb$method == m & nb$d == d, ]; w <- w[match(LV, w$noise_level), ]
     cat(sprintf("noisebase d=%s %-9s ARI %s | SR %s | errors %d | Sil NA %d\n", d, m,
                 paste(f3(w$mean_ari), collapse = " "), paste(f3(w$sr), collapse = " "), sum(w$n_errors), sum(w$n_sil_na)))

@@ -42,7 +42,7 @@ until the gate passes, and each one gets a `*_PROTOCOL.md` here before it runs.
 | `20_gate.R` | Compares the drivers with the original logs, the knit output and the manuscript. |
 | `ITEN500_PROTOCOL.md`, `21_iteN500_check.R` | Variant `iteN500`: RK-CCDs at d = 3, n = 500 with 500 repetitions, and its checks. |
 | `13_real_baselines.R` | Baseline rows of the real-data table (DBSCAN, MST, K-means++, Spectral, Louvain): runs each data-set block of the original script verbatim, once or over seeds. |
-| `23_noise.R` | The noise experiment (d = 3, 10; l = 3% to 20%), written 2026-10-24 because the original driver is lost. Its rows are in the paper; it does not reproduce the old table, see "Noise experiment (2026-10-24)". |
+| `23_noise.R` | The noise experiment (d = 3, 10; l = 3% to 20%), written 2026-10-24 because the original driver is lost. Its rows are in the paper; it does not reproduce the old table, see "Noise experiment (2026-10-24)". Variant `allpoints` is experiment 8 (k chosen on all points, 2026-10-31). |
 | `24_alpha_supplement.R` | Supplement Section S2.1 (2026-10-25): writes `results/tr3/supp_alpha.tex`, the rows of the α-sweep table (config A, seeds from config S, the paper's current settings) and of the shipped-against-regenerated table (configs A and G, seeds left out), from `real_alpha.csv`; checks that the rule's cells equal `real.csv`. Nothing is rerun. |
 | `25_greedy_prefix.R` | Real data (2026-10-25): UN- or RK-CCDs with the shipped first greedy selection (`greedy2`, every point ranked) or stopped at the first covering prefix; see "Greedy selection as the code runs it (2026-10-25)". |
 | `22_runtime.R`, `22_runtime_run.ps1`, `22_runtime_monitor.ps1`, `22_runtime_summary.R` | Re-timing of `tab:runtime_comparison` (d = 5, uniform, n = 50 to 500, three methods) on this machine, with a load guard; see "Runtime comparison (2026-10-24)". |
@@ -54,7 +54,7 @@ until the gate passes, and each one gets a `*_PROTOCOL.md` here before it runs.
 | `33_type1.R` | Experiment 2: size of one MC-SRT under CSR (two nulls) and UN-CCDs on uniform data without clusters. |
 | `34_ablation_direction.R` | Experiment 3: ascending against descending radius search at d = 10 and 20, n = 200, 500 replicates. |
 | `35_paired_tests.R` | Experiment 5: paired Wilcoxon tests of UN- against RK- and KS-CCDs at n = 50 (reads existing results). |
-| `36_new_tables.R` | The LaTeX tabular bodies of experiments 1, 2, 3, 5 and 7 (`results/tr3/tex/new_*.tex`) and the CSV summaries of experiment 7, with checks; nothing is rerun. |
+| `36_new_tables.R` | The LaTeX tabular bodies of experiments 1, 2, 3, 5, 7 and 8 (`results/tr3/tex/new_*.tex`) and the CSV summaries of experiments 7 and 8, with checks; nothing is rerun. |
 | `37_sim_baselines.R` | Experiment 7: DBSCAN, MST, K-means++, Spectral or Louvain (or `all`) on the simulated data (`sim`) and the noise data (`noise`) of the CCDs; `check` reproduces the stored real-data baseline rows first. |
 
 ## Running
@@ -115,7 +115,8 @@ A rerun skips every finished cell; move a result file aside to recompute.
 | `ablation_direction_replicates.csv`, `ablation_direction_summary.csv`, `ablation_direction_repro.csv` | experiment 3: ascending replicates, the comparison per cell, the reproduction check of the descending rows |
 | `paired_tests.csv`, `paired_tests_check.csv` | experiment 5: one row per cell and comparison; cell means against the supplement |
 | `simbase_replicates.csv`, `simbase_done.csv`; `noisebase_replicates.csv`, `noisebase_done.csv` | experiment 7: one row per replicate (method, setting or noise cell, mode, rep, ari, sil, k_hat, k_hat_block, n_label0, param, seconds, error, data_fp, fp_check); finished cells |
-| `simbase_summary.csv`, `simbase_by_d.csv`, `simbase_comparisons.csv`, `noisebase_summary.csv` | experiment 7, from `36_new_tables.R`: per setting (eight methods; CCD rows read from the supplement), per distribution and d, the comparisons by the 0.02 rule, and the noise cells |
+| `simbase_summary.csv`, `simbase_by_d.csv`, `simbase_comparisons.csv`, `noisebase_summary.csv` | experiments 7 and 8, from `36_new_tables.R`: per setting (eight methods; CCD rows read from the supplement), per distribution and d, the comparisons by the 0.02 rule, and the noise cells (since experiment 8, "UN-CCDs" there means k chosen on all points; "UN-CCDs (cluster points)" is the published choice) |
+| `noise_allpoints_replicates.csv`, `noise_allpoints_done.csv` | experiment 8: per replicate the published columns of `noise_replicates.csv` (gate: equal) plus ari_all, sil200_all and nlab_all for k chosen on all points |
 | `tex/new_*.tex` | output of `36_new_tables.R` |
 | `gate.csv` | gate comparison |
 
@@ -147,7 +148,8 @@ The RK-CCD d = 3, n = 500 scripts had iteN = 50 until 2026-10-18.
 These are listed in the guide, section 7. The drivers use the code's values,
 and changing any of them is the authors' decision:
 
-- the Gaussian cluster centres, 6 apart, and the radius²·I covariance;
+- the Gaussian cluster centres, 6 apart, and the radius²·I covariance (resolved
+  2026-10-31: the authors chose to describe the code's values in the paper, no rerun);
 - the per-data-set real-data levels;
 - the "or" combination of the mean and median NND tests, where the paper
   describes Holm.
@@ -656,3 +658,7 @@ $R = "C:\Program Files\R\R-4.6.1\bin\Rscript.exe"
 - Experiment 7 runs (2026-10-31): `all sim` 19:28 to 20:05 (36.5 min, 24 workers), `all noise`
   to 20:07 (2.5 min); exit codes 0 (`_logs/simbase_exitcodes_20261031.csv`). The verifier's own
   code, the 510-value real-data check and the fingerprints are described in the protocol outcome.
+- Experiment 8 (2026-10-31): `23_noise.R 3 allpoints` then `23_noise.R 10 allpoints`, 21:53 to
+  22:00, exit codes 0 (`_logs/noise_allpoints_20261031.log`); `TR3_SMOKE=3` runs the first three
+  replicates of each level on the full data and writes nothing. Main Table 4 now shows UN-CCDs with
+  k chosen on all points, as the baselines; Supplement Table S9 shows both choices.
