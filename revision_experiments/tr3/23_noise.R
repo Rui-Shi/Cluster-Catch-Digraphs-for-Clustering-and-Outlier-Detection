@@ -16,6 +16,11 @@
 #                replaced in the global environment (main process and workers) by a
 #                copy that reads env.*.rev[j + 2] as the code did until 2026-10-23;
 #                nothing in R/ccds/ is edited.
+#                allpoints: experiment 8 (NEW_EXPERIMENTS_PROTOCOL.md). The published
+#                computation plus the all-points choice of the number of clusters scored
+#                as the baselines of 37_sim_baselines.R (ari_all, sil200_all, nlab_all).
+#                Every published value is first compared with noise_replicates.csv (gate).
+#                Writes noise_allpoints_replicates.csv and noise_allpoints_done.csv.
 #     [r_noise]  radius of the ball of noise points (default 7)
 #     [center]   sweep (default): the ball is centred on the mean of the cluster
 #                centres. recycle: the noise branch of Gaussian_cls() as written, which
@@ -77,12 +82,25 @@ R_NOISE <- if (length(args) >= 3 && nzchar(args[3])) as.numeric(args[3]) else 7
 CENTER  <- if (length(args) >= 4 && nzchar(args[4])) args[4] else "sweep"
 ITEN    <- if (length(args) >= 5 && nzchar(args[5])) as.integer(args[5]) else 1000L
 LEVELS  <- c(0.03, 0.05, 0.10, 0.20)
-stopifnot(D %in% c("3", "10"), VARIANT %in% c("published", "oldindex"), CENTER %in% c("sweep", "recycle"),
+stopifnot(D %in% c("3", "10"), VARIANT %in% c("published", "oldindex", "allpoints"), CENTER %in% c("sweep", "recycle"),
           is.finite(R_NOISE), R_NOISE > 0, ITEN >= 1)
 if (VARIANT == "oldindex" && D != "10") stop("23_noise.R: oldindex applies to the descending search, d = 10")
 
 DONE_CSV <- tr3_path("noise_done.csv")
 REP_CSV  <- tr3_path("noise_replicates.csv")
+# TR3_SMOKE = m > 0: generate all data as usual, run only the first m replicates of each level,
+# print (and gate), write nothing
+SMOKE <- as.integer(Sys.getenv("TR3_SMOKE", "0"))
+if (VARIANT == "allpoints") {
+  stopifnot(ITEN == 1000L)  # the published data: 1000 replicates per level, drawn in order
+  PUB_CSV  <- REP_CSV
+  DONE_CSV <- tr3_path("noise_allpoints_done.csv")
+  REP_CSV  <- tr3_path("noise_allpoints_replicates.csv")
+  PUB <- utils::read.csv(PUB_CSV, colClasses = "character")
+  PUB <- PUB[PUB$variant == "published" & PUB$d == D & PUB$r_noise == as.character(R_NOISE) &
+               PUB$center == CENTER, , drop = FALSE]
+  stopifnot(nrow(PUB) == 4L * ITEN)
+}
 
 # the non-noise Gaussian n = 200 row gives table, direction, seed, sigma, radius range, sizes
 s <- tr3_sim_setting("UN-CCDs", "gaussian", D, "200")
@@ -130,9 +148,14 @@ tr3_noise_one <- function(x, label_T, nc, par) {
                                  dom.method = "greedy2", simul = par$simul, niter = 1000)
   ri <- nnccd.silhouette(g, x, cls = NULL, ind = seq_len(nc), lenDlimit = Inf)
   ra <- nnccd.silhouette(g, x, cls = NULL, ind = NULL, lenDlimit = Inf)
+  # experiment 8: the all-points choice, scored as 37_sim_baselines.R scores the baselines
+  la <- ra$label[seq_len(nc)]
+  nd <- length(unique(la))
+  s200 <- if (nd >= 2 && nd <= nc - 1) mean(cluster::silhouette(la, stats::dist(x[seq_len(nc), , drop = FALSE]))[, 3]) else NA_real_
   c(ari = mclust::adjustedRandIndex(ri$label[seq_len(nc)], label_T), sil = ri$si, k_hat = ri$si.ind,
     sil_all = ra$si, k_all = ra$si.ind, seconds = proc.time()[["elapsed"]] - t0,
-    old = descend_is_old())
+    old = descend_is_old(),
+    ari_all = mclust::adjustedRandIndex(la, label_T), sil200_all = s200, nlab_all = length(unique(ra$label)))
 }
 
 t_start <- Sys.time()
@@ -163,11 +186,12 @@ for (l in LEVELS) {
     next
   }
   data_list <- data[[as.character(l)]]
+  if (SMOKE > 0) data_list <- data_list[seq_len(SMOKE)]
   t0 <- Sys.time()
   r <- foreach(x = data_list, .packages = c("MASS", "cluster")) %dopar% tr3_noise_one(x, label_T, NC, par)
   r <- do.call(rbind, r)
   if (VARIANT == "oldindex" && !all(r[, "old"] == 1)) stop("23_noise.R: the old index did not reach every worker")
-  if (VARIANT == "published" && D == "10" && !all(r[, "old"] == 0)) stop("23_noise.R: an old index is loaded")
+  if (VARIANT %in% c("published", "allpoints") && D == "10" && !all(r[, "old"] == 0)) stop("23_noise.R: an old index is loaded")
 
   rows <- data.frame(key, iteN = ITEN, rep = seq_len(nrow(r)),
                      ari = fmt17(r[, "ari"]), sil = fmt17(r[, "sil"]), k_hat = fmt17(r[, "k_hat"]),
@@ -175,6 +199,29 @@ for (l in LEVELS) {
                      seconds = fmt17(r[, "seconds"]),
                      data_fp = fmt17(vapply(data_list, tr3_fp, numeric(1))),
                      stringsAsFactors = FALSE)
+  if (VARIANT == "allpoints") {
+    # gate: every published value of these replicates equals the stored published row
+    pub <- PUB[PUB$noise_level == as.character(l), , drop = FALSE]
+    pub <- pub[match(as.character(rows$rep), pub$rep), , drop = FALSE]
+    cols <- c("data_fp", "ari", "sil", "k_hat", "sil_all", "k_all")
+    bad <- vapply(cols, function(cc) sum(is.na(pub[[cc]]) | pub[[cc]] != rows[[cc]]), numeric(1))
+    cat(sprintf("  l = %g: gate on %d replicates, differences %s\n", l, nrow(rows),
+                paste(names(bad), bad, sep = "=", collapse = " ")))
+    if (any(bad > 0)) stop("23_noise.R allpoints: the published values are not reproduced (gate)")
+    rows$ari_all    <- fmt17(r[, "ari_all"])
+    rows$sil200_all <- fmt17(r[, "sil200_all"])
+    rows$nlab_all   <- fmt17(r[, "nlab_all"])
+    rows$gate       <- "equal"
+    rows <- rows[, c(names(key), "iteN", "rep", "ari", "sil", "k_hat", "sil_all", "k_all",
+                     "ari_all", "sil200_all", "nlab_all", "seconds", "data_fp", "gate")]
+    cat(sprintf("  l = %g: all points: mean ARI %.4f, SR %.3f, nlab_all != k_all in %d\n", l,
+                mean(r[, "ari_all"]), mean(r[, "nlab_all"] == 3), sum(r[, "nlab_all"] != r[, "k_all"])))
+  }
+  if (SMOKE > 0) {
+    cat(sprintf("  l = %g: smoke, %d replicates, %.1f s wall, nothing written\n", l, nrow(rows),
+                as.numeric(difftime(Sys.time(), t0, units = "secs"))))
+    next
+  }
   tr3_append(REP_CSV, rows)
   tr3_append(DONE_CSV, data.frame(key, iteN = ITEN, n_rows = nrow(rows), cores = cores,
                                   wall_secs = fmt17(as.numeric(difftime(Sys.time(), t0, units = "secs"))),
