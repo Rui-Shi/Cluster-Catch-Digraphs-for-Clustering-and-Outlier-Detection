@@ -54,7 +54,8 @@ until the gate passes, and each one gets a `*_PROTOCOL.md` here before it runs.
 | `33_type1.R` | Experiment 2: size of one MC-SRT under CSR (two nulls) and UN-CCDs on uniform data without clusters. |
 | `34_ablation_direction.R` | Experiment 3: ascending against descending radius search at d = 10 and 20, n = 200, 500 replicates. |
 | `35_paired_tests.R` | Experiment 5: paired Wilcoxon tests of UN- against RK- and KS-CCDs at n = 50 (reads existing results). |
-| `36_new_tables.R` | The LaTeX tabular bodies of experiments 1, 2, 3 and 5 (`results/tr3/tex/new_*.tex`), with checks; nothing is rerun. |
+| `36_new_tables.R` | The LaTeX tabular bodies of experiments 1, 2, 3, 5 and 7 (`results/tr3/tex/new_*.tex`) and the CSV summaries of experiment 7, with checks; nothing is rerun. |
+| `37_sim_baselines.R` | Experiment 7: DBSCAN, MST, K-means++, Spectral or Louvain (or `all`) on the simulated data (`sim`) and the noise data (`noise`) of the CCDs; `check` reproduces the stored real-data baseline rows first. |
 
 ## Running
 
@@ -113,6 +114,8 @@ A rerun skips every finished cell; move a result file aside to recompute.
 | `type1_test.csv`, `type1_test_summary.csv`, `type1_ccd_replicates.csv`, `type1_ccd_summary.csv` | experiment 2: rejection counts per (d, m) and null; UN-CCDs per replicate on uniform data; summaries |
 | `ablation_direction_replicates.csv`, `ablation_direction_summary.csv`, `ablation_direction_repro.csv` | experiment 3: ascending replicates, the comparison per cell, the reproduction check of the descending rows |
 | `paired_tests.csv`, `paired_tests_check.csv` | experiment 5: one row per cell and comparison; cell means against the supplement |
+| `simbase_replicates.csv`, `simbase_done.csv`; `noisebase_replicates.csv`, `noisebase_done.csv` | experiment 7: one row per replicate (method, setting or noise cell, mode, rep, ari, sil, k_hat, k_hat_block, n_label0, param, seconds, error, data_fp, fp_check); finished cells |
+| `simbase_summary.csv`, `simbase_by_d.csv`, `simbase_comparisons.csv`, `noisebase_summary.csv` | experiment 7, from `36_new_tables.R`: per setting (eight methods; CCD rows read from the supplement), per distribution and d, the comparisons by the 0.02 rule, and the noise cells |
 | `tex/new_*.tex` | output of `36_new_tables.R` |
 | `gate.csv` | gate comparison |
 
@@ -618,8 +621,10 @@ greedy algorithm. The code does not run the first step as described.
 Experiments 1, 2, 3 and 5 of the revision plan, asked for by the authors on 2026-10-25 for the
 KBS rebuttal. Design, decisions and outcomes are in `NEW_EXPERIMENTS_PROTOCOL.md` (written before
 the runs). Each driver was written by one agent and checked by a separate verifier agent before
-its full run, and the experiments ran one at a time. The manuscript reports them in blue: Table 6
-(experiment 1) and Supplement Section S4 (experiments 2, 3 and 5).
+its full run, and the experiments ran one at a time. The manuscript reports them in red (blue
+until 2026-10-31): Table 6 (experiment 1) and Supplement Section S4 (experiments 2, 3 and 5).
+Experiment 7 (the five baselines on the simulated and noise data) was added on 2026-10-31 under
+the same rules.
 
 From the clone root, in PowerShell:
 
@@ -630,6 +635,7 @@ $R = "C:\Program Files\R\R-4.6.1\bin\Rscript.exe"
 & $R revision_experiments/tr3/33_type1.R test                  # then ccd, then summary
 & $R revision_experiments/tr3/34_ablation_direction.R run      # [reps] [cells]; then summary
 & $R revision_experiments/tr3/35_paired_tests.R
+& $R revision_experiments/tr3/37_sim_baselines.R all check     # the gate; then: all sim, all noise
 & $R revision_experiments/tr3/36_new_tables.R                  # tex/new_*.tex and a summary
 ```
 
@@ -644,4 +650,9 @@ $R = "C:\Program Files\R\R-4.6.1\bin\Rscript.exe"
   `32_hd_baselines.R ... check` reproduces `real_baselines_fixed.csv` on the nine older data sets.
 - DBSCAN's k_hat: the original block counts clusters as distinct labels minus one (the noise
   label), so it would be one too low on a data set without noise points; all six new sets have
-  noise points.
+  noise points, and so do the nine older ones (`37_sim_baselines.R all check`, 2026-10-31).
+  Experiment 7 counts the labels other than 0; DBSCAN found no noise point in 8827 of its 60000
+  simulated data sets.
+- Experiment 7 runs (2026-10-31): `all sim` 19:28 to 20:05 (36.5 min, 24 workers), `all noise`
+  to 20:07 (2.5 min); exit codes 0 (`_logs/simbase_exitcodes_20261031.csv`). The verifier's own
+  code, the 510-value real-data check and the fingerprints are described in the protocol outcome.

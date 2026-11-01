@@ -8,17 +8,26 @@
 #   type1     type1_test_summary.csv, type1_ccd_summary.csv (33_type1.R)
 #   realhd    real_hd.csv (31_hd_real.R), real_hd_baselines.csv (32_hd_baselines.R) and
 #             their *_done.csv (finished cells only, the last copy of each)
+#   simbase   simbase_replicates.csv and simbase_done.csv (37_sim_baselines.R, mode run), with
+#             the CCD values of the supplement's Tables S2-S4 and S6-S8 (SUPP_TEX)
+#   noisebase noisebase_replicates.csv, noisebase_done.csv (37_sim_baselines.R) and
+#             noise_replicates.csv, noise_done.csv (23_noise.R, UN-CCDs)
 # Checks: the ablation table has 12 cells of 500 replicates, and its descending
 # ARI and SR (3 decimals) equal the n = 200 rows of the supplement's UN-CCD
 # tables (SUPP_TEX, default the manuscript folder); the paired table has 60
 # tests (30 cells x 2 comparisons); the type1 tables have 35 (d, m) cells of
 # B = 10000 and 20 (d, n) cells of 500 replicates; the realhd table has one row
 # (variant "hd") per method and data set (8 x 6) with the n and d of
-# tr3_load_hd(), and K-means++ and spectral clustering return the true k.
+# tr3_load_hd(), and K-means++ and spectral clustering return the true k; simbase
+# has 120 cells x 500 replicates per baseline, one fingerprint per setting and
+# replicate across the five baselines, and 60 rows per CCD table of the
+# supplement; noisebase has 8 cells x 1000 replicates per method, and its UN-CCD
+# values equal the supplement's noise table.
 #
 # USAGE (from the clone root): Rscript revision_experiments/tr3/36_new_tables.R
 # OUTPUT: results/tr3/tex/new_<part>.tex (one tabular body each; the manuscript
-# wraps each tabular in \textcolor{blue}{...}) and a summary on stdout. realhd
+# wraps each tabular in \textcolor{red}{...}) and a summary on stdout. simbase and
+# noisebase also write CSV summaries to results/tr3 (see their parts). realhd
 # writes new_realhd.tex (data sets as columns, ordered by n) and
 # new_realhd_data.tex (n, d and k rows for the dataset tables).
 # TR3_OUT_DIR, as in the drivers, replaces results/tr3 for the inputs and the
@@ -207,4 +216,216 @@ if (have("real_hd.csv", "real_hd_done.csv", "real_hd_baselines.csv", "real_hd_ba
   ok <- vapply(est, function(m) sum(as.integer(vapply(info$dataset, function(ds) cell(m, ds)$k_hat, "")) == info$k), 0)
   cat("  k_hat = k:", paste(sprintf("%s %d", est, ok), collapse = ", "), "of", nrow(info), "\n")
   cat("  CCD seconds:", paste(sprintf("%s %s %s", ccd$method, ccd$dataset, ccd$seconds), collapse = "; "), "\n")
+}
+
+# --- simbase: experiment 7, the five baselines on the simulated data ---------
+# Per setting (dist, d, n, k): mean ARI and Sil over the defined values (with the Sil NA count and
+# the error count) and SR, the share of the 500 replicates with k_hat = k (an error is a miss).
+# The CCD values come from the supplement's Tables S2-S4 and S6-S8 (SUPP_TEX, 3 decimals), the only
+# complete source. Comparisons as fixed in the protocol: per distribution and d, the mean over the
+# 12 settings; "comparable" when two such means differ by at most 0.02. Writes simbase_summary.csv
+# (per setting, eight methods), simbase_by_d.csv and simbase_comparisons.csv to RES, and the tex
+# bodies new_simbase.tex (main text) and new_simbase_<dist>_<method>.tex (supplement, one per
+# baseline and distribution, the layout of Table S2).
+SB_M <- c("DBSCAN", "MST", "K-means++", "Spectral", "Louvain")
+SB_GIVEN_K <- c("K-means++", "Spectral")
+CCD_M <- c("KS-CCDs", "RK-CCDs", "UN-CCDs")
+SIM_D <- c("2", "3", "5", "10", "20"); SIM_N <- c("50", "100", "200", "500"); SIM_K <- c("2", "3", "5")
+sb_num <- function(v) suppressWarnings(as.numeric(v))
+sb_na3 <- function(v) ifelse(is.na(v), "--", f3(v))
+sb_csv <- function(df, name) {
+  for (j in names(df)) if (is.numeric(df[[j]])) df[[j]] <- fmt17(df[[j]])
+  utils::write.csv(df, tr3_path(name), row.names = FALSE)
+  cat("written:", tr3_path(name), "\n")
+}
+if (have("simbase_replicates.csv", "simbase_done.csv")) {
+  x <- tr3_read_done(tr3_path("simbase_replicates.csv"), tr3_path("simbase_done.csv"),
+                     c("method", "dist", "d", "n", "n_clusters", "mode"), row_key = "rep")
+  x <- x[x$mode == "run", ]
+  id <- paste(x$method, x$dist, x$d, x$n, x$n_clusters)
+  g <- expand.grid(k = SIM_K, n = SIM_N, d = SIM_D, dist = names(DIST), method = SB_M, stringsAsFactors = FALSE)
+  tab <- table(id)
+  stopifnot(setequal(names(tab), paste(g$method, g$dist, g$d, g$n, g$k)), all(tab == 500),
+            all(x$fp_check %in% c("equal", "none")))
+  # the five methods clustered the same data sets: one fingerprint per setting and replicate
+  nfp <- tapply(x$data_fp, paste(x$dist, x$d, x$n, x$n_clusters, x$rep), function(v) length(unique(v)))
+  stopifnot(length(nfp) == 120 * 500, all(nfp == 1))
+  err <- !is.na(x$error) & nzchar(x$error)
+  sb <- do.call(rbind, lapply(split(seq_len(nrow(x)), id), function(i) {
+    z <- x[i, ]; e <- err[i]; a <- sb_num(z$ari); s <- sb_num(z$sil)
+    data.frame(method = z$method[1], dist = z$dist[1], d = z$d[1], n = z$n[1], n_clusters = z$n_clusters[1],
+               reps = nrow(z), n_errors = sum(e),
+               mean_ari = if (all(is.na(a))) NA_real_ else mean(a, na.rm = TRUE),
+               mean_sil = if (all(is.na(s))) NA_real_ else mean(s, na.rm = TRUE),
+               n_sil_na = sum(is.na(s) & !e),
+               sr = sum(sb_num(z$k_hat) == sb_num(z$n_clusters), na.rm = TRUE) / nrow(z),
+               n_no_noise = if (z$method[1] == "DBSCAN") sum(sb_num(z$n_label0) == 0, na.rm = TRUE) else NA_real_,
+               fp_check = paste(sort(unique(z$fp_check)), collapse = "+"),
+               source = "simbase_replicates.csv", stringsAsFactors = FALSE)
+  }))
+  # the CCD rows of the supplement tables (\textcolor{red}{x} -> x)
+  tex <- readLines(SUPP_TEX, warn = FALSE)
+  cc <- list()
+  for (ds in names(DIST)) for (m in CCD_M) {
+    lab <- sprintf("\\label{tab:%s_%s_Apdx}", c(uniform = "uni", gaussian = "Gau")[ds], m)
+    end <- grep(lab, tex, fixed = TRUE); stopifnot(length(end) == 1)
+    beg <- max(grep("\\begin{table}", tex[seq_len(end)], fixed = TRUE))
+    nn <- NA_character_
+    for (L in tex[beg:end]) {
+      if (grepl("$n=", L, fixed = TRUE)) nn <- sub("^.*\\$n=([0-9]+)\\$.*$", "\\1", L)
+      if (!grepl("& [235] clusters &", L)) next
+      k <- sub("^.*& ([235]) clusters &.*$", "\\1", L)
+      body <- sub("\\\\\\\\.*$", "", sub("^.*& [235] clusters &", "", L))
+      v <- as.numeric(trimws(strsplit(gsub("\\\\textcolor\\{red\\}\\{([^}]*)\\}", "\\1", body), "&")[[1]]))
+      stopifnot(length(v) == 15, !anyNA(v), !is.na(nn))
+      cc[[length(cc) + 1]] <- data.frame(method = m, dist = ds, d = SIM_D, n = nn, n_clusters = k, reps = 500,
+        n_errors = NA_real_, mean_ari = v[3 * (1:5) - 2], mean_sil = v[3 * (1:5) - 1], n_sil_na = NA_real_,
+        sr = v[3 * (1:5)], n_no_noise = NA_real_, fp_check = NA_character_,
+        source = "Supplementary_Material.tex", stringsAsFactors = FALSE)
+    }
+  }
+  cc <- do.call(rbind, cc)
+  stopifnot(nrow(cc) == 2 * 3 * 60, !anyDuplicated(paste(cc$method, cc$dist, cc$d, cc$n, cc$n_clusters)))
+  ORDER <- c(CCD_M, SB_M)
+  allm <- rbind(cc, sb)
+  allm <- allm[order(match(allm$method, ORDER), match(allm$dist, names(DIST)), match(allm$d, SIM_D),
+                     match(allm$n, SIM_N), match(allm$n_clusters, SIM_K)), ]
+  sb_csv(allm, "simbase_summary.csv")
+  pick <- function(m, ds, d) allm[allm$method == m & allm$dist == ds & allm$d == d, ]
+  byd <- do.call(rbind, lapply(names(DIST), function(ds) do.call(rbind, lapply(SIM_D, function(d)
+    do.call(rbind, lapply(ORDER, function(m) {
+      z <- pick(m, ds, d); stopifnot(nrow(z) == 12)
+      data.frame(method = m, dist = ds, d = d, settings = 12, mean_ari = mean(z$mean_ari),
+                 mean_sr = mean(z$sr), stringsAsFactors = FALSE)
+    }))))))
+  sb_csv(byd, "simbase_by_d.csv")
+  # UN-CCDs and KS-CCDs against every other method: the verdict on the means over 12 settings, and
+  # per setting, on the values as printed (3 decimals), how often the reference is higher or lower
+  cmp <- do.call(rbind, lapply(c("UN-CCDs", "KS-CCDs"), function(ref) do.call(rbind, lapply(names(DIST),
+    function(ds) do.call(rbind, lapply(SIM_D, function(d) do.call(rbind, lapply(setdiff(ORDER, ref), function(o) {
+      a <- pick(ref, ds, d); b <- pick(o, ds, d)
+      b <- b[match(paste(a$n, a$n_clusters), paste(b$n, b$n_clusters)), ]
+      dif <- byd$mean_ari[byd$method == ref & byd$dist == ds & byd$d == d] -
+        byd$mean_ari[byd$method == o & byd$dist == ds & byd$d == d]
+      s <- sign(as.numeric(f3(a$mean_ari)) - as.numeric(f3(b$mean_ari)))
+      data.frame(reference = ref, other = o, dist = ds, d = d, mean_ari_diff = dif,
+                 verdict = if (abs(dif) <= 0.02) "comparable" else if (dif > 0) "higher" else "lower",
+                 settings_higher = sum(s > 0), settings_lower = sum(s < 0), settings_equal = sum(s == 0),
+                 stringsAsFactors = FALSE)
+    }))))))))
+  sb_csv(cmp, "simbase_comparisons.csv")
+  # main-text table: mean ARI (eight methods) and mean SR (the six that estimate k) by dist and d
+  hd <- paste(sprintf("$d=%s$", SIM_D), collapse = " & ")
+  row_for <- function(m, what) {
+    v <- unlist(lapply(names(DIST), function(ds) vapply(SIM_D, function(d)
+      byd[[what]][byd$method == m & byd$dist == ds & byd$d == d], 0)))
+    sprintf("%s & %s \\\\", if (m %in% SB_GIVEN_K) paste0(m, "$^*$") else m, paste(f3(v), collapse = " & "))
+  }
+  emit("simbase", c("\\hline",
+    " & \\multicolumn{5}{c|}{Uniform} & \\multicolumn{5}{c|}{Gaussian} \\\\ \\cline{2-11}",
+    sprintf("Method & %s & %s \\\\ \\hline", hd, hd),
+    "\\multicolumn{11}{|l|}{Mean \\textit{ARI}} \\\\ \\hline",
+    vapply(ORDER, row_for, "", what = "mean_ari", USE.NAMES = FALSE), "\\hline",
+    "\\multicolumn{11}{|l|}{Mean \\textit{SR}} \\\\ \\hline",
+    vapply(setdiff(ORDER, SB_GIVEN_K), row_for, "", what = "mean_sr", USE.NAMES = FALSE), "\\hline"))
+  # supplement tables, one per baseline and distribution, in the layout of Table S2
+  for (ds in names(DIST)) for (m in SB_M) {
+    L <- c("\\hline",
+      sprintf("\\multicolumn{2}{|c|}{\\multirow{2}*{%s}} & %s \\\\ \\cline{3-17}", m,
+              paste(sprintf("\\multicolumn{3}{|c|}{$d=%s$}", SIM_D), collapse = " & ")),
+      sprintf("\\multicolumn{2}{|c|}{} & %s \\\\ \\hline",
+              paste(rep("\\textit{ARI} & \\textit{Sil} & \\textit{SR}", 5), collapse = " & ")))
+    for (nn in SIM_N) for (k in SIM_K) {
+      v <- vapply(SIM_D, function(d) {
+        z <- sb[sb$method == m & sb$dist == ds & sb$d == d & sb$n == nn & sb$n_clusters == k, ]
+        stopifnot(nrow(z) == 1)
+        paste(sb_na3(z$mean_ari), sb_na3(z$mean_sil), if (m %in% SB_GIVEN_K) "--" else f3(z$sr), sep = " & ")
+      }, "")
+      L <- c(L, sprintf("%s & %s clusters & %s \\\\ %s", if (k == "2") sprintf("\\multirow{3}*{$n=%s$}", nn) else "",
+                        k, paste(v, collapse = " & "), if (k == "5") "\\cline{1-17}" else "\\cline{3-17}"))
+    }
+    emit(sprintf("simbase_%s_%s", ds, m), L)
+  }
+  # summary for the text
+  for (ds in names(DIST)) for (d in SIM_D) {
+    z <- byd[byd$dist == ds & byd$d == d, ]
+    cat(sprintf("simbase %s d=%s mean ARI: %s\n", ds, d, paste(sprintf("%s %.3f", z$method, z$mean_ari), collapse = ", ")))
+  }
+  for (ref in c("UN-CCDs", "KS-CCDs")) for (o in setdiff(ORDER, ref)) {
+    z <- cmp[cmp$reference == ref & cmp$other == o, ]
+    cat(sprintf("  %s vs %s: %s; settings higher/lower/equal %d/%d/%d of 120\n", ref, o,
+                paste(sprintf("%s%s %s (%+.3f)", substr(z$dist, 1, 1), z$d, z$verdict, z$mean_ari_diff), collapse = ", "),
+                sum(z$settings_higher), sum(z$settings_lower), sum(z$settings_equal)))
+  }
+  e <- sb[sb$n_errors > 0 | sb$n_sil_na > 0, ]
+  cat(sprintf("  errors: %s\n  Sil NA (1 or n clusters): %s\n",
+              paste(sprintf("%s %s d=%s n=%s k=%s: %d", e$method, e$dist, e$d, e$n, e$n_clusters, e$n_errors)[e$n_errors > 0], collapse = "; "),
+              paste(tapply(sb$n_sil_na, sb$method, sum), names(tapply(sb$n_sil_na, sb$method, sum)), collapse = ", ")))
+  db <- sb[sb$method == "DBSCAN", ]
+  cat(sprintf("  DBSCAN replicates without noise points: %d of %d (k_hat counts the labels other than 0)\n",
+              sum(db$n_no_noise), sum(db$reps)))
+}
+
+# --- noisebase: experiment 7, the five baselines on the noise data ------------
+# Per d and noise level: mean ARI and Sil (on the 200 cluster points, over the defined values) and
+# SR (k_hat = 3) of the five baselines, next to UN-CCDs from noise_replicates.csv (published,
+# r_noise 7, sweep), whose values must equal the supplement's noise table at 3 decimals. Writes
+# noisebase_summary.csv and new_noisebase.tex.
+if (have("noisebase_replicates.csv", "noisebase_done.csv", "noise_replicates.csv", "noise_done.csv")) {
+  LV <- c("0.03", "0.05", "0.1", "0.2"); ND <- c("3", "10")
+  y <- tr3_read_done(tr3_path("noisebase_replicates.csv"), tr3_path("noisebase_done.csv"),
+                     c("method", "d", "noise_level", "r_noise", "center", "mode"), row_key = "rep")
+  y <- y[y$mode == "run", ]
+  y$noise_level <- as.character(as.numeric(y$noise_level))
+  stopifnot(all(y$r_noise == "7"), all(y$center == "sweep"), all(y$fp_check == "equal"))
+  u <- tr3_read_done(tr3_path("noise_replicates.csv"), tr3_path("noise_done.csv"),
+                     c("variant", "d", "noise_level", "r_noise", "center"), row_key = "rep")
+  u <- u[u$variant == "published" & u$r_noise == "7" & u$center == "sweep", ]
+  u$noise_level <- as.character(as.numeric(u$noise_level))
+  u$method <- "UN-CCDs"; u$error <- ""
+  NM <- c("UN-CCDs", SB_M)
+  cols <- c("method", "d", "noise_level", "rep", "ari", "sil", "k_hat", "error")
+  z <- rbind(u[, cols], y[, cols])
+  idn <- paste(z$method, z$d, z$noise_level)
+  tab <- table(idn)
+  stopifnot(setequal(names(tab), outer(outer(NM, ND, paste), LV, paste)), all(tab == 1000))
+  nb <- do.call(rbind, lapply(split(seq_len(nrow(z)), idn), function(i) {
+    w <- z[i, ]; e <- !is.na(w$error) & nzchar(w$error); a <- sb_num(w$ari); s <- sb_num(w$sil)
+    data.frame(method = w$method[1], d = w$d[1], noise_level = w$noise_level[1], reps = nrow(w),
+               n_errors = sum(e), mean_ari = mean(a, na.rm = TRUE), mean_sil = mean(s, na.rm = TRUE),
+               n_sil_na = sum(is.na(s) & !e), sr = sum(sb_num(w$k_hat) == 3, na.rm = TRUE) / nrow(w),
+               stringsAsFactors = FALSE)
+  }))
+  nb <- nb[order(match(nb$d, ND), match(nb$method, NM), match(nb$noise_level, LV)), ]
+  # UN-CCDs must repeat the supplement's noise table (3 decimals)
+  tex <- readLines(SUPP_TEX, warn = FALSE)
+  end <- grep("\\label{tab:Noise_Level_Clustering_Apdx}", tex, fixed = TRUE); stopifnot(length(end) == 1)
+  beg <- max(grep("\\begin{table}", tex[seq_len(end)], fixed = TRUE))
+  for (d in ND) {
+    L <- grep(sprintf("{$d=%s$}", d), tex[beg:end], fixed = TRUE, value = TRUE); stopifnot(length(L) == 1)
+    v <- trimws(strsplit(gsub("\\\\textcolor\\{red\\}\\{([^}]*)\\}", "\\1", sub("\\\\\\\\.*$", "", L)), "&")[[1]])[-1]
+    w <- nb[nb$method == "UN-CCDs" & nb$d == d, ]; w <- w[match(LV, w$noise_level), ]
+    got <- as.vector(rbind(f3(w$mean_ari), f3(w$mean_sil), f3(w$sr)))
+    if (!identical(got, v)) stop("noisebase: UN-CCDs d=", d, " differ from the supplement (",
+                                 paste(got, collapse = "/"), " vs ", paste(v, collapse = "/"), ")")
+  }
+  cat("check passed: UN-CCDs on the noise data equal the supplement's noise table (24 values)\n")
+  sb_csv(nb, "noisebase_summary.csv")
+  L <- c("\\hline",
+    sprintf("\\multirow{2}*{$d$} & \\multirow{2}*{Method} & %s \\\\ \\cline{3-14}",
+            paste(sprintf("\\multicolumn{3}{c|}{$l=%s\\%%$}", c("3", "5", "10", "20")), collapse = " & ")),
+    sprintf(" & & %s \\\\ \\hline", paste(rep("\\textit{ARI} & \\textit{Sil} & \\textit{SR}", 4), collapse = " & ")))
+  for (d in ND) for (m in NM) {
+    w <- nb[nb$method == m & nb$d == d, ]; w <- w[match(LV, w$noise_level), ]
+    v <- paste(sb_na3(w$mean_ari), sb_na3(w$mean_sil), if (m %in% SB_GIVEN_K) rep("--", 4) else f3(w$sr), sep = " & ")
+    L <- c(L, sprintf("%s & %s & %s \\\\ %s", if (m == "UN-CCDs") sprintf("\\multirow{%d}*{%s}", length(NM), d) else "",
+                      if (m %in% SB_GIVEN_K) paste0(m, "$^*$") else m, paste(v, collapse = " & "),
+                      if (m == NM[length(NM)]) "\\hline" else "\\cline{2-14}"))
+  }
+  emit("noisebase", L)
+  for (d in ND) for (m in NM) {
+    w <- nb[nb$method == m & nb$d == d, ]; w <- w[match(LV, w$noise_level), ]
+    cat(sprintf("noisebase d=%s %-9s ARI %s | SR %s | errors %d | Sil NA %d\n", d, m,
+                paste(f3(w$mean_ari), collapse = " "), paste(f3(w$sr), collapse = " "), sum(w$n_errors), sum(w$n_sil_na)))
+  }
 }

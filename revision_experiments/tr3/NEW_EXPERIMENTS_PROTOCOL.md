@@ -177,3 +177,31 @@ Run
 Output (`results/tr3/`): `simbase_replicates.csv` and `noisebase_replicates.csv` (one row per
 replicate: keys, rep, ari, sil, k_hat, DBSCAN's block count, seconds, error, data_fp), their
 `_done.csv` files, and `simbase_check.csv` (the real-data check). Tables by `36_new_tables.R`.
+
+Outcome of experiment 7 (driver 75110bf; run 2026-10-31, `all sim` 19:28 to 20:05 with 24 workers,
+`all noise` to 20:07; logs `_logs/simbase_sim_20261031.log`, `_logs/simbase_noise_20261031.log`,
+exit codes 0 in `_logs/simbase_exitcodes_20261031.csv`; tables `_logs/new_tables_20261031.log`):
+- Gate: the real-data check reproduced 510 of 510 stored values (writer and verifier separately).
+  Every one of the 15 real sets has DBSCAN noise points, so no published DBSCAN k_hat is too low.
+- 600 sim cells x 500 and 40 noise cells x 1000, all in the done files. Fingerprints equal in the
+  66 settings with stored ones (330 cells) and in all 40 noise cells; one fingerprint per setting
+  and replicate across the five baselines. One error in 340000 replicates: spectral clustering,
+  uniform, d = 2, n = 50, k = 2, replicate 4 ("NA/NaN/Inf in foreign function call (arg 1)", as in
+  the original block). Sil undefined (one cluster) in 11209 MST and 747 DBSCAN replicates of 60000.
+  DBSCAN found no noise point in 8827 of 60000 data sets (there the block's count is one too low).
+- Mean ARI over the 12 settings of each distribution and d, by the 0.02 rule (10 groups):
+  UN-CCDs against DBSCAN higher in 9 (lower at uniform d = 20, by 0.023), against MST higher in
+  10, against Louvain higher in 6 (uniform, all d; Gaussian d = 20) and lower in 4 (Gaussian
+  d <= 10, by 0.039 to 0.080); against K-means++ (given k) higher in 4 (uniform d >= 3), comparable
+  in 2 (Gaussian d = 3, 5), lower in 4 (uniform d = 2; Gaussian d = 2, 10, 20); against spectral
+  clustering (given k) higher in 4 (uniform d <= 10), comparable in 2 (Gaussian d = 3, 5), lower in
+  4 (uniform d = 20; Gaussian d = 2, 10, 20). KS-CCDs (delta per setting): higher than DBSCAN and
+  MST in all 120 settings; higher than K-means++ and spectral clustering in 8 groups, lower at
+  Gaussian d = 10, 20; against Louvain higher in 6, comparable in 2, lower in 2.
+- Noise (ARI and Sil on the 200 cluster points): UN-CCDs SR 0.955 to 0.998; DBSCAN SR at most
+  0.667 (d = 3) and 0.046 (d = 10); MST SR at most 0.284; Louvain ARI at least 0.988 but SR 0.092
+  to 0.563 at d = 3 and 0 at d = 10 (the noise points form extra clusters); K-means++ and spectral
+  clustering (given k = 3) ARI 0.881 to 0.991. The UN-CCD values equal the supplement's noise table.
+- Independent recomputation in Python from the replicate files (scratch `check_simbase.py`): the
+  80 rows of `simbase_by_d.csv`, the 140 of `simbase_comparisons.csv` and the 48 of
+  `noisebase_summary.csv` agree.
