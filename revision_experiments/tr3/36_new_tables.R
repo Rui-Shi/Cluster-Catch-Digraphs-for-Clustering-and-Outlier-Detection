@@ -294,11 +294,17 @@ if (have("simbase_replicates.csv", "simbase_done.csv")) {
                      match(allm$n, SIM_N), match(allm$n_clusters, SIM_K)), ]
   sb_csv(allm, "simbase_summary.csv")
   pick <- function(m, ds, d) allm[allm$method == m & allm$dist == ds & allm$d == d, ]
+  # Means over the 12 settings, for every method from the per-setting values as printed in the
+  # supplement (3 decimals), so that each cell of the main table can be recomputed from Tables S2-S4,
+  # S6-S8 and S10-S19. Exact: sums in integer thousandths; printed by rounding half up (r3).
+  milli <- function(v) as.integer(round(as.numeric(f3(v)) * 1000))
+  r3 <- function(s) sprintf("%.3f", ((2L * s + 12L) %/% 24L) / 1000)
   byd <- do.call(rbind, lapply(names(DIST), function(ds) do.call(rbind, lapply(SIM_D, function(d)
     do.call(rbind, lapply(ORDER, function(m) {
-      z <- pick(m, ds, d); stopifnot(nrow(z) == 12)
-      data.frame(method = m, dist = ds, d = d, settings = 12, mean_ari = mean(z$mean_ari),
-                 mean_sr = mean(z$sr), stringsAsFactors = FALSE)
+      z <- pick(m, ds, d); stopifnot(nrow(z) == 12, !anyNA(z$mean_ari), !anyNA(z$sr))
+      sa <- sum(milli(z$mean_ari)); ss <- sum(milli(z$sr))
+      data.frame(method = m, dist = ds, d = d, settings = 12, sum_ari_milli = sa, sum_sr_milli = ss,
+                 mean_ari = sa / 12000, mean_sr = ss / 12000, stringsAsFactors = FALSE)
     }))))))
   sb_csv(byd, "simbase_by_d.csv")
   # UN-CCDs and KS-CCDs against every other method: the verdict on the means over 12 settings, and
@@ -307,11 +313,12 @@ if (have("simbase_replicates.csv", "simbase_done.csv")) {
     function(ds) do.call(rbind, lapply(SIM_D, function(d) do.call(rbind, lapply(setdiff(ORDER, ref), function(o) {
       a <- pick(ref, ds, d); b <- pick(o, ds, d)
       b <- b[match(paste(a$n, a$n_clusters), paste(b$n, b$n_clusters)), ]
-      dif <- byd$mean_ari[byd$method == ref & byd$dist == ds & byd$d == d] -
-        byd$mean_ari[byd$method == o & byd$dist == ds & byd$d == d]
+      dm <- byd$sum_ari_milli[byd$method == ref & byd$dist == ds & byd$d == d] -
+        byd$sum_ari_milli[byd$method == o & byd$dist == ds & byd$d == d]   # 12000 x the difference
+      dif <- dm / 12000
       s <- sign(as.numeric(f3(a$mean_ari)) - as.numeric(f3(b$mean_ari)))
       data.frame(reference = ref, other = o, dist = ds, d = d, mean_ari_diff = dif,
-                 verdict = if (abs(dif) <= 0.02) "comparable" else if (dif > 0) "higher" else "lower",
+                 verdict = if (abs(dm) <= 240L) "comparable" else if (dm > 0) "higher" else "lower",
                  settings_higher = sum(s > 0), settings_lower = sum(s < 0), settings_equal = sum(s == 0),
                  stringsAsFactors = FALSE)
     }))))))))
@@ -320,16 +327,16 @@ if (have("simbase_replicates.csv", "simbase_done.csv")) {
   hd <- paste(sprintf("$d=%s$", SIM_D), collapse = " & ")
   row_for <- function(m, what) {
     v <- unlist(lapply(names(DIST), function(ds) vapply(SIM_D, function(d)
-      byd[[what]][byd$method == m & byd$dist == ds & byd$d == d], 0)))
-    sprintf("%s & %s \\\\", if (m %in% SB_GIVEN_K) paste0(m, "$^*$") else m, paste(f3(v), collapse = " & "))
+      byd[[what]][byd$method == m & byd$dist == ds & byd$d == d], 0L)))
+    sprintf("%s & %s \\\\", if (m %in% SB_GIVEN_K) paste0(m, "$^*$") else m, paste(r3(v), collapse = " & "))
   }
   emit("simbase", c("\\hline",
     " & \\multicolumn{5}{c|}{Uniform} & \\multicolumn{5}{c|}{Gaussian} \\\\ \\cline{2-11}",
     sprintf("Method & %s & %s \\\\ \\hline", hd, hd),
     "\\multicolumn{11}{|l|}{Mean \\textit{ARI}} \\\\ \\hline",
-    vapply(ORDER, row_for, "", what = "mean_ari", USE.NAMES = FALSE), "\\hline",
+    vapply(ORDER, row_for, "", what = "sum_ari_milli", USE.NAMES = FALSE), "\\hline",
     "\\multicolumn{11}{|l|}{Mean \\textit{SR}} \\\\ \\hline",
-    vapply(setdiff(ORDER, SB_GIVEN_K), row_for, "", what = "mean_sr", USE.NAMES = FALSE), "\\hline"))
+    vapply(setdiff(ORDER, SB_GIVEN_K), row_for, "", what = "sum_sr_milli", USE.NAMES = FALSE), "\\hline"))
   # supplement tables, one per baseline and distribution, in the layout of Table S2
   for (ds in names(DIST)) for (m in SB_M) {
     L <- c("\\hline",
