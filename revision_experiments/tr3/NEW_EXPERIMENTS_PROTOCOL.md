@@ -205,3 +205,36 @@ exit codes 0 in `_logs/simbase_exitcodes_20261031.csv`; tables `_logs/new_tables
 - Independent recomputation in Python from the replicate files (scratch `check_simbase.py`): the
   80 rows of `simbase_by_d.csv`, the 140 of `simbase_comparisons.csv` and the 48 of
   `noisebase_summary.csv` agree.
+
+## Experiment 8: UN-CCDs on the noise data with k chosen on all points (`23_noise.R allpoints`)
+
+Written 2026-10-31, before the code change. The authors chose this on 2026-10-31, after a
+cross-check of the manuscript found that, on the noise data, UN-CCDs choose k by the silhouette
+on the 200 cluster points (`nnccd.silhouette(ind = 1:200)`, which needs to know which points are
+noise), while the five baselines of experiment 7 count k over all points. Neither document said
+the rules differ. `noise_replicates.csv` already has k chosen on all points (`k_all`), but not the
+ARI or Sil of that choice.
+
+Data: as the published variant of `23_noise.R` (d = 3, 10; l = 3%, 5%, 10%, 20%; 1000 replicates;
+r_noise 7, sweep; same seed and settings). Nothing in `R/ccds/` changes.
+
+Per replicate, one UN-CCD graph and two selections of the number of clusters from it
+- published: as before (silhouette on the 200 cluster points): ari, sil, k_hat;
+- all points: the silhouette over all 200 + n_noise points, as `UNCCD_clustering()` does
+  (`ind = NULL`; already stored as `sil_all`, `k_all`). New columns, scored as the baselines:
+  `ari_all` = ARI of the labels of the 200 cluster points against the truth; `sil200_all` = mean
+  silhouette of those labels on those points, NA unless they form 2 to 199 groups; `nlab_all` = the
+  number of distinct labels over all points (the baselines' k_hat). SR = share with `nlab_all` = 3.
+  Any replicate with `nlab_all` different from `k_all` is counted and reported.
+
+Gate (before any number is used): in every replicate, data_fp, ari, sil, k_hat, sil_all and k_all
+equal the stored published row as fmt17 text. Any difference stops the cell.
+
+Run: smoke test (3 replicates per cell), then d = 3 and d = 10 one after the other (never two R
+runs on G: at once), from PowerShell. Output, separate from the published files:
+`noise_allpoints_replicates.csv` and `noise_allpoints_done.csv`.
+
+Use in the paper (fixed now, whatever the numbers): main Table 4 shows UN-CCDs under the all-points
+rule, the rule of the five baselines; Supplement Table S9 shows UN-CCDs under both rules; both
+documents state both rules. The abstract, highlights and conclusion take their noise claims from
+the all-points numbers.
