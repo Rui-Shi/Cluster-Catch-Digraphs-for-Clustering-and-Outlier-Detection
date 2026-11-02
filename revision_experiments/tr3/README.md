@@ -9,7 +9,8 @@ These drivers replace the 120 copy-paste simulation scripts and the three
 real-data scripts for new work. The originals print averages to SLURM logs and
 save the workspace. The drivers run the same code through one interface, with
 the same settings and data, and write every replicate to a CSV. Nothing in
-`methods/`, `R/` or `data/` is edited. In `simulations/`, the following settings were
+`methods/`, `R/` or `data/` is edited, except the descending radius search in `R/ccds/UN_CCD.R` (index fix
+2026-10-23, sorted neighbour lists 2026-11-02; see their sections). In `simulations/`, the following settings were
 changed on 2026-10-18 and 2026-10-23 by the authors' decision (see the audit section):
 - the table line of the four UN-CCD Gaussian d = 10 scripts, from 0.1% to 1%;
 - `iteN` of the two RK-CCD d = 3, n = 500 scripts, from 50 to 500;
@@ -56,6 +57,7 @@ until the gate passes, and each one gets a `*_PROTOCOL.md` here before it runs.
 | `35_paired_tests.R` | Experiment 5: paired Wilcoxon tests of UN- against RK- and KS-CCDs at n = 50 (reads existing results). |
 | `36_new_tables.R` | The LaTeX tabular bodies of experiments 1, 2, 3, 5, 7 and 8 (`results/tr3/tex/new_*.tex`) and the CSV summaries of experiments 7 and 8, with checks; nothing is rerun. |
 | `37_sim_baselines.R` | Experiment 7: DBSCAN, MST, K-means++, Spectral or Louvain (or `all`) on the simulated data (`sim`) and the noise data (`noise`) of the CCDs; `check` reproduces the stored real-data baseline rows first. |
+| `38_descend_pointer_check.R` | Checks that the descending radius search of 2026-11-02 (sorted neighbour lists) returns exactly the radii of the 2026-10-23 version, on simulated and real data with d ≥ 10 and edge cases; see "Descending search with sorted neighbour lists (2026-11-02)". |
 
 ## Running
 
@@ -119,6 +121,8 @@ A rerun skips every finished cell; move a result file aside to recompute.
 | `noise_allpoints_replicates.csv`, `noise_allpoints_done.csv` | experiment 8: per replicate the published columns of `noise_replicates.csv` (gate: equal) plus ari_all, sil200_all and nlab_all for k chosen on all points |
 | `tex/new_*.tex` | output of `36_new_tables.R` |
 | `gate.csv` | gate comparison |
+| `descend_pointer_check.csv` | output of `38_descend_pointer_check.R`: case, n, d, low.num, scores, pass, seconds of both versions |
+| `descend_ptr_20261102/` | the driver runs that checked the 2026-11-02 descending search against the published files (see its section) |
 
 Numbers are written with 17 significant digits, so means recomputed from the
 CSV equal the in-memory ones exactly. Each cell is appended as soon as it
@@ -177,6 +181,30 @@ descending search (d >= 10) changes; ascending searches, all real-data UN-CCD bl
 - The noise experiment (d = 3 and 10) was rerun with a new driver whose rows replace the published table; see
   "Noise experiment (2026-10-24)".
 - Not rerun: the alpha sweep's config A rows for seeds and breast_cancer (descending; superseded by config S).
+
+## Descending search with sorted neighbour lists (2026-11-02)
+
+Author decision 2026-11-01: adopt the pointer search, so that the paper can state O(n^3) per data set for d >= 10.
+In `R/ccds/UN_CCD.R`, when a point leaves the ball, a member whose nearest neighbour it was took a minimum over all other
+members, O(n) each, so a data set cost O(n^4) in the worst case. Now `nnccd.sorted.nbrs()` sorts the other points of each
+point by distance once per data set (O(n^2 log n) time, n(n-1) integers), and `nnccd.radi.descend.one(..., S)` keeps per
+member a position in its list that only moves forward while one centre is searched: O(n^2) per centre, O(n^3) per data set.
+The comparison line with the table (`env.*.rev[j + 1]`) is unchanged, so `23_noise.R oldindex` still finds it. The
+ascending search, RK-CCDs and KS-CCDs are untouched. Checks, all on this machine, R 4.6.1:
+- `38_descend_pointer_check.R`: radii identical to the 2026-10-23 version (copied verbatim into the script) in 115 of 115
+  cases: 96 simulated data sets (d = 10, 20; n = 50 to 500), the six real data sets of `31_hd_real.R`, 13 edge cases
+  (duplicates, lattice data, n = 4 to 8, low.num 2 and 4, scores). Radius time, all real sets: 511.4 s before, 145.7 s after
+  (segmentation 471.0 s to 124.9 s).
+- Through the drivers, with outputs in `results/tr3/descend_ptr_20261102/` (the published files' MD5s did not change):
+  `31_hd_real.R UN-CCDs` with `TR3_OUT_DIR`: the six data sets equal `real_hd.csv` in n, d, ari, sil and k_hat;
+  a copy of `10_sim.R` with its three output paths redirected: the 48 UN-CCD cells with d = 10, 20 (24,000 replicates)
+  equal `sim_replicates.csv` in ari, sil, k_hat and data_fp; a copy of `23_noise.R 10 allpoints` with its done file
+  redirected and `TR3_SMOKE=1000`: its gate finds 0 differences in the 4,000 published d = 10 noise replicates.
+- `00_check_settings.R` passes and `20_gate.R` passes, 87 of 87 (neither has a descending cell).
+- Times. Segmentation, one R process: 616.7 s before (`real_hd.csv`), 255.7 s after. Simulations, 24 workers, median
+  seconds per data set per (distribution, d) over 1,500 data sets: n = 200, 1.18-1.25 before and 1.23-1.28 after;
+  n = 500, 10.97-12.88 before and 9.33-9.78 after; exponent log(t500 / t200) / log(2.5) 2.38-2.58 before, 2.21-2.23 after.
+  The "before" times come from other runs (10 to 24 workers), so they are not a controlled comparison.
 
 ## Gate
 
