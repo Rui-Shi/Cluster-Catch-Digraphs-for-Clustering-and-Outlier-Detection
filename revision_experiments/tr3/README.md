@@ -689,4 +689,6 @@ $R = "C:\Program Files\R\R-4.6.1\bin\Rscript.exe"
 - Experiment 8 (2026-10-31): `23_noise.R 3 allpoints` then `23_noise.R 10 allpoints`, 21:53 to
   22:00, exit codes 0 (`_logs/noise_allpoints_20261031.log`); `TR3_SMOKE=3` runs the first three
   replicates of each level on the full data and writes nothing. Main Table 4 now shows UN-CCDs with
-  k chosen on all points, as the baselines; Supplement Table S9 shows both choices.
+  k chosen on all points, as the baselines; Supplement Table S9 shows the same rule, one row per d
+  (the cluster-points rows left the supplement on 2026-11-01, manuscript commit e4cc060; they stay in
+  `noisebase_summary.csv`).

@@ -381,8 +381,9 @@ if (have("simbase_replicates.csv", "simbase_done.csv")) {
 # (noise_allpoints_replicates.csv, experiment 8), and of UN-CCDs with the published choice on the
 # 200 cluster points (noise_replicates.csv: published, r_noise 7, sweep). Writes
 # noisebase_summary.csv, new_noisebase.tex (main Table 4: UN-CCDs with k on all points and the five
-# baselines) and new_noise_supp.tex (Table S9: UN-CCDs under both choices), and reports whether the
-# supplement's Table S9 has the generated rows.
+# baselines) and new_noise_supp.tex (Table S9: UN-CCDs with k chosen on all points, one row per d),
+# and reports whether the supplement's Table S9 has the generated rows. The cluster-points rows
+# stay in noisebase_summary.csv.
 if (have("noisebase_replicates.csv", "noisebase_done.csv", "noise_replicates.csv", "noise_done.csv")) {
   LV <- c("0.03", "0.05", "0.1", "0.2"); ND <- c("3", "10")
   y <- tr3_read_done(tr3_path("noisebase_replicates.csv"), tr3_path("noisebase_done.csv"),
@@ -438,24 +439,23 @@ if (have("noisebase_replicates.csv", "noisebase_done.csv", "noise_replicates.csv
                       if (m == NM[length(NM)]) "\\hline" else "\\cline{2-14}"))
   }
   emit("noisebase", L)
-  # Table S9: UN-CCDs under both choices of k; then report whether the supplement has these rows
+  # Table S9: UN-CCDs with k chosen on all points (the main Table 4 rows), one row per d, since the
+  # authors dropped the cluster-points rows on 2026-11-01; then report whether the supplement has these rows
   S9 <- c("\\hline",
-    sprintf("\\multirow{2}*{$d$} & \\multirow{2}*{$\\hat{k}$ chosen on} & %s \\\\ \\cline{3-14}",
+    sprintf("\\multirow{2}*{$d$} & %s \\\\ \\cline{2-13}",
             paste(sprintf("\\multicolumn{3}{c|}{$l=%s\\%%$}", c("3", "5", "10", "20")), collapse = " & ")),
-    sprintf(" & & %s \\\\ \\hline", paste(rep("\\textit{ARI} & \\textit{Sil} & \\textit{SR}", 4), collapse = " & ")))
-  for (d in ND) for (m in NU) {
-    w <- nb[nb$method == m & nb$d == d, ]; w <- w[match(LV, w$noise_level), ]
+    sprintf(" & %s \\\\ \\hline", paste(rep("\\textit{ARI} & \\textit{Sil} & \\textit{SR}", 4), collapse = " & ")))
+  for (d in ND) {
+    w <- nb[nb$method == NU[1] & nb$d == d, ]; w <- w[match(LV, w$noise_level), ]
     v <- paste(sb_na3(w$mean_ari), sb_na3(w$mean_sil), f3(w$sr), sep = " & ")
-    S9 <- c(S9, sprintf("%s & %s & %s \\\\ %s", if (m == NU[1]) sprintf("\\multirow{2}*{%s}", d) else "",
-                        if (m == NU[1]) "all points" else "cluster points", paste(v, collapse = " & "),
-                        if (m == NU[2]) "\\hline" else "\\cline{2-14}"))
+    S9 <- c(S9, sprintf("%s & %s \\\\ \\hline", d, paste(v, collapse = " & ")))
   }
   emit("noise_supp", S9)
   tex <- readLines(SUPP_TEX, warn = FALSE)
   end <- grep("\\label{tab:Noise_Level_Clustering_Apdx}", tex, fixed = TRUE); stopifnot(length(end) == 1)
   beg <- max(grep("\\begin{table}", tex[seq_len(end)], fixed = TRUE))
   norm <- function(s) trimws(gsub("\\s+", " ", gsub("\\\\textcolor\\{red\\}\\{([^}]*)\\}", "\\1", s)))
-  body <- norm(tex[beg:end]); want <- norm(S9[grepl("points &", S9, fixed = TRUE)])
+  body <- norm(tex[beg:end]); want <- norm(S9[grepl("^(3|10) & ", S9)])
   cat(sprintf("Table S9 in the supplement has the %d generated UN-CCD rows: %s\n", length(want),
               all(want %in% body)))
   for (d in ND) for (m in c(NM, NU[2])) {
