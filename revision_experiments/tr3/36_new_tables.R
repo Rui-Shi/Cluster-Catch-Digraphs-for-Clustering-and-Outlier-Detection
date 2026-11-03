@@ -16,7 +16,7 @@
 # Checks: the ablation table has 12 cells of 500 replicates, and its descending
 # ARI and SR (3 decimals) equal the n = 200 rows of the supplement's UN-CCD
 # tables (SUPP_TEX, default the manuscript folder); the paired table has 60
-# tests (30 cells x 2 comparisons); the type1 tables have 35 (d, m) cells of
+# tests (30 cells x 2 comparisons) at each of n = 50 and 200; the type1 tables have 35 (d, m) cells of
 # B = 10000 and 20 (d, n) cells of 500 replicates; the realhd table has one row
 # (variant "hd") per method and data set (8 x 6) with the n and d of
 # tr3_load_hd(), and K-means++ and spectral clustering return the true k; simbase
@@ -94,30 +94,37 @@ if (have("ablation_direction_summary.csv")) {
               sum(as.numeric(a$p_wilcoxon) < 0.05, na.rm = TRUE)))
 }
 
-# --- paired tests at n = 50: verdict counts per distribution and d ----------
+# --- paired tests at n = 50 and 200: verdict counts per n, distribution and d ----
+# (Holm within each n, as 35_paired_tests.R adjusts them)
 if (have("paired_tests.csv")) {
   p <- utils::read.csv(tr3_path("paired_tests.csv"), colClasses = "character")
-  stopifnot(nrow(p) == 60, all(p$n == "50"))
+  PN <- c("50", "200")
+  stopifnot(nrow(p) == 60 * length(PN), setequal(p$n, PN), all(table(p$n) == 60))
   V <- c("UN higher", "UN lower", "no difference")
   stopifnot(all(p$verdict %in% V))
   cnt <- function(sub, cmp) sapply(V, function(v) sum(sub$comparison == cmp & sub$verdict == v))
-  rows <- character(0)
-  for (ds in names(DIST)) for (d in c("2", "3", "5", "10", "20")) {
-    s <- p[p$dist == ds & p$d == d, ]
-    stopifnot(nrow(s) == 6)
-    rows <- c(rows, sprintf("%s & %s & %s & %s \\\\", DIST[ds], d,
-                            paste(cnt(s, "UN vs RK"), collapse = " & "),
-                            paste(cnt(s, "UN vs KS"), collapse = " & ")))
+  L <- c("\\hline",
+         " & & & \\multicolumn{3}{c|}{UN- vs RK-CCDs} & \\multicolumn{3}{c|}{UN- vs KS-CCDs} \\\\ \\cline{4-9}",
+         "$n$ & Clusters & $d$ & higher & lower & n.s. & higher & lower & n.s. \\\\ \\hline")
+  for (N in PN) {
+    pn <- p[p$n == N, ]
+    first <- TRUE
+    for (ds in names(DIST)) for (d in c("2", "3", "5", "10", "20")) {
+      s <- pn[pn$dist == ds & pn$d == d, ]
+      stopifnot(nrow(s) == 6)
+      L <- c(L, sprintf("%s & %s & %s & %s & %s \\\\", if (first) sprintf("\\multirow{11}*{%s}", N) else "",
+                        DIST[ds], d, paste(cnt(s, "UN vs RK"), collapse = " & "),
+                        paste(cnt(s, "UN vs KS"), collapse = " & ")))
+      first <- FALSE
+    }
+    L <- c(L, "\\cline{2-9}",
+           sprintf(" & \\multicolumn{2}{c|}{Total} & %s & %s \\\\ \\hline",
+                   paste(cnt(pn, "UN vs RK"), collapse = " & "), paste(cnt(pn, "UN vs KS"), collapse = " & ")))
+    cat(sprintf("paired n=%s: UN vs RK higher/lower/n.s. %s; UN vs KS %s; raw p < 0.05 in %d of 60, Holm in %d\n", N,
+                paste(cnt(pn, "UN vs RK"), collapse = "/"), paste(cnt(pn, "UN vs KS"), collapse = "/"),
+                sum(as.numeric(pn$p) < 0.05), sum(as.numeric(pn$p_holm) < 0.05)))
   }
-  tot <- sprintf("\\multicolumn{2}{|c|}{Total} & %s & %s \\\\",
-                 paste(cnt(p, "UN vs RK"), collapse = " & "), paste(cnt(p, "UN vs KS"), collapse = " & "))
-  emit("paired", c("\\hline",
-                   " & & \\multicolumn{3}{c|}{UN- vs RK-CCDs} & \\multicolumn{3}{c|}{UN- vs KS-CCDs} \\\\ \\cline{3-8}",
-                   "Clusters & $d$ & higher & lower & n.s. & higher & lower & n.s. \\\\ \\hline",
-                   rows, "\\hline", tot, "\\hline"))
-  cat(sprintf("paired: UN vs RK higher/lower/n.s. %s; UN vs KS %s; raw p < 0.05 in %d of 60, Holm in %d\n",
-              paste(cnt(p, "UN vs RK"), collapse = "/"), paste(cnt(p, "UN vs KS"), collapse = "/"),
-              sum(as.numeric(p$p) < 0.05), sum(as.numeric(p$p_holm) < 0.05)))
+  emit("paired", L)
 }
 
 # --- type1: size of one MC-SRT under CSR, and k_hat of UN-CCDs on CSR data ---

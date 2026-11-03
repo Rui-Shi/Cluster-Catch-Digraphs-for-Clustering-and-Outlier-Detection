@@ -65,6 +65,12 @@ UN vs RK 9 higher, 4 lower, 17 not significant (for d >= 10: 8 / 1 / 3); UN vs K
 (Gaussian, d = 20), 19 lower (15 with d <= 5), 8 not significant. The 90 cell means equal the
 supplement's n = 50 values. Supplement Table S14.
 
+Experiment 5 at n = 200 (author request 2026-11-01; README, "Paired tests at n = 200 (2026-11-01/02)"): after the
+rerun of the 26 n = 200 folders without per-replicate rows, the same tests at n = 200, Holm within each n (60 tests
+per n; log `_logs/paired_tests_20261102.log`). n = 200: UN vs RK 13 higher, 9 lower (all d <= 5), 8 not significant
+(d >= 10: 12 of 12 higher); UN vs KS 2 higher (Gaussian, d = 20), 18 lower (14 with d <= 5), 10 not significant.
+The n = 50 results above are unchanged; the 180 cell means equal the supplement. Table `tab:paired_Apdx`.
+
 Experiment 3 (run 2026-10-25, 1.7 min, log `_logs/ablation_direction_20261025.log`): 12 cells x
 500 replicates; the descending reruns of replicates 1-3 equal the stored rows in all 12 cells.
 Mean ARI difference (ascending minus descending) from -0.012 to 0.0045; descending higher in

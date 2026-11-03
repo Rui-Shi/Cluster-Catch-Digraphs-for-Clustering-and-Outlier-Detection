@@ -54,7 +54,7 @@ until the gate passes, and each one gets a `*_PROTOCOL.md` here before it runs.
 | `32_hd_baselines.R` | Experiment 1: DBSCAN, MST, K-means++, Spectral or Louvain (or `all`) on those six sets: each original script's `seeds` block with the data object (and k) substituted. `check` reproduces `real_baselines_fixed.csv`; `show` prints the evaluated block. |
 | `33_type1.R` | Experiment 2: size of one MC-SRT under CSR (two nulls) and UN-CCDs on uniform data without clusters. |
 | `34_ablation_direction.R` | Experiment 3: ascending against descending radius search at d = 10 and 20, n = 200, 500 replicates. |
-| `35_paired_tests.R` | Experiment 5: paired Wilcoxon tests of UN- against RK- and KS-CCDs at n = 50 (reads existing results). |
+| `35_paired_tests.R` | Experiment 5: paired Wilcoxon tests of UN- against RK- and KS-CCDs at n = 50 and 200, Holm within each n (reads existing results; see "Paired tests at n = 200 (2026-11-01/02)"). |
 | `36_new_tables.R` | The LaTeX tabular bodies of experiments 1, 2, 3, 5, 7 and 8 (`results/tr3/tex/new_*.tex`) and the CSV summaries of experiments 7 and 8, with checks; nothing is rerun. |
 | `37_sim_baselines.R` | Experiment 7: DBSCAN, MST, K-means++, Spectral or Louvain (or `all`) on the simulated data (`sim`) and the noise data (`noise`) of the CCDs; `check` reproduces the stored real-data baseline rows first. |
 | `38_descend_pointer_check.R` | Checks that the descending radius search of 2026-11-02 (sorted neighbour lists) returns exactly the radii of the 2026-10-23 version, on simulated and real data with d ≥ 10 and edge cases; see "Descending search with sorted neighbour lists (2026-11-02)". |
@@ -115,7 +115,7 @@ A rerun skips every finished cell; move a result file aside to recompute.
 | `real_hd_baselines.csv`, `real_hd_baselines_params.csv`, `real_hd_baselines_done.csv` | experiment 1, baselines: method, data set, n, d, ari, sil, k_hat, seed, script; the Eps / sigma / bandwidth each block chose |
 | `type1_test.csv`, `type1_test_summary.csv`, `type1_ccd_replicates.csv`, `type1_ccd_summary.csv` | experiment 2: rejection counts per (d, m) and null; UN-CCDs per replicate on uniform data; summaries |
 | `ablation_direction_replicates.csv`, `ablation_direction_summary.csv`, `ablation_direction_repro.csv` | experiment 3: ascending replicates, the comparison per cell, the reproduction check of the descending rows |
-| `paired_tests.csv`, `paired_tests_check.csv` | experiment 5: one row per cell and comparison; cell means against the supplement |
+| `paired_tests.csv`, `paired_tests_check.csv` | experiment 5: one row per n (50, 200), cell and comparison; cell means against the supplement |
 | `simbase_replicates.csv`, `simbase_done.csv`; `noisebase_replicates.csv`, `noisebase_done.csv` | experiment 7: one row per replicate (method, setting or noise cell, mode, rep, ari, sil, k_hat, k_hat_block, n_label0, param, seconds, error, data_fp, fp_check); finished cells |
 | `simbase_summary.csv`, `simbase_by_d.csv`, `simbase_comparisons.csv`, `noisebase_summary.csv` | experiments 7 and 8, from `36_new_tables.R`: per setting (eight methods; CCD rows read from the supplement), per distribution and d, the comparisons by the 0.02 rule, and the noise cells (since experiment 8, "UN-CCDs" there means k chosen on all points; "UN-CCDs (cluster points)" is the published choice) |
 | `noise_allpoints_replicates.csv`, `noise_allpoints_done.csv` | experiment 8: per replicate the published columns of `noise_replicates.csv` (gate: equal) plus ari_all, sil200_all and nlab_all for k chosen on all points |
@@ -205,6 +205,24 @@ ascending search, RK-CCDs and KS-CCDs are untouched. Checks, all on this machine
   seconds per data set per (distribution, d) over 1,500 data sets: n = 200, 1.18-1.25 before and 1.23-1.28 after;
   n = 500, 10.97-12.88 before and 9.33-9.78 after; exponent log(t500 / t200) / log(2.5) 2.38-2.58 before, 2.21-2.23 after.
   The "before" times come from other runs (10 to 24 workers), so they are not a controlled comparison.
+
+## Paired tests at n = 200 (2026-11-01/02)
+
+Author request 2026-11-01: paired tests at n = 200 beside n = 50. Per-replicate rows at n = 200 existed only for UN-CCDs
+with d = 10, 20 (rerun 2026-10-23), so `10_sim.R <method> <dist> <d> 200` (variant `published`) was run for the other 26
+folders, one at a time on this machine: UN-CCDs d = 2, 3, 5 (2026-11-01 18:46-18:47), RK-CCDs (18:47-20:35) and KS-CCDs
+(2026-11-02 10:07-18:41; their code does not load `UN_CCD.R`). All exit codes 0. Logs `_logs/n200_<method>_<dist>_<d>d_20261101.log`,
+queue `_logs/n200_queue_20261101.log`; the CSVs as they were before are in `_before_n200_20261101/`.
+- Check: in each of the 26 logs, the mean ARI, Sil and SR (for KS-CCDs also the chosen delta) for 2, 3 and 5 clusters equal
+  the published SLURM log of the folder (`audit_logs.csv`; KS-CCDs batch 145) in all printed digits.
+- `35_paired_tests.R` now tests n = 50 and 200 (`TR3_PAIRED_N`), with Holm over the 60 tests of each n
+  (`_logs/paired_tests_20261102.log`). The 180 cell means equal the supplement tables at 3 decimals; the n = 50 rows equal
+  the earlier run (`_before_n200_20261101/paired_tests_n50.csv`) in all columns.
+- n = 200, Holm 0.05: UN vs RK 13 higher, 9 lower, 8 not significant (d >= 10: 12 of 12 higher, mean ARI difference
+  +0.024 to +0.326; d <= 5: 9 lower, -0.037 to -0.006, 1 higher, 8 not significant). UN vs KS 2 higher (Gaussian, d = 20,
+  3 and 5 clusters), 18 lower (14 with d <= 5, -0.063 to -0.001), 10 not significant. n = 50, unchanged: UN vs RK
+  9 / 4 / 17 (higher / lower / not significant), UN vs KS 3 / 19 / 8.
+- `36_new_tables.R` writes the paired table with both n (`_logs/new_tables_20261102.log`).
 
 ## Gate
 
