@@ -475,7 +475,7 @@ What was done
   `identical()` to `MST_Clustering()`'s at the chosen threshold in every block, and on iris (all 201 grid
   values), seeds (51), R15 (5), asymmetric (4) and D31 (3). Two runs on all nine data sets (two processes,
   separate part files, exit codes 0 and 0) gave byte-identical files: ARI, Sil, k_hat and the threshold agree
-  to 17 digits. The script is kept as an exploratory file, with a header that says it was not adopted.
+  to 17 digits. The script was removed on 2026-11-03 (author decision); it is in the git history (added in 6027db4).
 - Result: it over-segments. Threshold, number of clusters and ARI / Sil, against threshold 2:
 
 | data set | thresh (Sil-max) | k_hat, thresh 2 | k_hat, Sil-max | ARI / Sil, thresh 2 | ARI / Sil, Sil-max |
@@ -493,10 +493,9 @@ What was done
   The chosen threshold is the lower grid edge (1.00) on 5 of the 9 data sets (wholesale, breast_cancer,
   aggregation, R15, D31); none is at 3.00. The grid was not widened. The undefined-silhouette grid values were
   22 (iris), 41 (seeds), 57 (user_knowledge) and 0 on the other six.
-- Files kept for the record (`results/tr3/`): `real_baselines_fixed_mstrule_MST_run1.csv`, `_run2.csv` and
-  their `_params.csv` (param `thresh`), logs `_logs/real_baselines_fixed_mstrule_MST_run<1|2>.log`, exit
-  codes `_logs/real_baselines_fixed_mstrule_MST_exitcodes.txt`. The data of this experiment are in these
-  files only; they are not in `real_baselines_fixed*.csv`.
+- The result files of this experiment (`real_baselines_fixed_mstrule_MST_run1.csv`, `_run2.csv` and their
+  `_params.csv`, param `thresh`) and its logs were removed from the clone on 2026-11-03 (author decision) and
+  are not in the repository; the table above is the record. They were never part of `real_baselines_fixed*.csv`.
 
 What the repository has now
 - `Real_Data_MST_fix_cutoff.R` is the committed version (`thresh = 2`), unchanged by this experiment, and
@@ -505,7 +504,7 @@ What the repository has now
 - The MST rows of `real_baselines_fixed.csv`, `real_baselines_fixed_run2.csv` and the params file are the
   threshold-2 ones as before (restored from `_before_mst_rule_20261023/`, byte-identical to the files before
   the experiment). A new MST run with the committed script, `real_baselines_fixed_mst2_after_revert_MST_run1.csv`
-  (exit code 0), equals the MST rows of `real_baselines_fixed.csv` in ARI, Sil, k_hat as 17-digit text on all
+  (exit code 0; removed with the other part files on 2026-11-03), equals the MST rows of `real_baselines_fixed.csv` in ARI, Sil, k_hat as 17-digit text on all
   nine data sets. The other methods' rows were never changed.
 - `00_check_settings.R` and `20_gate.R` pass after the revert (`_logs/check_settings_after_mst_revert_20261023.log`,
   `_logs/gate_after_mst_revert_20261023.log`).
