@@ -2,7 +2,7 @@
 
 This guide is for reproducing the experiments of *Clustering with Uniformity- and Neighbor-Based Random Geometric Graphs* (Shi and Ceyhan, arXiv:2501.06268; the current manuscript is `G:\Submissions\TR3\TR3_10182026\UNCCD4Clustering.tex` with its `Supplementary_Material.tex`).
 It was written on 2026-10-18 against `main` at `bdcf27e`, the commit this clone is on.
-The file is not tracked by git.
+It is tracked by git since commit 187d5ea (branch `tr3-revision`).
 
 Section numbers such as "Table S4" refer to that manuscript and supplement.
 

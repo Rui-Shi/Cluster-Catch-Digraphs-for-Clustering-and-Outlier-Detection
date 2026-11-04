@@ -8,10 +8,12 @@ root):
   and Mutual Catch Digraphs" (NEUCOM-D-26-15191).
 - **tr2/** -- Pattern Recognition, "Outlyingness Scores with Cluster Catch
   Digraphs..." (PR-D-26-05767).
-- **tr3/** -- the UN-CCD clustering paper, "Clustering with Uniformity- and
-  Neighbor-Based Random Geometric Graphs" (rejected by KBS,
-  KNOSYS-D-26-08010). Drivers and reproduction gate; see `tr3/README.md`.
-  Takes only `append_result()`/`has_result()` from `shared/harness.R`.
+- **tr3/** -- the UN-CCD clustering paper, now "Cluster Catch Digraphs:
+  Nearest-Neighbor Covering Radii and Label-Free Parameter Selection"
+  (submitted to KBS as "Clustering with Uniformity- and Neighbor-Based Random
+  Geometric Graphs" and rejected, KNOSYS-D-26-08010). Drivers and
+  reproduction gate; see `tr3/README.md`. Takes only
+  `append_result()`/`has_result()` from `shared/harness.R`.
 - **shared/** -- infrastructure the projects source.
 
 Reorganized 2026-08-30 into a full split: each project's scripts and docs now

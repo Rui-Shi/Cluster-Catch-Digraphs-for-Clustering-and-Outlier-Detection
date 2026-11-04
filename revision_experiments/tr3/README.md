@@ -1,7 +1,8 @@
 # tr3: UN-CCD clustering paper
 
-Revision experiments for "Clustering with Uniformity- and Neighbor-Based Random
-Geometric Graphs" (Shi, Ceyhan and Billor; rejected by KBS as KNOSYS-D-26-08010).
+Revision experiments for the UN-CCD clustering paper (Shi, Ceyhan and Billor), now titled "Cluster Catch
+Digraphs: Nearest-Neighbor Covering Radii and Label-Free Parameter Selection". It was submitted to KBS as
+"Clustering with Uniformity- and Neighbor-Based Random Geometric Graphs" and rejected (KNOSYS-D-26-08010).
 The manuscript is at `G:\Submissions\TR3\TR3_10182026\`. The map from each paper
 result to its original script is `CLUSTERING_REPRODUCTION_GUIDE.md` at the clone root.
 
