@@ -54,6 +54,15 @@ The extent is the largest n among the data sets that use that d; d = 2 has
 - Per-iteration body: `.ccd_qt_nn_once(n, d)` from `R/ccds/quantile_table.R`.
   It is the transcription of `NNDestP.simpois.lower.quant()`. The draws come
   from `.ccd_qt_draws()` with niter = 10000, as the shipped NN tables have.
+  Correction (2026-11-03): the shipped tables do not record niter. The
+  generator scripts in `R/ccds/NN-test_quantile/` use 10000 for the d = 2
+  tables (1000 entries). The shipped d = 5 and 6 tables have 5000 entries,
+  and the scripts that write 5000-entry tables use 2000 (`5d_9095%.R`,
+  `6d_9599%.R`; `5d_90%.R` uses 10000 but writes 1000 entries). No script
+  for the d = 4 tables is in the repository. See also
+  `revision_experiments/tr2/FINDINGS.md` ("Production parameters
+  reconciled"). Supplement S2.1 no longer states N for the original tables
+  (manuscript commit 320ba22).
 - Seed 20260927 + d, with **22 workers fixed**. `.ccd_qt_draws()` uses
   `clusterSetRNGStream()` and `parLapply()`, so the draws depend on the
   number of workers; another worker count gives other tables.
