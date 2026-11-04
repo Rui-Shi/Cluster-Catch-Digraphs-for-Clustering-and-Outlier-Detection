@@ -692,7 +692,8 @@ $R = "C:\Program Files\R\R-4.6.1\bin\Rscript.exe"
   31 stops if it is set while the output folder is `results/tr3`.
 - Experiment 1 data: `30_hd_load.R` reads wine, vehicle, segmentation and wdbc from
   `revision_experiments/tr3_data/` (UCI downloads of 2026-10-25, md5 in `MANIFEST.csv`; the
-  folder is not tracked by git) and hepatitis and lymphography from `data/clustering/`.
+  zip files and the files extracted from them, which the loader reads, are committed since
+  2026-11-03) and hepatitis and lymphography from `data/clustering/`.
 - Experiment 1 runs: the CCDs from 2026-10-25 23:26 to 2026-10-26 00:37 (UN-CCDs 11.1 min,
   RK-CCDs 1.7, KS-CCDs 58.0), then the five baselines (1.8 min); all exit codes 0.
   `32_hd_baselines.R ... check` reproduces `real_baselines_fixed.csv` on the nine older data sets.

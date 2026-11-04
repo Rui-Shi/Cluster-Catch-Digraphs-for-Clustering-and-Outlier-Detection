@@ -1,0 +1,5 @@
+dataset,file,url,downloaded,md5
+wine,wine/wine.zip,https://archive.ics.uci.edu/static/public/109/wine.zip,2026-10-25,5efc729a8079d4ade3cadb59217226d4
+vehicle,vehicle/vehicle.zip,https://archive.ics.uci.edu/static/public/149/statlog+vehicle+silhouettes.zip,2026-10-25,3899942ed9cbdb8306a9716591378706
+segmentation,segmentation/segmentation.zip,https://archive.ics.uci.edu/static/public/50/image+segmentation.zip,2026-10-25,f5632d3d4c991d9e438d293943074923
+wdbc,wdbc/wdbc.zip,https://archive.ics.uci.edu/static/public/17/breast+cancer+wisconsin+diagnostic.zip,2026-10-25,97da86fb8aa67b905c88ad6c499f6bd4
