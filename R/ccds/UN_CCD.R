@@ -242,6 +242,16 @@ nnccd.silhouette_mutual1 <- function(graph, datax,ind=NULL, lenClimit=Inf, k=NUL
 # therefore the radii, are identical to the earlier version
 # (checked by revision_experiments/tr1/92b_validate_incremental_radi.R against
 # R/ccds/UN_CCD_radi_recompute_reference.R).
+# Descending search with sorted neighbour lists (2026-11-02).
+# When a point leaves the ball, each member whose nearest neighbour it was needs
+# a new one. The 2026-09-23 version took a minimum over all other members, O(n)
+# per such member, so a data set cost O(n^4) in the worst case. Now the other
+# points of each point are sorted by distance once per data set
+# (nnccd.sorted.nbrs(): O(n^2 log n) time, n(n-1) integers), and each member keeps
+# a position in its list that only moves forward during one centre's search:
+# O(n^2) per centre, O(n^3) per data set. The new minimum is the same matrix entry
+# as before, so the radii are identical to the 2026-10-23 version (checked by
+# revision_experiments/tr3/38_descend_pointer_check.R).
 
 # Ascending search for centre i: ball members o.d[2:j]; returns the radius.
 nnccd.radi.ascend.one <- function(i, ddx, o.d, n, low.num, env.ave, env.med) {
@@ -272,27 +282,62 @@ nnccd.radi.ascend.one <- function(i, ddx, o.d, n, low.num, env.ave, env.med) {
   0
 }
 
+# Per data set: column p holds the other n - 1 points sorted by distance to p
+# (ties in index order, as order() keeps them).
+nnccd.sorted.nbrs <- function(ddx) {
+  n <- nrow(ddx)
+  S <- matrix(0L, n - 1L, n)
+  for (p in seq_len(n)) {
+    o <- order(ddx[p, ])
+    S[, p] <- o[o != p]                       # p is not its own neighbour
+  }
+  S
+}
+
 # Descending search for centre i: ball members o.d[j:(n-1)]; returns the radius.
-# nn1.val/nn1.idx/nn2.val: each point's nearest and second-nearest distance to
-# any other point (computed once per data set), used to start the full ball in O(n).
-nnccd.radi.descend.one <- function(i, ddx, o.d, n, low.num, env.ave.rev, env.med.rev,
-                                   nn1.val, nn1.idx, nn2.val) {
-  mem <- o.d[1:(n - 1)]                       # members at j = 1
+# S: nnccd.sorted.nbrs(ddx). Member k (point p = mem[k]) keeps ptr[k], a position
+# in S[, p]: every point before it has left the ball and S[ptr[k], p] is in the
+# ball, so nn[k] = ddx[p, S[ptr[k], p]] is p's nearest neighbour in the ball.
+# Points only leave, so a pointer only moves forward within one centre.
+# Table entry m holds the quantiles for m points. At step j the ball has n-j members,
+# so the entry is n-j, i.e. env.*.rev[j+1].
+nnccd.radi.descend.one <- function(i, ddx, o.d, n, low.num, env.ave.rev, env.med.rev, S) {
+  m1 <- n - 1L                                # length of each column of S
+  mem <- o.d[1:(n - 1)]                       # members at j = 1, position k <-> point mem[k]
   e <- o.d[n]                                 # the one point outside the ball
-  nn <- ifelse(nn1.idx[mem] == e, nn2.val[mem], nn1.val[mem])   # position k <-> point mem[k]
+  inball <- rep(TRUE, n)
+  inball[e] <- FALSE
+  nm <- length(mem)
+  ptr <- rep(1L, nm)                          # first in-ball neighbour: position 1 unless that is e
+  if (m1 >= 1L) ptr[S[1L, mem] == e] <- 2L
+  ok <- ptr <= m1                             # FALSE only when no other point is in the ball
+  tgt <- integer(nm)                          # the point at ptr[k]; 0L = none left
+  nn <- rep(Inf, nm)                          # Inf = no other member
+  tgt[ok] <- S[cbind(ptr[ok], mem[ok])]
+  nn[ok] <- ddx[cbind(mem[ok], tgt[ok])]
   for (j in 1:(n - low.num)) {
     if (j > 1) {                              # point o.d[j-1] leaves; members are mem[j:(n-1)]
       x <- o.d[j - 1]
+      inball[x] <- FALSE
       pos <- j:(n - 1)
-      hit <- pos[nn[pos] == ddx[mem[pos], x]]
+      hit <- pos[tgt[pos] == x]               # members whose nearest neighbour was x
       for (k in hit) {
-        others <- mem[pos[pos != k]]
-        nn[k] <- if (length(others)) min(ddx[mem[k], others]) else Inf
+        p <- mem[k]
+        q <- ptr[k] + 1L
+        while (q <= m1 && !inball[S[q, p]]) q <- q + 1L
+        ptr[k] <- q
+        if (q <= m1) {
+          tgt[k] <- S[q, p]
+          nn[k] <- ddx[p, tgt[k]]
+        } else {
+          tgt[k] <- 0L
+          nn[k] <- Inf
+        }
       }
     }
     r <- ddx[i, o.d[j]]
     cur <- nn[j:(n - 1)]
-    if (mean(cur) / r > env.ave.rev[j + 2] & median(cur) / r > env.med.rev[j + 2]) {
+    if (mean(cur) / r > env.ave.rev[j + 1] & median(cur) / r > env.med.rev[j + 1]) {
       return(r)
     }
   }
@@ -313,12 +358,7 @@ nnccd.radi <- function(dx, quantile="lower", method="ascend", low.num, quant, si
     else {NN.envelop <- NNDest.simpois.lower.quant(n, d, quant, niter)}
     if(method=="descend"){
       env.ave.rev <- rev(NN.envelop$average); env.med.rev <- rev(NN.envelop$median)
-      dd0 <- ddx; diag(dd0) <- Inf
-      nn1.idx <- apply(dd0, 1, which.min)
-      nn1.val <- dd0[cbind(1:n, nn1.idx)]
-      dd0[cbind(1:n, nn1.idx)] <- Inf
-      nn2.val <- apply(dd0, 1, min)
-      rm(dd0)
+      S <- nnccd.sorted.nbrs(ddx)
     }
     for(i in 1:n){
       if(method == "ascend"){
@@ -327,8 +367,7 @@ nnccd.radi <- function(dx, quantile="lower", method="ascend", low.num, quant, si
       }
       if(method=="descend"){
         o.d <- order(ddx[i,], decreasing=T) # the descending distance order for i_th object
-        R[i] <- nnccd.radi.descend.one(i, ddx, o.d, n, low.num, env.ave.rev, env.med.rev,
-                                       nn1.val, nn1.idx, nn2.val)
+        R[i] <- nnccd.radi.descend.one(i, ddx, o.d, n, low.num, env.ave.rev, env.med.rev, S)
       }
       if(scores && R[i]==0){R[i]=sort(ddx[i,])[2]} # avoid 0 radius (necessary for outlyingness scores!)
     }

@@ -1,0 +1,121 @@
+method,dist,d,n,seed,iteN,cls_dis,sig,r_min,r_max,n1_adj_3cls,table,quant,direction,delta_grid,driver
+UN-CCDs,uniform,2,50,2024,500,3,NA,0.8,1.2,-1,NN-test-simul_2d_85%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Uniform/2d/2d_235clusters_n50.R
+UN-CCDs,uniform,2,100,2024,500,3,NA,0.8,1.2,1,NN-test-simul_2d_85%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Uniform/2d/2d_235clusters_n100.R
+UN-CCDs,uniform,2,200,2024,500,3,NA,0.8,1.2,-1,NN-test-simul_2d_85%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Uniform/2d/2d_235clusters_n200.R
+UN-CCDs,uniform,2,500,2024,500,3,NA,0.8,1.2,-1,NN-test-simul_2d_85%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Uniform/2d/2d_235clusters_n500.R
+UN-CCDs,uniform,3,50,2024,500,3,NA,0.8,1.2,-1,NN-test-simul_3d_90%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Uniform/3d/3d_235clusters_n50.R
+UN-CCDs,uniform,3,100,2024,500,3,NA,0.8,1.2,1,NN-test-simul_3d_90%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Uniform/3d/3d_235clusters_n100.R
+UN-CCDs,uniform,3,200,2024,500,3,NA,0.8,1.2,-1,NN-test-simul_3d_90%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Uniform/3d/3d_235clusters_n200.R
+UN-CCDs,uniform,3,500,2024,500,3,NA,0.8,1.2,-1,NN-test-simul_3d_90%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Uniform/3d/3d_235clusters_n500.R
+UN-CCDs,uniform,5,50,2024,500,3,NA,0.8,1.2,-1,NN-test-simul_5d_95%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Uniform/5d/5d_235clusters_n50.R
+UN-CCDs,uniform,5,100,2024,500,3,NA,0.8,1.2,1,NN-test-simul_5d_95%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Uniform/5d/5d_235clusters_n100.R
+UN-CCDs,uniform,5,200,2024,500,3,NA,0.8,1.2,-1,NN-test-simul_5d_95%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Uniform/5d/5d_235clusters_n200.R
+UN-CCDs,uniform,5,500,2024,500,3,NA,0.8,1.2,-1,NN-test-simul_5d_95%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Uniform/5d/5d_235clusters_n500.R
+UN-CCDs,uniform,10,50,2024,500,3,NA,0.8,1.2,-1,NN-test-simul_10d_99%.RData,,descend,,simulations/clustering/UN_CCDs/Simulations/Uniform/10d/10d_235clusters_n50.R
+UN-CCDs,uniform,10,100,2024,500,3,NA,0.8,1.2,1,NN-test-simul_10d_99%.RData,,descend,,simulations/clustering/UN_CCDs/Simulations/Uniform/10d/10d_235clusters_n100.R
+UN-CCDs,uniform,10,200,2024,500,3,NA,0.8,1.2,-1,NN-test-simul_10d_99%.RData,,descend,,simulations/clustering/UN_CCDs/Simulations/Uniform/10d/10d_235clusters_n200.R
+UN-CCDs,uniform,10,500,2024,500,3,NA,0.8,1.2,-1,NN-test-simul_10d_99%.RData,,descend,,simulations/clustering/UN_CCDs/Simulations/Uniform/10d/10d_235clusters_n500.R
+UN-CCDs,uniform,20,50,2024,500,3,NA,0.8,1.2,-1,NN-test-simul_20d_999%.RData,,descend,,simulations/clustering/UN_CCDs/Simulations/Uniform/20d/20d_235clusters_n50.R
+UN-CCDs,uniform,20,100,2024,500,3,NA,0.8,1.2,1,NN-test-simul_20d_999%.RData,,descend,,simulations/clustering/UN_CCDs/Simulations/Uniform/20d/20d_235clusters_n100.R
+UN-CCDs,uniform,20,200,2024,500,3,NA,0.8,1.2,-1,NN-test-simul_20d_999%.RData,,descend,,simulations/clustering/UN_CCDs/Simulations/Uniform/20d/20d_235clusters_n200.R
+UN-CCDs,uniform,20,500,2024,500,3,NA,0.8,1.2,-1,NN-test-simul_20d_999%.RData,,descend,,simulations/clustering/UN_CCDs/Simulations/Uniform/20d/20d_235clusters_n500.R
+UN-CCDs,gaussian,2,50,2024,500,6,1,0.8,1.2,-1,NN-test-simul_2d_85%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/2d/2d_235clusters_n50.R
+UN-CCDs,gaussian,2,100,2024,500,6,1,0.8,1.2,1,NN-test-simul_2d_85%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/2d/2d_235clusters_n100.R
+UN-CCDs,gaussian,2,200,2024,500,6,1,0.8,1.2,-1,NN-test-simul_2d_85%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/2d/2d_235clusters_n200.R
+UN-CCDs,gaussian,2,500,2024,500,6,1,0.8,1.2,-1,NN-test-simul_2d_85%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/2d/2d_235clusters_n500.R
+UN-CCDs,gaussian,3,50,2024,500,6,1,0.8,1.2,-1,NN-test-simul_3d_90%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/3d/3d_235clusters_n50.R
+UN-CCDs,gaussian,3,100,2024,500,6,1,0.8,1.2,1,NN-test-simul_3d_90%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/3d/3d_235clusters_n100.R
+UN-CCDs,gaussian,3,200,2024,500,6,1,0.8,1.2,-1,NN-test-simul_3d_90%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/3d/3d_235clusters_n200.R
+UN-CCDs,gaussian,3,500,2024,500,6,1,0.8,1.2,-1,NN-test-simul_3d_90%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/3d/3d_235clusters_n500.R
+UN-CCDs,gaussian,5,50,2024,500,6,1,0.8,1.2,-1,NN-test-simul_5d_95%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/5d/5d_235clusters_n50.R
+UN-CCDs,gaussian,5,100,2024,500,6,1,0.8,1.2,1,NN-test-simul_5d_95%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/5d/5d_235clusters_n100.R
+UN-CCDs,gaussian,5,200,2024,500,6,1,0.8,1.2,-1,NN-test-simul_5d_95%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/5d/5d_235clusters_n200.R
+UN-CCDs,gaussian,5,500,2024,500,6,1,0.8,1.2,-1,NN-test-simul_5d_95%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/5d/5d_235clusters_n500.R
+UN-CCDs,gaussian,10,50,2024,500,6,1,0.8,1.2,-1,NN-test-simul_10d_99%.RData,,descend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/10d/10d_235clusters_n50.R
+UN-CCDs,gaussian,10,100,2024,500,6,1,0.8,1.2,1,NN-test-simul_10d_99%.RData,,descend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/10d/10d_235clusters_n100.R
+UN-CCDs,gaussian,10,200,2024,500,6,1,0.8,1.2,-1,NN-test-simul_10d_99%.RData,,descend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/10d/10d_235clusters_n200.R
+UN-CCDs,gaussian,10,500,2024,500,6,1,0.8,1.2,-1,NN-test-simul_10d_99%.RData,,descend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/10d/10d_235clusters_n500.R
+UN-CCDs,gaussian,20,50,2024,500,6,1,0.8,1.2,-1,NN-test-simul_20d_999%.RData,,descend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/20d/20d_235clusters_n50.R
+UN-CCDs,gaussian,20,100,2024,500,6,1,0.8,1.2,1,NN-test-simul_20d_999%.RData,,descend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/20d/20d_235clusters_n100.R
+UN-CCDs,gaussian,20,200,2024,500,6,1,0.8,1.2,-1,NN-test-simul_20d_999%.RData,,descend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/20d/20d_235clusters_n200.R
+UN-CCDs,gaussian,20,500,2024,500,6,1,0.8,1.2,-1,NN-test-simul_20d_999%.RData,,descend,,simulations/clustering/UN_CCDs/Simulations/Gaussian/20d/20d_235clusters_n500.R
+RK-CCDs,uniform,2,50,2024,500,3,NA,0.8,1.2,-1,RK-test-simul_2d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Uniform/2d/2d_235clusters_n50.R
+RK-CCDs,uniform,2,100,2024,500,3,NA,0.8,1.2,1,RK-test-simul_2d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Uniform/2d/2d_235clusters_n100.R
+RK-CCDs,uniform,2,200,2024,500,3,NA,0.8,1.2,-1,RK-test-simul_2d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Uniform/2d/2d_235clusters_n200.R
+RK-CCDs,uniform,2,500,2024,500,3,NA,0.8,1.2,-1,RK-test-simul_2d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Uniform/2d/2d_235clusters_n500.R
+RK-CCDs,uniform,3,50,2024,500,3,NA,0.8,1.2,-1,RK-test-simul_3d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Uniform/3d/3d_235clusters_n50.R
+RK-CCDs,uniform,3,100,2024,500,3,NA,0.8,1.2,1,RK-test-simul_3d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Uniform/3d/3d_235clusters_n100.R
+RK-CCDs,uniform,3,200,2024,500,3,NA,0.8,1.2,-1,RK-test-simul_3d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Uniform/3d/3d_235clusters_n200.R
+RK-CCDs,uniform,3,500,2024,500,3,NA,0.8,1.2,-1,RK-test-simul_3d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Uniform/3d/3d_235clusters_n500.R
+RK-CCDs,uniform,5,50,2024,500,3,NA,0.8,1.2,-1,RK-test-simul_5d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Uniform/5d/5d_235clusters_n50.R
+RK-CCDs,uniform,5,100,2024,500,3,NA,0.8,1.2,1,RK-test-simul_5d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Uniform/5d/5d_235clusters_n100.R
+RK-CCDs,uniform,5,200,2024,500,3,NA,0.8,1.2,-1,RK-test-simul_5d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Uniform/5d/5d_235clusters_n200.R
+RK-CCDs,uniform,5,500,2024,500,3,NA,0.8,1.2,-1,RK-test-simul_5d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Uniform/5d/5d_235clusters_n500.R
+RK-CCDs,uniform,10,50,2024,500,3,NA,0.8,1.2,-1,RK-test-simul_10d_999%.RData,0.999,,,simulations/clustering/RK_CCDs/Simulations/Uniform/10d/10d_235clusters_n50.R
+RK-CCDs,uniform,10,100,2024,500,3,NA,0.8,1.2,1,RK-test-simul_10d_999%.RData,0.999,,,simulations/clustering/RK_CCDs/Simulations/Uniform/10d/10d_235clusters_n100.R
+RK-CCDs,uniform,10,200,2024,500,3,NA,0.8,1.2,-1,RK-test-simul_10d_999%.RData,0.999,,,simulations/clustering/RK_CCDs/Simulations/Uniform/10d/10d_235clusters_n200.R
+RK-CCDs,uniform,10,500,2024,500,3,NA,0.8,1.2,-1,RK-test-simul_10d_999%.RData,0.999,,,simulations/clustering/RK_CCDs/Simulations/Uniform/10d/10d_235clusters_n500.R
+RK-CCDs,uniform,20,50,2024,500,3,NA,0.8,1.2,-1,RK-test-simul_20d_999%.RData,0.999,,,simulations/clustering/RK_CCDs/Simulations/Uniform/20d/20d_235clusters_n50.R
+RK-CCDs,uniform,20,100,2024,500,3,NA,0.8,1.2,1,RK-test-simul_20d_999%.RData,0.999,,,simulations/clustering/RK_CCDs/Simulations/Uniform/20d/20d_235clusters_n100.R
+RK-CCDs,uniform,20,200,2024,500,3,NA,0.8,1.2,-1,RK-test-simul_20d_999%.RData,0.999,,,simulations/clustering/RK_CCDs/Simulations/Uniform/20d/20d_235clusters_n200.R
+RK-CCDs,uniform,20,500,2024,500,3,NA,0.8,1.2,-1,RK-test-simul_20d_999%.RData,0.999,,,simulations/clustering/RK_CCDs/Simulations/Uniform/20d/20d_235clusters_n500.R
+RK-CCDs,gaussian,2,50,2024,500,6,1,0.8,1.2,-1,RK-test-simul_2d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/2d/2d_235clusters_n50.R
+RK-CCDs,gaussian,2,100,2024,500,6,1,0.8,1.2,1,RK-test-simul_2d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/2d/2d_235clusters_n100.R
+RK-CCDs,gaussian,2,200,2024,500,6,1,0.8,1.2,-1,RK-test-simul_2d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/2d/2d_235clusters_n200.R
+RK-CCDs,gaussian,2,500,2024,500,6,1,0.8,1.2,-1,RK-test-simul_2d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/2d/2d_235clusters_n500.R
+RK-CCDs,gaussian,3,50,2024,500,6,1,0.8,1.2,-1,RK-test-simul_3d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/3d/3d_235clusters_n50.R
+RK-CCDs,gaussian,3,100,2024,500,6,1,0.8,1.2,1,RK-test-simul_3d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/3d/3d_235clusters_n100.R
+RK-CCDs,gaussian,3,200,2024,500,6,1,0.8,1.2,-1,RK-test-simul_3d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/3d/3d_235clusters_n200.R
+RK-CCDs,gaussian,3,500,2024,500,6,1,0.8,1.2,-1,RK-test-simul_3d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/3d/3d_235clusters_n500.R
+RK-CCDs,gaussian,5,50,2024,500,6,1,0.8,1.2,-1,RK-test-simul_5d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/5d/5d_235clusters_n50.R
+RK-CCDs,gaussian,5,100,2024,500,6,1,0.8,1.2,1,RK-test-simul_5d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/5d/5d_235clusters_n100.R
+RK-CCDs,gaussian,5,200,2024,500,6,1,0.8,1.2,-1,RK-test-simul_5d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/5d/5d_235clusters_n200.R
+RK-CCDs,gaussian,5,500,2024,500,6,1,0.8,1.2,-1,RK-test-simul_5d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/5d/5d_235clusters_n500.R
+RK-CCDs,gaussian,10,50,2024,500,6,1,0.8,1.2,-1,RK-test-simul_10d_999%.RData,0.999,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/10d/10d_235clusters_n50.R
+RK-CCDs,gaussian,10,100,2024,500,6,1,0.8,1.2,1,RK-test-simul_10d_999%.RData,0.999,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/10d/10d_235clusters_n100.R
+RK-CCDs,gaussian,10,200,2024,500,6,1,0.8,1.2,-1,RK-test-simul_10d_999%.RData,0.999,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/10d/10d_235clusters_n200.R
+RK-CCDs,gaussian,10,500,2024,500,6,1,0.8,1.2,-1,RK-test-simul_10d_999%.RData,0.999,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/10d/10d_235clusters_n500.R
+RK-CCDs,gaussian,20,50,2024,500,6,1,0.8,1.2,-1,RK-test-simul_20d_999%.RData,0.999,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/20d/20d_235clusters_n50.R
+RK-CCDs,gaussian,20,100,2024,500,6,1,0.8,1.2,1,RK-test-simul_20d_999%.RData,0.999,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/20d/20d_235clusters_n100.R
+RK-CCDs,gaussian,20,200,2024,500,6,1,0.8,1.2,-1,RK-test-simul_20d_999%.RData,0.999,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/20d/20d_235clusters_n200.R
+RK-CCDs,gaussian,20,500,2024,500,6,1,0.8,1.2,-1,RK-test-simul_20d_999%.RData,0.999,,,simulations/clustering/RK_CCDs/Simulations/Gaussian/20d/20d_235clusters_n500.R
+KS-CCDs,uniform,2,50,2024,500,3,NA,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/2d/2d_235clusters_n50.R
+KS-CCDs,uniform,2,100,2024,500,3,NA,0.8,1.2,1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/2d/2d_235clusters_n100.R
+KS-CCDs,uniform,2,200,2024,500,3,NA,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/2d/2d_235clusters_n200.R
+KS-CCDs,uniform,2,500,2024,500,3,NA,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/2d/2d_235clusters_n500.R
+KS-CCDs,uniform,3,50,2024,500,3,NA,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/3d/3d_235clusters_n50.R
+KS-CCDs,uniform,3,100,2024,500,3,NA,0.8,1.2,1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/3d/3d_235clusters_n100.R
+KS-CCDs,uniform,3,200,2024,500,3,NA,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/3d/3d_235clusters_n200.R
+KS-CCDs,uniform,3,500,2024,500,3,NA,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/3d/3d_235clusters_n500.R
+KS-CCDs,uniform,5,50,2024,500,3,NA,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/5d/5d_235clusters_n50.R
+KS-CCDs,uniform,5,100,2024,500,3,NA,0.8,1.2,1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/5d/5d_235clusters_n100.R
+KS-CCDs,uniform,5,200,2024,500,3,NA,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/5d/5d_235clusters_n200.R
+KS-CCDs,uniform,5,500,2024,500,3,NA,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/5d/5d_235clusters_n500.R
+KS-CCDs,uniform,10,50,2024,500,3,NA,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/10d/10d_235clusters_n50.R
+KS-CCDs,uniform,10,100,2024,500,3,NA,0.8,1.2,1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/10d/10d_235clusters_n100.R
+KS-CCDs,uniform,10,200,2024,500,3,NA,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/10d/10d_235clusters_n200.R
+KS-CCDs,uniform,10,500,2024,500,3,NA,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/10d/10d_235clusters_n500.R
+KS-CCDs,uniform,20,50,2024,500,3,NA,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/20d/20d_235clusters_n50.R
+KS-CCDs,uniform,20,100,2024,500,3,NA,0.8,1.2,1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/20d/20d_235clusters_n100.R
+KS-CCDs,uniform,20,200,2024,500,3,NA,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/20d/20d_235clusters_n200.R
+KS-CCDs,uniform,20,500,2024,500,3,NA,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Uniform/20d/20d_235clusters_n500.R
+KS-CCDs,gaussian,2,50,2024,500,6,1,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/2d/2d_235clusters_n50.R
+KS-CCDs,gaussian,2,100,2024,500,6,1,0.8,1.2,1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/2d/2d_235clusters_n100.R
+KS-CCDs,gaussian,2,200,2024,500,6,1,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/2d/2d_235clusters_n200.R
+KS-CCDs,gaussian,2,500,2024,500,6,1,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/2d/2d_235clusters_n500.R
+KS-CCDs,gaussian,3,50,2024,500,6,1,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/3d/3d_235clusters_n50.R
+KS-CCDs,gaussian,3,100,2024,500,6,1,0.8,1.2,1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/3d/3d_235clusters_n100.R
+KS-CCDs,gaussian,3,200,2024,500,6,1,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/3d/3d_235clusters_n200.R
+KS-CCDs,gaussian,3,500,2024,500,6,1,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/3d/3d_235clusters_n500.R
+KS-CCDs,gaussian,5,50,2024,500,6,1,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/5d/5d_235clusters_n50.R
+KS-CCDs,gaussian,5,100,2024,500,6,1,0.8,1.2,1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/5d/5d_235clusters_n100.R
+KS-CCDs,gaussian,5,200,2024,500,6,1,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/5d/5d_235clusters_n200.R
+KS-CCDs,gaussian,5,500,2024,500,6,1,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/5d/5d_235clusters_n500.R
+KS-CCDs,gaussian,10,50,2024,500,6,1,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/10d/10d_235clusters_n50.R
+KS-CCDs,gaussian,10,100,2024,500,6,1,0.8,1.2,1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/10d/10d_235clusters_n100.R
+KS-CCDs,gaussian,10,200,2024,500,6,1,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/10d/10d_235clusters_n200.R
+KS-CCDs,gaussian,10,500,2024,500,6,1,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/10d/10d_235clusters_n500.R
+KS-CCDs,gaussian,20,50,2024,500,6,1,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/20d/20d_235clusters_n50.R
+KS-CCDs,gaussian,20,100,2024,500,6,1,0.8,1.2,1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/20d/20d_235clusters_n100.R
+KS-CCDs,gaussian,20,200,2024,500,6,1,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/20d/20d_235clusters_n200.R
+KS-CCDs,gaussian,20,500,2024,500,6,1,0.8,1.2,-1,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Gaussian/20d/20d_235clusters_n500.R

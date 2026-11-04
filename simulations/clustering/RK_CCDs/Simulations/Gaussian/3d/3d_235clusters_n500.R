@@ -21,7 +21,7 @@ if(d<10){quant=0.99 # the level of K-test
   quant=0.999
 }
 
-iteN = 50 # the number of simulated data set.
+iteN = 500 # the number of simulated data set.
 cls_dis = 6 # the distances between each cluster center
 
 # the min and max of the radii of clusters

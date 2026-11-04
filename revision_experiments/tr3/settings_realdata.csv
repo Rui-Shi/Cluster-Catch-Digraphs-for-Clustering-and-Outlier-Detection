@@ -1,0 +1,28 @@
+method,dataset,table,quant,direction,delta_grid,script
+UN-CCDs,iris,NN-test-simul_4d_90%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Real_Data/Real_Data_UNCCD.R
+UN-CCDs,seeds,NN-test-simul_7d_95%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Real_Data/Real_Data_UNCCD.R
+UN-CCDs,user_knowledge,NN-test-simul_5d_95%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Real_Data/Real_Data_UNCCD.R
+UN-CCDs,wholesale,NN-test-simul_6d_95%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Real_Data/Real_Data_UNCCD.R
+UN-CCDs,breast_cancer,NN-test-simul_9d_95%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Real_Data/Real_Data_UNCCD.R
+UN-CCDs,aggregation,NN-test-simul_2d_85%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Real_Data/Real_Data_UNCCD.R
+UN-CCDs,asymmetric,NN-test-simul_2d_85%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Real_Data/Real_Data_UNCCD.R
+UN-CCDs,R15,NN-test-simul_2d_85%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Real_Data/Real_Data_UNCCD.R
+UN-CCDs,D31,NN-test-simul_2d_85%.RData,,ascend,,simulations/clustering/UN_CCDs/Simulations/Real_Data/Real_Data_UNCCD.R
+RK-CCDs,iris,RK-test-simul_4d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Real_Data/Real_Data_RKCCD.R
+RK-CCDs,seeds,RK-test-simul_7d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Real_Data/Real_Data_RKCCD.R
+RK-CCDs,user_knowledge,RK-test-simul_5d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Real_Data/Real_Data_RKCCD.R
+RK-CCDs,wholesale,RK-test-simul_6d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Real_Data/Real_Data_RKCCD.R
+RK-CCDs,breast_cancer,RK-test-simul_9d_999%.RData,0.999,,,simulations/clustering/RK_CCDs/Simulations/Real_Data/Real_Data_RKCCD.R
+RK-CCDs,aggregation,RK-test-simul_2d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Real_Data/Real_Data_RKCCD.R
+RK-CCDs,asymmetric,RK-test-simul_2d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Real_Data/Real_Data_RKCCD.R
+RK-CCDs,R15,RK-test-simul_2d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Real_Data/Real_Data_RKCCD.R
+RK-CCDs,D31,RK-test-simul_2d_99%.RData,0.99,,,simulations/clustering/RK_CCDs/Simulations/Real_Data/Real_Data_RKCCD.R
+KS-CCDs,iris,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Real_Data/Real_Data_KSCCD.R
+KS-CCDs,seeds,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Real_Data/Real_Data_KSCCD.R
+KS-CCDs,user_knowledge,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Real_Data/Real_Data_KSCCD.R
+KS-CCDs,wholesale,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Real_Data/Real_Data_KSCCD.R
+KS-CCDs,breast_cancer,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Real_Data/Real_Data_KSCCD.R
+KS-CCDs,aggregation,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Real_Data/Real_Data_KSCCD.R
+KS-CCDs,asymmetric,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Real_Data/Real_Data_KSCCD.R
+KS-CCDs,R15,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Real_Data/Real_Data_KSCCD.R
+KS-CCDs,D31,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",simulations/clustering/KS_CCDs/Simulations/Real_Data/Real_Data_KSCCD.R

@@ -34,7 +34,7 @@ print(paste("iris x UN-CCDs: the ARI is", ari, "the average silhouette index is"
 
 ##### seeds data #####
 source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_7d_95%.RData"))
-method="descend"
+method="ascend"
 
 n_col = ncol(seeds)
 X = seeds[, -n_col] # remove the class column for clustering
@@ -57,7 +57,7 @@ print(paste("seeds x UN-CCDs: the ARI is", ari, "the average silhouette index is
 
 
 ##### user_knowledge data #####
-source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_6d_95%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_5d_95%.RData"))
 method="ascend"
 
 n_col = ncol(user_knowledge)
@@ -81,7 +81,7 @@ print(paste("user_knowledge x UN-CCDs: the ARI is", ari, "the average silhouette
 
 
 ##### wholesale data #####
-source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_8d_95%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_6d_95%.RData"))
 method="ascend"
 
 n_col = ncol(wholesale)
@@ -106,7 +106,7 @@ print(paste("wholesale x UN-CCDs: the ARI is", ari, "the average silhouette inde
 
 ##### breast_cancer data #####
 source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_9d_95%.RData"))
-method="descend"
+method="ascend"
 
 n_col = ncol(breast_cancer)
 X = breast_cancer[, -n_col] # remove the class column for clustering
@@ -153,7 +153,7 @@ print(paste("aggregation x UN-CCDs: the ARI is", ari, "the average silhouette in
 
 
 ##### asymmetric data #####
-source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_2d_80%.RData"))
+source(here::here("R/ccds/quantile_table.R")); load_quantile_table(here::here("R/NN-test_quantile/NN-test-simul_2d_85%.RData"))
 method="ascend"
 
 n_col = ncol(asymmetric)

@@ -1,6 +1,6 @@
 # revision_experiments
 
-This directory is shared by two paper revisions that both build on the same
+This directory is shared by three paper revisions that all build on the same
 CCD/MCCD codebase (`data/`, `methods/`, `R/`, `simulations/` at the repo
 root):
 
@@ -8,7 +8,13 @@ root):
   and Mutual Catch Digraphs" (NEUCOM-D-26-15191).
 - **tr2/** -- Pattern Recognition, "Outlyingness Scores with Cluster Catch
   Digraphs..." (PR-D-26-05767).
-- **shared/** -- infrastructure both projects source.
+- **tr3/** -- the UN-CCD clustering paper, now "Cluster Catch Digraphs:
+  Nearest-Neighbor Covering Radii and Label-Free Parameter Selection"
+  (submitted to KBS as "Clustering with Uniformity- and Neighbor-Based Random
+  Geometric Graphs" and rejected, KNOSYS-D-26-08010). Drivers and
+  reproduction gate; see `tr3/README.md`. Takes only
+  `append_result()`/`has_result()` from `shared/harness.R`.
+- **shared/** -- infrastructure the projects source.
 
 Reorganized 2026-08-30 into a full split: each project's scripts and docs now
 live in their own subdirectory (`tr1/`, `tr2/`), not just their `results/`.
@@ -261,6 +267,10 @@ The pinned PyOD 3.6.1 / torch 2.13.0+cpu Python environment, used by tr2's
   script writes stays local: raw per-replicate CSVs, diagnostics, `figures/`,
   `probes/`, `wp4_data/`, `wp4_data2/`, `wp6_scores/`, and the console logs
   in `results/tr2/_logs/`.
+- `results/tr3/` -- tr3's result files, force-added as for tr1 (since
+  2026-11-03); the quantile tables in `results/tr3/alpha_tables/` are not
+  committed. What is committed and what was removed: `tr3/README.md`,
+  "Results".
 
 ## tr1/
 

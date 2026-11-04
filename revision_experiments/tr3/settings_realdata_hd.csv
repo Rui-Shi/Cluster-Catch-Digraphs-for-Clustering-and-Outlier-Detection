@@ -1,0 +1,19 @@
+method,dataset,table,quant,direction,delta_grid,script
+UN-CCDs,wine,NN-test-simul_13d_99%.RData,,descend,,revision_experiments/tr3/31_hd_real.R
+RK-CCDs,wine,RK-test-simul_13d_999%.RData,0.999,,,revision_experiments/tr3/31_hd_real.R
+KS-CCDs,wine,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",revision_experiments/tr3/31_hd_real.R
+UN-CCDs,hepatitis,NN-test-simul_19d_99%.RData,,descend,,revision_experiments/tr3/31_hd_real.R
+RK-CCDs,hepatitis,RK-test-simul_19d_999%.RData,0.999,,,revision_experiments/tr3/31_hd_real.R
+KS-CCDs,hepatitis,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",revision_experiments/tr3/31_hd_real.R
+UN-CCDs,lymphography,NN-test-simul_18d_99%.RData,,descend,,revision_experiments/tr3/31_hd_real.R
+RK-CCDs,lymphography,RK-test-simul_18d_999%.RData,0.999,,,revision_experiments/tr3/31_hd_real.R
+KS-CCDs,lymphography,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",revision_experiments/tr3/31_hd_real.R
+UN-CCDs,wdbc,NN-test-simul_30d_999%.RData,,descend,,revision_experiments/tr3/31_hd_real.R
+RK-CCDs,wdbc,RK-test-simul_30d_999%.RData,0.999,,,revision_experiments/tr3/31_hd_real.R
+KS-CCDs,wdbc,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",revision_experiments/tr3/31_hd_real.R
+UN-CCDs,vehicle,NN-test-simul_18d_99%.RData,,descend,,revision_experiments/tr3/31_hd_real.R
+RK-CCDs,vehicle,RK-test-simul_18d_999%.RData,0.999,,,revision_experiments/tr3/31_hd_real.R
+KS-CCDs,vehicle,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",revision_experiments/tr3/31_hd_real.R
+UN-CCDs,segmentation,NN-test-simul_18d_99%.RData,,descend,,revision_experiments/tr3/31_hd_real.R
+RK-CCDs,segmentation,RK-test-simul_18d_999%.RData,0.999,,,revision_experiments/tr3/31_hd_real.R
+KS-CCDs,segmentation,,,,"c(seq(0.01, 1, 0.01), seq(1.1, 10, 0.1), seq(11, 20, 1))",revision_experiments/tr3/31_hd_real.R
