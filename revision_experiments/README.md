@@ -11,9 +11,12 @@ root):
 - **tr3/** -- the UN-CCD clustering paper, now "Cluster Catch Digraphs:
   Nearest-Neighbor Covering Radii and Label-Free Parameter Selection"
   (submitted to KBS as "Clustering with Uniformity- and Neighbor-Based Random
-  Geometric Graphs" and rejected, KNOSYS-D-26-08010). Drivers and
-  reproduction gate; see `tr3/README.md`. Takes only
-  `append_result()`/`has_result()` from `shared/harness.R`.
+  Geometric Graphs" and rejected, KNOSYS-D-26-08010). Drivers; see
+  `tr3/README.md`. Takes only `append_result()`/`has_result()` from
+  `shared/harness.R`. 2026-11-03: the reproduction gate `20` with its
+  reference script `12`, the checks `21` and `25`, their outputs, the audit
+  CSVs and a superseded run were removed from main; all of them are on the
+  branch `tr3-revision` (commit `f235490`).
 - **shared/** -- infrastructure the projects source.
 
 Reorganized 2026-08-30 into a full split: each project's scripts and docs now

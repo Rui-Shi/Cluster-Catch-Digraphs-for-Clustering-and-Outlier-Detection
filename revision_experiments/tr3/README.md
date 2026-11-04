@@ -27,8 +27,16 @@ changed on 2026-10-18 and 2026-10-23 by the authors' decision (see the audit sec
 
 ## Status
 
-Reproduction gate (`20_gate.R`): see the end of this file. No new experiment runs
-until the gate passes, and each one gets a `*_PROTOCOL.md` here before it runs.
+On `main` since 2026-11-03: the drivers and scripts behind the published numbers, their inputs and
+results, the shared-code check `38_descend_pointer_check.R`, the settings check `00_check_settings.R`
+and every protocol. The checks and audits that no published number rests on were removed from `main`
+on 2026-11-03 and stay on branch `tr3-revision`: the reproduction gate `20_gate.R` (87 of 87 passed,
+last run 2026-11-03) and its reference script `12_real_reference.R`, `21_iteN500_check.R`,
+`25_greedy_prefix.R`, and their outputs (`gate.csv`, `real_reference.csv`, `iteN500_check.csv`,
+`greedy_prefix/`), the audits `audit_cells.csv`, `audit_logs.csv`, `audit_repro.csv`,
+`real_verify_ccd.csv`, `real_verify_baselines.csv`, and the superseded `real_baselines_eps.csv`.
+The sections below still describe them as they were when written. Each new experiment got a
+`*_PROTOCOL.md` here before it ran.
 
 ## Files
 
@@ -40,13 +48,10 @@ until the gate passes, and each one gets a `*_PROTOCOL.md` here before it runs.
 | `tr3_lib.R` | Shared code: `ccd_cluster()`, data generation in the scripts' random-number order, the patched loader, CSV checkpointing. |
 | `10_sim.R` | One simulation cell group (method, distribution, d, n). |
 | `11_real.R` | CCD rows of the real-data table. |
-| `12_real_reference.R` | Runs the original real-data script blocks verbatim, to get full-precision reference values. |
-| `20_gate.R` | Compares the drivers with the original logs, the knit output and the manuscript. |
-| `ITEN500_PROTOCOL.md`, `21_iteN500_check.R` | Variant `iteN500`: RK-CCDs at d = 3, n = 500 with 500 repetitions, and its checks. |
+| `ITEN500_PROTOCOL.md` | Variant `iteN500`: RK-CCDs at d = 3, n = 500 with 500 repetitions (its check script, `21_iteN500_check.R`, is on branch `tr3-revision`). |
 | `13_real_baselines.R` | Baseline rows of the real-data table (DBSCAN, MST, K-means++, Spectral, Louvain): runs each data-set block of the original script verbatim, once or over seeds. |
 | `23_noise.R` | The noise experiment (d = 3, 10; l = 3% to 20%), written 2026-10-24 because the original driver is lost. Its rows are in the paper; it does not reproduce the old table, see "Noise experiment (2026-10-24)". Variant `allpoints` is experiment 8 (k chosen on all points, 2026-10-31). |
 | `24_alpha_supplement.R` | Supplement Section S2.1 (2026-10-25): writes `results/tr3/supp_alpha.tex`, the rows of the α-sweep table (config A, seeds from config S, the paper's current settings) and of the shipped-against-regenerated table (configs A and G, seeds left out), from `real_alpha.csv`; checks that the rule's cells equal `real.csv`. Nothing is rerun. |
-| `25_greedy_prefix.R` | Real data (2026-10-25): UN- or RK-CCDs with the shipped first greedy selection (`greedy2`, every point ranked) or stopped at the first covering prefix; see "Greedy selection as the code runs it (2026-10-25)". |
 | `22_runtime.R`, `22_runtime_run.ps1`, `22_runtime_monitor.ps1`, `22_runtime_summary.R` | Re-timing of `tab:runtime_comparison` (d = 5, uniform, n = 50 to 500, three methods) on this machine, with a load guard; see "Runtime comparison (2026-10-24)". |
 | `ALPHA_PROTOCOL.md`, `14_alpha_tables.R`, `15_real_alpha.R`, `16_alpha_summary.R` | One α for UN-CCDs on all real data sets (20% to 1%): generates the missing NN tables, runs every cell, checks the reproduction and scores the levels. |
 | `NEW_EXPERIMENTS_PROTOCOL.md` | Design, decisions and outcomes of the new experiments for the KBS rebuttal (2026-10-25): 1 real data with d ≥ 13, 2 Type I error, 3 search direction, 5 paired tests. See "New experiments (2026-10-25)". |
@@ -69,8 +74,6 @@ $R = "C:\Program Files\R\R-4.6.1\bin\Rscript.exe"
 & $R revision_experiments/tr3/00_check_settings.R
 & $R revision_experiments/tr3/10_sim.R UN-CCDs uniform 2 50          # [clusters] [variant]
 & $R revision_experiments/tr3/11_real.R RK-CCDs iris,seeds,R15
-& $R revision_experiments/tr3/12_real_reference.R UN-CCDs iris,seeds,R15
-& $R revision_experiments/tr3/20_gate.R
 ```
 
 `TR3_CORES` sets the number of workers (default: all). Results do not depend on it.
@@ -101,7 +104,7 @@ A rerun skips every finished cell; move a result file aside to recompute.
 ## Results (`revision_experiments/results/tr3/`)
 
 `results/` is gitignored. As for tr1, the result files were force-added on 2026-11-03
-(`git ls-files revision_experiments/results/tr3` lists the 90 files): the files of this table, the
+(90 files; 78 on `main` since the removals listed under "Status", `git ls-files revision_experiments/results/tr3`): the files of this table, the
 `*_done.csv` files (the readers keep only the cells listed there), `_before_alpha_adopt_20261023/`
 (read by `16_alpha_summary.R`) and the files the sections below cite as results. Not committed: the
 35 quantile tables in `alpha_tables/` (`*.RData`, written by `14_alpha_tables.R`). Removed from the
@@ -119,10 +122,8 @@ The sections below this table still name some of these files as they were when w
 | `sim_ks_search.csv` | KS grid value per cell: delta, mean_sil, mean_ari, sr, seconds |
 | `real.csv`, `real_done.csv` | method and data set: n, d, ari, sil, k_hat, seconds, param, table |
 | `real_ks_search.csv` | KS grid value per data set: si |
-| `real_reference.csv` | output of `12_real_reference.R` |
 | `real_baselines.csv`, `real_baselines_seeds.csv` | output of `13_real_baselines.R`: verbatim runs, and seeds 1 to 30 (both from before the baseline fixes of 2026-10-23) |
 | `real_baselines_fixed.csv`, `real_baselines_fixed_run2.csv`, `real_baselines_fixed_params.csv` | the baselines after the fixes of 2026-10-23: first run, second run (identical), and the Eps / sigma each block chose (the per-method part files `real_baselines_fixed_<method>_run<1,2>[_params].csv` were removed on 2026-11-03) |
-| `real_verify_ccd.csv`, `real_verify_baselines.csv` | real-data rerun of 2026-10-19 against the paper and the knit output, per cell and metric |
 | `real_alpha.csv`, `alpha_summary.csv` | α sweep: config, level, data set (ARI, Sil, k_hat, table, source); the criteria per config and level. Generated tables in `alpha_tables/` |
 | `real_hd.csv`, `real_hd_done.csv`, `real_hd_ks_search.csv` | experiment 1, CCDs: variant (`hd`), method, data set, n, d, ari, sil, k_hat, seconds, param (KS: chosen m), table; KS grid value per data set: si |
 | `real_hd_baselines.csv`, `real_hd_baselines_params.csv`, `real_hd_baselines_done.csv` | experiment 1, baselines: method, data set, n, d, ari, sil, k_hat, seed, script; the Eps / sigma / bandwidth each block chose |
@@ -133,7 +134,6 @@ The sections below this table still name some of these files as they were when w
 | `simbase_summary.csv`, `simbase_by_d.csv`, `simbase_comparisons.csv`, `noisebase_summary.csv` | experiments 7 and 8, from `36_new_tables.R`: per setting (eight methods; CCD rows read from the supplement), per distribution and d, the comparisons by the 0.02 rule, and the noise cells (since experiment 8, "UN-CCDs" there means k chosen on all points; "UN-CCDs (cluster points)" is the published choice) |
 | `noise_allpoints_replicates.csv`, `noise_allpoints_done.csv` | experiment 8: per replicate the published columns of `noise_replicates.csv` (gate: equal) plus ari_all, sil200_all and nlab_all for k chosen on all points |
 | `tex/new_*.tex` | output of `36_new_tables.R` |
-| `gate.csv` | gate comparison |
 | `descend_pointer_check.csv` | output of `38_descend_pointer_check.R`: case, n, d, low.num, scores, pass, seconds of both versions |
 | `descend_ptr_20261102/` | the driver runs that checked the 2026-11-02 descending search against the published files (see its section): their outputs (`real_hd_UN.csv`, `sim_replicates_UN_d10_d20.csv` and the done files) and `compare_summary.json`, written by `compare_verify.py` |
 
