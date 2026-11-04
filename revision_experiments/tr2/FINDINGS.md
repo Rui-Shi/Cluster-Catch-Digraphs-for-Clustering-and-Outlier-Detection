@@ -2,6 +2,8 @@
 
 Feeds the final EXPERIMENT_RESULTS.md (T8). Each entry: what was found, evidence, consequence.
 
+Scripts that no published number rests on (generator probes and checks, superseded runs, audits) were removed from `main` on 2026-10-24 and are kept on the branch `tr2-revision-experiments` (commit `8964125`); entries below still name some of them.
+
 ## 1. Recovered quantile tables are the production tables (T2, 2026-07-10)
 WBC reproduction gate: 6 of 9 methods reproduce the manuscript's real-data WBC row to the 3rd decimal; max drift 0.011 (LOF). Conventions confirmed: RK quantile 99% for d<=5 / 999% for d>=10; NN per-d anchors (2d→85%, 3d→90%, 5d→95%, 10d→99%, 20d→999%); OS threshold = 2; label polarity 1=regular/0=outlier, outliers last.
 

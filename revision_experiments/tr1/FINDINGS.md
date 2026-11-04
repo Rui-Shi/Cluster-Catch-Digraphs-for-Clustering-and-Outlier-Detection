@@ -14,6 +14,11 @@ every script with its purpose and outputs.
 
 - Authority: a committed result file beats a findings note (`*_findings.md`,
   `WP*_FINDINGS*.md`), which beats this index.
+- Scripts and files that no published result rests on (probes, audits of
+  the submitted tables, checks of intermediate runs, superseded runs, console
+  logs) were removed from `main` on 2026-10-24 and are kept on the branch
+  `tr1-revision-experiments` (commit `b9a77d7`); the log in section 5
+  still names some of them.
 - Most drivers checkpoint per cell, so rerunning one against a committed
   file computes nothing new; move the file aside first.
 - The Monte Carlo quantile tables are not in the repository. A missing table
@@ -87,20 +92,21 @@ bounds, not results.
   waveform and PenDigits cells of `wp2a_smin_sweep16.csv` and
   `wp2a_smin_bigfour.csv` at the values it covers.
 - The published stability results are the S_min = 0.05 vintage
-  (`wp2b_*_smin005.csv`); the files without the suffix are the earlier
-  S_min = 0.0625 run.
+  (`wp2b_*_smin005.csv`); the earlier S_min = 0.0625 run is on the archive
+  branch.
 - `wp2c_rerun_alpha001.csv` (six cells rerun with the regenerated 0.1% NN
   tables) and `wp2c_manuscript_tables.csv` (`78`) supersede the matching
   cells of `final_comparison.csv`.
 - `wp2a_alpha_claim_audit.csv` is the record before the table repair;
   `wp2a_provenance_verify.csv` is the check after it.
 - `wp6_incr/94_ab_raw.csv` (paired timing) supersedes the `wp6_incr/91_*`
-  re-timing of 2026-09-23, which ran on another day; `95` summarizes `94`.
+  re-timing of 2026-09-23, which ran on another day and is on the archive
+  branch; `95` summarizes `94`.
 - `wp6/91c_wp6_runtime_ksqrt_summary.csv` (rule `ksqrt`, k = round(sqrt(n)))
   supersedes the MutualKNN and SNN `k10` rows of
   `wp6/91b_wp6_runtime_py_summary.csv` in `tab:wp6_runtime` and
   `SM-tab:wp6-n-py` / `wp6-d-py`; `91b`'s k grid is kept as a record.
-- The tr1 table-provenance scripts (`62`-`78`) record which duplicated NN
+- The tr1 table-provenance scripts (`63`-`78`) record which duplicated NN
   tables were deleted and which 0.1% tables were installed in
   `tr1/DELETED_DUPLICATE_TABLES.md` and `tr1/INSTALLED_REGEN999_TABLES.md`.
 
