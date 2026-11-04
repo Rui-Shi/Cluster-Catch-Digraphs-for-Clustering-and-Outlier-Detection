@@ -674,7 +674,16 @@ greedy algorithm. The code does not run the first step as described.
   - RK-CCDs (prefix only): ARI and Sil equal the published rows of `real.csv` within 4.4e-16, same k-hat
     on all seven (labels not compared).
   - KS-CCDs: not run (the 200-value grid search takes hours); the code path is the same.
-- The manuscript now describes the step as the code runs it (manuscript commits c82e6de, 555666a).
+- Not equivalent in general (2026-11-03). A ball outside the covering prefix shares a point with the
+  prefix ball that covers its center, but it is dropped only if that prefix ball is selected. When that
+  ball was itself dropped for touching an earlier center, the extra ball can become a center, and the
+  silhouette step can accept it. Example, run with the shipped `UNCCD_clustering` and `nnccd.radi`
+  replaced by given radii: x = 0, 1, 2, 3, 4, 5, 8, 9, 10, 11 (d = 1); radius 3 at x = 3 and x = 8,
+  2 at x = 10, 0 elsewhere. Shipped step: centers at x = 3 and x = 10, 2 clusters (silhouette 0.686).
+  Covering prefix: center at x = 3, 1 cluster. On the seven real data sets above, the shipped UN-CCD run
+  kept extra centers (iris 21 against 13), but the silhouette step accepted none of them.
+- The manuscript describes the step as the code runs it since manuscript commit c059335 (2026-11-03):
+  Greedy Algorithm 1 without its stopping rule. (c82e6de and 555666a did so first; 34f9a65 reverted them.)
   Nothing in `R/` or `methods/` was edited.
 
 ## New experiments (2026-10-25)
