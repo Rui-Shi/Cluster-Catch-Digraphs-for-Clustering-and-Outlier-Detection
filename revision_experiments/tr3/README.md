@@ -64,6 +64,7 @@ The sections below still describe them as they were when written. Each new exper
 | `36_new_tables.R` | The LaTeX tabular bodies of experiments 1, 2, 3, 5, 7 and 8 (`results/tr3/tex/new_*.tex`) and the CSV summaries of experiments 7 and 8, with checks; nothing is rerun. |
 | `37_sim_baselines.R` | Experiment 7: DBSCAN, MST, K-means++, Spectral or Louvain (or `all`) on the simulated data (`sim`) and the noise data (`noise`) of the CCDs; `check` reproduces the stored real-data baseline rows first. |
 | `38_descend_pointer_check.R` | Checks that the descending radius search of 2026-11-02 (sorted neighbour lists) returns exactly the radii of the 2026-10-23 version, on simulated and real data with d ≥ 10 and edge cases; see "Descending search with sorted neighbour lists (2026-11-02)". |
+| `39_line_plots.py` | Python (2026-11-03): the six line-plot figures of the Supplement (`Lineplots_Clustering_*.png`, Figures S2-S4 and S6-S8), drawn from the ARI columns of Supplement Tables S2-S4 and S6-S8 read from `Supplementary_Material.tex`, with the plotting code of the authors' notebook (whose hand-typed values had gone out of date). Reads every plotted point back and stops if one differs from its table value. Usage: `python 39_line_plots.py <Supplementary_Material.tex> <out_dir>`; ran with Python 3.13.13, seaborn 0.13.2, matplotlib 3.11.2, pandas 3.1.0, numpy 2.5.4. |
 
 ## Running
 
