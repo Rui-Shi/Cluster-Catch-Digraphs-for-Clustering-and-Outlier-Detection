@@ -98,7 +98,19 @@ A rerun skips every finished cell; move a result file aside to recompute.
 - **The loader fix.** The real-data loader's `setwd()` is fixed in memory, and
   `readxl` is needed only for `user_knowledge`.
 
-## Results (`revision_experiments/results/tr3/`, not tracked by git)
+## Results (`revision_experiments/results/tr3/`)
+
+`results/` is gitignored. As for tr1, the result files were force-added on 2026-11-03
+(`git ls-files revision_experiments/results/tr3` lists the 90 files): the files of this table, the
+`*_done.csv` files (the readers keep only the cells listed there), `_before_alpha_adopt_20261023/`
+(read by `16_alpha_summary.R`) and the files the sections below cite as results. Not committed: the
+35 quantile tables in `alpha_tables/` (`*.RData`, written by `14_alpha_tables.R`). Removed from the
+clone on 2026-11-03 (408 files, kept outside the repository): the console logs (`_logs/`,
+`descend_ptr_20261102/logs/`), the backup folders `_before_*` other than `_before_alpha_adopt_20261023/`,
+the part files (`real_alpha_parts/`, `real_baselines_fixed_<method>_run<n>[_params].csv`,
+`real_baselines_fixed_v2_*`, `real_baselines_fixed_mst2_after_revert_*`), the MST Sil-max runs
+(`real_baselines_fixed_mstrule_*`) and the driver copies in `descend_ptr_20261102/driver_copies/`.
+The sections below this table still name some of these files as they were when written.
 
 | File | One row per |
 |---|---|
@@ -108,8 +120,8 @@ A rerun skips every finished cell; move a result file aside to recompute.
 | `real.csv`, `real_done.csv` | method and data set: n, d, ari, sil, k_hat, seconds, param, table |
 | `real_ks_search.csv` | KS grid value per data set: si |
 | `real_reference.csv` | output of `12_real_reference.R` |
-| `real_baselines.csv`, `real_baselines_seeds.csv` | output of `13_real_baselines.R`: verbatim runs, and seeds 1 to 30 (both from before the baseline fixes of 2026-10-23; copies in `_before_baseline_fix_20261023/`) |
-| `real_baselines_fixed.csv`, `real_baselines_fixed_run2.csv`, `real_baselines_fixed_params.csv` | the baselines after the fixes of 2026-10-23: first run, second run (identical), and the Eps / sigma each block chose. Part files `real_baselines_fixed_<method>_run<1,2>[_params].csv` |
+| `real_baselines.csv`, `real_baselines_seeds.csv` | output of `13_real_baselines.R`: verbatim runs, and seeds 1 to 30 (both from before the baseline fixes of 2026-10-23) |
+| `real_baselines_fixed.csv`, `real_baselines_fixed_run2.csv`, `real_baselines_fixed_params.csv` | the baselines after the fixes of 2026-10-23: first run, second run (identical), and the Eps / sigma each block chose (the per-method part files `real_baselines_fixed_<method>_run<1,2>[_params].csv` were removed on 2026-11-03) |
 | `real_verify_ccd.csv`, `real_verify_baselines.csv` | real-data rerun of 2026-10-19 against the paper and the knit output, per cell and metric |
 | `real_alpha.csv`, `alpha_summary.csv` | α sweep: config, level, data set (ARI, Sil, k_hat, table, source); the criteria per config and level. Generated tables in `alpha_tables/` |
 | `real_hd.csv`, `real_hd_done.csv`, `real_hd_ks_search.csv` | experiment 1, CCDs: variant (`hd`), method, data set, n, d, ari, sil, k_hat, seconds, param (KS: chosen m), table; KS grid value per data set: si |
@@ -123,7 +135,7 @@ A rerun skips every finished cell; move a result file aside to recompute.
 | `tex/new_*.tex` | output of `36_new_tables.R` |
 | `gate.csv` | gate comparison |
 | `descend_pointer_check.csv` | output of `38_descend_pointer_check.R`: case, n, d, low.num, scores, pass, seconds of both versions |
-| `descend_ptr_20261102/` | the driver runs that checked the 2026-11-02 descending search against the published files (see its section) |
+| `descend_ptr_20261102/` | the driver runs that checked the 2026-11-02 descending search against the published files (see its section): their outputs (`real_hd_UN.csv`, `sim_replicates_UN_d10_d20.csv` and the done files) and `compare_summary.json`, written by `compare_verify.py` |
 
 Numbers are written with 17 significant digits, so means recomputed from the
 CSV equal the in-memory ones exactly. Each cell is appended as soon as it

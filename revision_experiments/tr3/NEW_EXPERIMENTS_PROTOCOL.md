@@ -5,6 +5,9 @@ experiments 1, 2, 3 and 5 of the revision plan on 2026-10-25; experiments 4 (fai
 cases, extended noise) and 6 (sensitivity to N) are not run. Each script was written by
 one agent and checked by a separate verifier agent before its full run.
 
+Note of 2026-11-03: the console logs this file cites (`_logs/...`) were removed from the clone
+in the clean-up before the merge to `main`; see `README.md`, "Results".
+
 ## Decisions taken before the runs (authors, 2026-10-25)
 
 - UN-CCDs level for real data with d >= 10: alpha = 1% for 10 <= d < 20 (tables

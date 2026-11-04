@@ -280,6 +280,10 @@ The pinned PyOD 3.6.1 / torch 2.13.0+cpu Python environment, used by tr2's
     place. A handful of `*_log.txt` text logs (e.g. `wp4_run_log.txt`,
     `wp3_real_log.txt`) were not moved and remain directly under
     `results/tr2/`.
+- `results/tr3/` -- tr3's result files, force-added as for tr1 (since
+  2026-11-03); the quantile tables in `results/tr3/alpha_tables/` are not
+  committed. What is committed and what was removed: `tr3/README.md`,
+  "Results".
 
 ## tr1/
 

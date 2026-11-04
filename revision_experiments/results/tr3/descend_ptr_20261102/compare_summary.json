@@ -1,0 +1,648 @@
+{
+ "v2_real": [
+  {
+   "dataset": "wine",
+   "n": 178,
+   "d": 13,
+   "equal": true,
+   "diffs": [],
+   "sec_old": 0.73,
+   "sec_new": 0.58
+  },
+  {
+   "dataset": "hepatitis",
+   "n": 80,
+   "d": 19,
+   "equal": true,
+   "diffs": [],
+   "sec_old": 0.1299999999999999,
+   "sec_new": 0.1100000000000001
+  },
+  {
+   "dataset": "lymphography",
+   "n": 148,
+   "d": 18,
+   "equal": true,
+   "diffs": [],
+   "sec_old": 0.47,
+   "sec_new": 0.3599999999999999
+  },
+  {
+   "dataset": "wdbc",
+   "n": 569,
+   "d": 30,
+   "equal": true,
+   "diffs": [],
+   "sec_old": 11.129999999999999,
+   "sec_new": 7.27
+  },
+  {
+   "dataset": "vehicle",
+   "n": 846,
+   "d": 18,
+   "equal": true,
+   "diffs": [],
+   "sec_old": 37.46,
+   "sec_new": 17.979999999999997
+  },
+  {
+   "dataset": "segmentation",
+   "n": 2086,
+   "d": 18,
+   "equal": true,
+   "diffs": [],
+   "sec_old": 616.72,
+   "sec_new": 255.73999999999998
+  }
+ ],
+ "v3_sim": [
+  {
+   "dist": "gaussian",
+   "d": 10,
+   "n": 50,
+   "k": 2,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.050000000000000044,
+   "median_sec_new": 0.06000000000000005
+  },
+  {
+   "dist": "gaussian",
+   "d": 10,
+   "n": 50,
+   "k": 3,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.06000000000000005,
+   "median_sec_new": 0.08000000000000007
+  },
+  {
+   "dist": "gaussian",
+   "d": 10,
+   "n": 50,
+   "k": 5,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.0600000000000005,
+   "median_sec_new": 0.08000000000000007
+  },
+  {
+   "dist": "gaussian",
+   "d": 20,
+   "n": 50,
+   "k": 2,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.05999999999999983,
+   "median_sec_new": 0.06000000000000005
+  },
+  {
+   "dist": "gaussian",
+   "d": 20,
+   "n": 50,
+   "k": 3,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.0600000000000005,
+   "median_sec_new": 0.08000000000000007
+  },
+  {
+   "dist": "gaussian",
+   "d": 20,
+   "n": 50,
+   "k": 5,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.07000000000000028,
+   "median_sec_new": 0.07999999999999963
+  },
+  {
+   "dist": "uniform",
+   "d": 10,
+   "n": 50,
+   "k": 2,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.050000000000000044,
+   "median_sec_new": 0.05499999999999994
+  },
+  {
+   "dist": "uniform",
+   "d": 10,
+   "n": 50,
+   "k": 3,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.06000000000000005,
+   "median_sec_new": 0.07999999999999963
+  },
+  {
+   "dist": "uniform",
+   "d": 10,
+   "n": 50,
+   "k": 5,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.05999999999999961,
+   "median_sec_new": 0.07000000000000028
+  },
+  {
+   "dist": "uniform",
+   "d": 20,
+   "n": 50,
+   "k": 2,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.050000000000000044,
+   "median_sec_new": 0.06000000000000005
+  },
+  {
+   "dist": "uniform",
+   "d": 20,
+   "n": 50,
+   "k": 3,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.06000000000000005,
+   "median_sec_new": 0.08000000000000007
+  },
+  {
+   "dist": "uniform",
+   "d": 20,
+   "n": 50,
+   "k": 5,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.0600000000000005,
+   "median_sec_new": 0.07999999999999918
+  },
+  {
+   "dist": "gaussian",
+   "d": 10,
+   "n": 100,
+   "k": 2,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.25,
+   "median_sec_new": 0.25
+  },
+  {
+   "dist": "gaussian",
+   "d": 10,
+   "n": 100,
+   "k": 3,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.3099999999999987,
+   "median_sec_new": 0.3000000000000007
+  },
+  {
+   "dist": "gaussian",
+   "d": 10,
+   "n": 100,
+   "k": 5,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.3000000000000007,
+   "median_sec_new": 0.3099999999999987
+  },
+  {
+   "dist": "gaussian",
+   "d": 20,
+   "n": 100,
+   "k": 2,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.25,
+   "median_sec_new": 0.25
+  },
+  {
+   "dist": "gaussian",
+   "d": 20,
+   "n": 100,
+   "k": 3,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.3000000000000007,
+   "median_sec_new": 0.3100000000000005
+  },
+  {
+   "dist": "gaussian",
+   "d": 20,
+   "n": 100,
+   "k": 5,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.3099999999999987,
+   "median_sec_new": 0.3100000000000005
+  },
+  {
+   "dist": "uniform",
+   "d": 10,
+   "n": 100,
+   "k": 2,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.24499999999999966,
+   "median_sec_new": 0.25
+  },
+  {
+   "dist": "uniform",
+   "d": 10,
+   "n": 100,
+   "k": 3,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.29999999999999893,
+   "median_sec_new": 0.3000000000000007
+  },
+  {
+   "dist": "uniform",
+   "d": 10,
+   "n": 100,
+   "k": 5,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.3099999999999987,
+   "median_sec_new": 0.3099999999999987
+  },
+  {
+   "dist": "uniform",
+   "d": 20,
+   "n": 100,
+   "k": 2,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.25,
+   "median_sec_new": 0.25
+  },
+  {
+   "dist": "uniform",
+   "d": 20,
+   "n": 100,
+   "k": 3,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.3000000000000007,
+   "median_sec_new": 0.3100000000000005
+  },
+  {
+   "dist": "uniform",
+   "d": 20,
+   "n": 100,
+   "k": 5,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 0.3000000000000007,
+   "median_sec_new": 0.3100000000000005
+  },
+  {
+   "dist": "gaussian",
+   "d": 10,
+   "n": 200,
+   "k": 2,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 1.1400000000000006,
+   "median_sec_new": 1.0700000000000007
+  },
+  {
+   "dist": "gaussian",
+   "d": 10,
+   "n": 200,
+   "k": 3,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 1.2999999999999972,
+   "median_sec_new": 1.2999999999999972
+  },
+  {
+   "dist": "gaussian",
+   "d": 10,
+   "n": 200,
+   "k": 5,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 1.3099999999999952,
+   "median_sec_new": 1.3199999999999967
+  },
+  {
+   "dist": "gaussian",
+   "d": 20,
+   "n": 200,
+   "k": 2,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 1.0900000000000003,
+   "median_sec_new": 1.1099999999999994
+  },
+  {
+   "dist": "gaussian",
+   "d": 20,
+   "n": 200,
+   "k": 3,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 1.2299999999999969,
+   "median_sec_new": 1.3399999999999963
+  },
+  {
+   "dist": "gaussian",
+   "d": 20,
+   "n": 200,
+   "k": 5,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 1.2399999999999949,
+   "median_sec_new": 1.3499999999999979
+  },
+  {
+   "dist": "uniform",
+   "d": 10,
+   "n": 200,
+   "k": 2,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 1.0300000000000011,
+   "median_sec_new": 1.0300000000000011
+  },
+  {
+   "dist": "uniform",
+   "d": 10,
+   "n": 200,
+   "k": 3,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 1.1999999999999957,
+   "median_sec_new": 1.2899999999999991
+  },
+  {
+   "dist": "uniform",
+   "d": 10,
+   "n": 200,
+   "k": 5,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 1.2199999999999989,
+   "median_sec_new": 1.3000000000000114
+  },
+  {
+   "dist": "uniform",
+   "d": 20,
+   "n": 200,
+   "k": 2,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 1.110000000000003,
+   "median_sec_new": 1.0700000000000003
+  },
+  {
+   "dist": "uniform",
+   "d": 20,
+   "n": 200,
+   "k": 3,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 1.25,
+   "median_sec_new": 1.3299999999999983
+  },
+  {
+   "dist": "uniform",
+   "d": 20,
+   "n": 200,
+   "k": 5,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 1.3300000000000125,
+   "median_sec_new": 1.3399999999999892
+  },
+  {
+   "dist": "gaussian",
+   "d": 10,
+   "n": 500,
+   "k": 2,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 11.700000000000003,
+   "median_sec_new": 8.170000000000002
+  },
+  {
+   "dist": "gaussian",
+   "d": 10,
+   "n": 500,
+   "k": 3,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 12.860000000000014,
+   "median_sec_new": 9.699999999999989
+  },
+  {
+   "dist": "gaussian",
+   "d": 10,
+   "n": 500,
+   "k": 5,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 13.305000000000064,
+   "median_sec_new": 9.799999999999955
+  },
+  {
+   "dist": "gaussian",
+   "d": 20,
+   "n": 500,
+   "k": 2,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 11.910000000000025,
+   "median_sec_new": 8.525000000000004
+  },
+  {
+   "dist": "gaussian",
+   "d": 20,
+   "n": 500,
+   "k": 3,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 13.360000000000127,
+   "median_sec_new": 10.0
+  },
+  {
+   "dist": "gaussian",
+   "d": 20,
+   "n": 500,
+   "k": 5,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 12.990000000000009,
+   "median_sec_new": 10.109999999999985
+  },
+  {
+   "dist": "uniform",
+   "d": 10,
+   "n": 500,
+   "k": 2,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 11.530000000000001,
+   "median_sec_new": 7.8700000000000045
+  },
+  {
+   "dist": "uniform",
+   "d": 10,
+   "n": 500,
+   "k": 3,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 12.419999999999959,
+   "median_sec_new": 9.449999999999989
+  },
+  {
+   "dist": "uniform",
+   "d": 10,
+   "n": 500,
+   "k": 5,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 12.559999999999945,
+   "median_sec_new": 9.569999999999993
+  },
+  {
+   "dist": "uniform",
+   "d": 20,
+   "n": 500,
+   "k": 2,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 11.790000000000006,
+   "median_sec_new": 8.030000000000001
+  },
+  {
+   "dist": "uniform",
+   "d": 20,
+   "n": 500,
+   "k": 3,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 11.910000000000053,
+   "median_sec_new": 9.780000000000001
+  },
+  {
+   "dist": "uniform",
+   "d": 20,
+   "n": 500,
+   "k": 5,
+   "reps": 500,
+   "equal": 500,
+   "median_sec_old": 9.980000000000018,
+   "median_sec_new": 9.810000000000002
+  }
+ ],
+ "v3_new_rows": 24000,
+ "v3_rows_without_published_match": 0,
+ "v3_by_n": {
+  "50": {
+   "cells": 12,
+   "old_min": 0.050000000000000044,
+   "old_max": 0.07000000000000028,
+   "old_median": 0.06000000000000005,
+   "new_min": 0.05499999999999994,
+   "new_max": 0.08000000000000007,
+   "new_median": 0.0799999999999994
+  },
+  "100": {
+   "cells": 12,
+   "old_min": 0.24499999999999966,
+   "old_max": 0.3099999999999987,
+   "old_median": 0.3000000000000007,
+   "new_min": 0.25,
+   "new_max": 0.3100000000000005,
+   "new_median": 0.3049999999999997
+  },
+  "200": {
+   "cells": 12,
+   "old_min": 1.0300000000000011,
+   "old_max": 1.3300000000000125,
+   "old_median": 1.2249999999999979,
+   "new_min": 1.0300000000000011,
+   "new_max": 1.3499999999999979,
+   "new_median": 1.3000000000000043
+  },
+  "500": {
+   "cells": 12,
+   "old_min": 9.980000000000018,
+   "old_max": 13.360000000000127,
+   "old_median": 12.165000000000006,
+   "new_min": 7.8700000000000045,
+   "new_max": 10.109999999999985,
+   "new_median": 9.634999999999991
+  },
+  "slope_200_500_old": 2.5053425210832345,
+  "slope_200_500_new": 2.1860289182472434
+ },
+ "v3_pooled": {
+  "uniform_d10": {
+   "old": {
+    "n200": 1.1799999999999997,
+    "n500": 12.339999999999947,
+    "exp": 2.5617759716924113,
+    "count200": 1500,
+    "count500": 1500
+   },
+   "new": {
+    "n200": 1.2300000000000004,
+    "n500": 9.329999999999984,
+    "exp": 2.2113296304225947,
+    "count200": 1500,
+    "count500": 1500
+   }
+  },
+  "uniform_d20": {
+   "old": {
+    "n200": 1.2399999999999949,
+    "n500": 10.970000000000027,
+    "exp": 2.3792152630543164,
+    "count200": 1500,
+    "count500": 1500
+   },
+   "new": {
+    "n200": 1.259999999999991,
+    "n500": 9.570000000000036,
+    "exp": 2.2127490914968133,
+    "count200": 1500,
+    "count500": 1500
+   }
+  },
+  "gaussian_d10": {
+   "old": {
+    "n200": 1.245000000000004,
+    "n500": 12.75,
+    "exp": 2.5389275049518583,
+    "count200": 1500,
+    "count500": 1500
+   },
+   "new": {
+    "n200": 1.240000000000002,
+    "n500": 9.530000000000001,
+    "exp": 2.2256400366267695,
+    "count200": 1500,
+    "count500": 1500
+   }
+  },
+  "gaussian_d20": {
+   "old": {
+    "n200": 1.21,
+    "n500": 12.879999999999882,
+    "exp": 2.5811189383419073,
+    "count200": 1500,
+    "count500": 1500
+   },
+   "new": {
+    "n200": 1.2799999999999998,
+    "n500": 9.78000000000003,
+    "exp": 2.2192513089769905,
+    "count200": 1500,
+    "count500": 1500
+   }
+  }
+ }
+}

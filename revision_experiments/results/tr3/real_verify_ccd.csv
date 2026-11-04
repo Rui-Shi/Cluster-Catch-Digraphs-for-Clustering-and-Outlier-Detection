@@ -1,0 +1,91 @@
+method,dataset,metric,n,d,paper,html_value,driver_11,reference_12,compared_with,match_paper_3dp,match_driver_vs_ref_15dig,seconds
+UN-CCDs,iris,ARI,147,4,0.599,,0.59947933047892932,0.59947933047892932,12_real_reference,True,True,0.1100000000000001
+UN-CCDs,iris,Sil,147,4,0.445,,0.44489787354192223,0.44489787354192223,12_real_reference,True,True,
+UN-CCDs,iris,k_hat,147,4,3,,3,3,12_real_reference,True,True,
+UN-CCDs,seeds,ARI,210,7,0.509,,0.50868075800517487,0.50868075800517487,12_real_reference,True,True,1
+UN-CCDs,seeds,Sil,210,7,0.467,,0.46699036915089492,0.46699036915089492,12_real_reference,True,True,
+UN-CCDs,seeds,k_hat,210,7,2,,2,2,12_real_reference,True,True,
+UN-CCDs,user_knowledge,ARI,258,5,0.091,,0.091442238651129951,0.091442238651129951,12_real_reference,True,True,0.14000000000000012
+UN-CCDs,user_knowledge,Sil,258,5,0.158,,0.15773162957499365,0.15773162957499365,12_real_reference,True,True,
+UN-CCDs,user_knowledge,k_hat,258,5,2,,2,2,12_real_reference,True,True,
+UN-CCDs,wholesale,ARI,440,6,0.002,,0.0024662755767776989,0.0024662755767776989,12_real_reference,True,True,0.66000000000000014
+UN-CCDs,wholesale,Sil,440,6,0.113,,0.1131302299703339,0.1131302299703339,12_real_reference,True,True,
+UN-CCDs,wholesale,k_hat,440,6,3,,3,3,12_real_reference,True,True,
+UN-CCDs,breast_cancer,ARI,449,9,,,0.075297752989423136,0.075297752989423136,12_real_reference,,True,6.9900000000000002
+UN-CCDs,breast_cancer,Sil,449,9,,,0.20753656645915225,0.20753656645915225,12_real_reference,,True,
+UN-CCDs,breast_cancer,k_hat,449,9,,,2,2,12_real_reference,,True,
+UN-CCDs,aggregation,ARI,788,2,,,0.40716854079060338,0.40716854079060338,12_real_reference,,True,4.6400000000000006
+UN-CCDs,aggregation,Sil,788,2,,,0.41395008428582669,0.41395008428582669,12_real_reference,,True,
+UN-CCDs,aggregation,k_hat,788,2,,,3,3,12_real_reference,,True,
+UN-CCDs,asymmetric,ARI,1000,2,0.736,,0.73618869434407053,0.73618869434407053,12_real_reference,True,True,4.370000000000001
+UN-CCDs,asymmetric,Sil,1000,2,0.606,,0.60637912514446657,0.60637912514446657,12_real_reference,True,True,
+UN-CCDs,asymmetric,k_hat,1000,2,4,,4,4,12_real_reference,True,True,
+UN-CCDs,R15,ARI,600,2,0.975,,0.97496616926228863,0.97496616926228863,12_real_reference,True,True,1.3599999999999994
+UN-CCDs,R15,Sil,600,2,0.742,,0.74208313385945313,0.74208313385945313,12_real_reference,True,True,
+UN-CCDs,R15,k_hat,600,2,15,,15,15,12_real_reference,True,True,
+UN-CCDs,D31,ARI,3100,2,0.799,,0.74930403720544125,0.74930403720544125,12_real_reference,False,True,183.22
+UN-CCDs,D31,Sil,3100,2,0.474,,0.44442483600312765,0.44442483600312765,12_real_reference,False,True,
+UN-CCDs,D31,k_hat,3100,2,31,,31,31,12_real_reference,True,True,
+RK-CCDs,iris,ARI,147,4,0.557,,0.55660971827975148,0.55660971827975148,12_real_reference,True,True,9.5099999999999998
+RK-CCDs,iris,Sil,147,4,0.393,,0.39335536166954338,0.39335536166954338,12_real_reference,True,True,
+RK-CCDs,iris,k_hat,147,4,3,,3,3,12_real_reference,True,True,
+RK-CCDs,seeds,ARI,210,7,0.500,,0.4997916727226922,0.4997916727226922,12_real_reference,True,True,16.5
+RK-CCDs,seeds,Sil,210,7,0.164,,0.16420522215572106,0.16420522215572106,12_real_reference,True,True,
+RK-CCDs,seeds,k_hat,210,7,3,,3,3,12_real_reference,True,True,
+RK-CCDs,user_knowledge,ARI,258,5,0.052,,0.052368696527784114,0.052368696527784114,12_real_reference,True,True,18.220000000000002
+RK-CCDs,user_knowledge,Sil,258,5,0.119,,0.11922306051759554,0.11922306051759554,12_real_reference,True,True,
+RK-CCDs,user_knowledge,k_hat,258,5,2,,2,2,12_real_reference,True,True,
+RK-CCDs,wholesale,ARI,440,6,-0.002,,-0.0019159580805591175,-0.0019159580805591175,12_real_reference,True,True,16.719999999999999
+RK-CCDs,wholesale,Sil,440,6,0.344,,0.34368109823324866,0.34368109823324866,12_real_reference,True,True,
+RK-CCDs,wholesale,k_hat,440,6,2,,2,2,12_real_reference,True,True,
+RK-CCDs,breast_cancer,ARI,449,9,,,0.25384943110618641,0.25384943110618641,12_real_reference,,True,17.090000000000003
+RK-CCDs,breast_cancer,Sil,449,9,,,0.12411772227377686,0.12411772227377686,12_real_reference,,True,
+RK-CCDs,breast_cancer,k_hat,449,9,,,2,2,12_real_reference,,True,
+RK-CCDs,aggregation,ARI,788,2,,,0.78369004267860154,0.78369004267860154,12_real_reference,,True,2042.8
+RK-CCDs,aggregation,Sil,788,2,,,0.52304381065138716,0.52304381065138716,12_real_reference,,True,
+RK-CCDs,aggregation,k_hat,788,2,,,4,4,12_real_reference,,True,
+RK-CCDs,asymmetric,ARI,1000,2,0.730,,0.72977833724161656,0.72977833724161656,12_real_reference,True,True,236.75
+RK-CCDs,asymmetric,Sil,1000,2,0.605,,0.60542351514663706,0.60542351514663706,12_real_reference,True,True,
+RK-CCDs,asymmetric,k_hat,1000,2,4,,4,4,12_real_reference,True,True,
+RK-CCDs,R15,ARI,600,2,0.993,,0.99277819941363021,0.99277819941363021,12_real_reference,True,True,18.090000000000146
+RK-CCDs,R15,Sil,600,2,0.753,,0.75273920882261636,0.75273920882261636,12_real_reference,True,True,
+RK-CCDs,R15,k_hat,600,2,15,,15,15,12_real_reference,True,True,
+RK-CCDs,D31,ARI,3100,2,0.814,,0.81439008069200536,0.81439008069200536,12_real_reference,True,True,705.25999999999976
+RK-CCDs,D31,Sil,3100,2,0.495,,0.49539204061222275,0.49539204061222275,12_real_reference,True,True,
+RK-CCDs,D31,k_hat,3100,2,30,,30,30,12_real_reference,True,True,
+KS-CCDs,iris,ARI,147,4,0.561,0.560576612295461,0.56057661229546119,,HTML (7 sig digits for m),True,True,1.1899999999999999
+KS-CCDs,iris,Sil,147,4,0.578,0.578046182519709,0.5780461825197093,,HTML (7 sig digits for m),True,True,
+KS-CCDs,iris,k_hat,147,4,2,2,2,,HTML (7 sig digits for m),True,True,
+KS-CCDs,iris,KS_m,147,4,,1.2,1.2000000000000002,,HTML (7 sig digits for m),,True,
+KS-CCDs,seeds,ARI,210,7,0.497,0.496858877678606,0.49685887767860631,,HTML (7 sig digits for m),True,True,2.7699999999999996
+KS-CCDs,seeds,Sil,210,7,0.468,0.467588094740704,0.46758809474070401,,HTML (7 sig digits for m),True,True,
+KS-CCDs,seeds,k_hat,210,7,2,2,2,,HTML (7 sig digits for m),True,True,
+KS-CCDs,seeds,KS_m,210,7,,0.95,0.95000000000000007,,HTML (7 sig digits for m),,True,
+KS-CCDs,user_knowledge,ARI,258,5,0.005,0.00463599172093341,0.0046359917209334058,,HTML (7 sig digits for m),True,True,5.0800000000000001
+KS-CCDs,user_knowledge,Sil,258,5,0.254,0.254092937739963,0.25409293773996283,,HTML (7 sig digits for m),True,True,
+KS-CCDs,user_knowledge,k_hat,258,5,2,2,2,,HTML (7 sig digits for m),True,True,
+KS-CCDs,user_knowledge,KS_m,258,5,,0.66,0.66000000000000003,,HTML (7 sig digits for m),,True,
+KS-CCDs,wholesale,ARI,440,6,-0.013,-0.0128795639687855,-0.01287956396878546,,HTML (7 sig digits for m),True,True,23.449999999999999
+KS-CCDs,wholesale,Sil,440,6,0.765,0.765163545777553,0.76516354577755252,,HTML (7 sig digits for m),True,True,
+KS-CCDs,wholesale,k_hat,440,6,2,2,2,,HTML (7 sig digits for m),True,True,
+KS-CCDs,wholesale,KS_m,440,6,,0.26,0.26000000000000001,,HTML (7 sig digits for m),,True,
+KS-CCDs,breast_cancer,ARI,449,9,,0.667355518903533,0.66735551890353262,,HTML (7 sig digits for m),,True,23.829999999999998
+KS-CCDs,breast_cancer,Sil,449,9,,0.431859725740033,0.43185972574003273,,HTML (7 sig digits for m),,True,
+KS-CCDs,breast_cancer,k_hat,449,9,,2,2,,HTML (7 sig digits for m),,True,
+KS-CCDs,breast_cancer,KS_m,449,9,,0.78,0.78000000000000003,,HTML (7 sig digits for m),,True,
+KS-CCDs,aggregation,ARI,788,2,,0.826567638469427,0.8265676384694266,,HTML (7 sig digits for m),,True,112.22999999999999
+KS-CCDs,aggregation,Sil,788,2,,0.526968132659926,0.52696813265992637,,HTML (7 sig digits for m),,True,
+KS-CCDs,aggregation,k_hat,788,2,,5,5,,HTML (7 sig digits for m),,True,
+KS-CCDs,aggregation,KS_m,788,2,,1.8,1.8000000000000003,,HTML (7 sig digits for m),,True,
+KS-CCDs,asymmetric,ARI,1000,2,0.691,0.691397826316941,0.69139782631694113,,HTML (7 sig digits for m),True,True,97.160000000000025
+KS-CCDs,asymmetric,Sil,1000,2,0.643,0.642976770374233,0.64297677037423318,,HTML (7 sig digits for m),True,True,
+KS-CCDs,asymmetric,k_hat,1000,2,4,4,4,,HTML (7 sig digits for m),True,True,
+KS-CCDs,asymmetric,KS_m,1000,2,,20,20,,HTML (7 sig digits for m),,True,
+KS-CCDs,R15,ARI,600,2,0.989,0.989213864339646,0.98921386433964564,,HTML (7 sig digits for m),True,True,29.439999999999998
+KS-CCDs,R15,Sil,600,2,0.753,0.752592172200384,0.7525921722003841,,HTML (7 sig digits for m),True,True,
+KS-CCDs,R15,k_hat,600,2,15,15,15,,HTML (7 sig digits for m),True,True,
+KS-CCDs,R15,KS_m,600,2,,11,11,,HTML (7 sig digits for m),,True,
+KS-CCDs,D31,ARI,3100,2,0.948,0.9483333814796,0.94833338147959978,,HTML (7 sig digits for m),True,True,5579.3100000000004
+KS-CCDs,D31,Sil,3100,2,0.574,0.5737655870598,0.57376558705979952,,HTML (7 sig digits for m),True,True,
+KS-CCDs,D31,k_hat,3100,2,31,31,31,,HTML (7 sig digits for m),True,True,
+KS-CCDs,D31,KS_m,3100,2,,7.1,7.0999999999999996,,HTML (7 sig digits for m),,True,
