@@ -47,3 +47,6 @@ SUMCCD_outlier = function(datax, simul=NULL, min.cls=0, low.num=2, quant=0.99){
     return(ksccd.connected(rkccd_clusters[[x]],delta_max[x],sequential=FALSE,alpha=0.05)$member)})
   return(c(clusters=list(rkccd_clusters),label=list(cluster_component),radii=list(RK_result$R)))
 }
+
+# Earlier name of SUMCCD_outlier, still called by the simulation drivers.
+MFCCD_outlier <- SUMCCD_outlier

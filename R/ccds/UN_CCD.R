@@ -345,6 +345,9 @@ nnccd.radi.descend.one <- function(i, ddx, o.d, n, low.num, env.ave.rev, env.med
 }
 
 nnccd.radi <- function(dx, quantile="lower", method="ascend", low.num, quant, simul=NULL, niter, scores=F){
+  # an unknown search direction used to give all-zero radii without an error
+  if(!(is.character(method) && length(method)==1 && method %in% c("ascend","descend")))
+    stop("nnccd.radi: method must be \"ascend\" or \"descend\", not ", paste(deparse(method), collapse=""))
 
   ddx <- as.matrix(dist(dx)) # the distance matrix
   n <- nrow(dx)

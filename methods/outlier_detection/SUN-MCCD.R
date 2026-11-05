@@ -51,3 +51,6 @@ SUNMCCD_outlier = function(datax, simul=NULL, min.cls=0, method="ascend", low.nu
     return(ksccd.connected(nnccd_clusters[[x]],delta_max[x],sequential=FALSE,alpha=0.05)$member)})
   return(c(clusters=list(nnccd_clusters),label=list(cluster_component),radii=list(NN_result$R)))
 }
+
+# Earlier name of SUNMCCD_outlier, still called by the simulation drivers.
+MFNNCCD_outlier <- SUNMCCD_outlier

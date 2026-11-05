@@ -55,7 +55,7 @@ r_max = 1.3
 nnccd.rkccd.outlier = function(datax, simul){
   set.seed(321)
   graph <- nnccd_clustering_quantile(datax, low.num=3, quantile="lower", 
-                                     method="decend", dom.method="greedy2", 
+                                     method="descend", dom.method="greedy2", 
                                      simul=simul, niter=100)
   NN.result = nnccd.silhouette(graph,datax,cls=NULL,ind=NULL, lenDlimit=Inf)
   NN.result = c(graph,NN.result)
