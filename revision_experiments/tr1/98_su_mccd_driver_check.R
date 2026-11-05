@@ -14,7 +14,7 @@
 # Everything else is copied from those drivers: generator, cluster geometry,
 # contamination 5%, set.seed(123) before generating all data sets,
 # S_min = max(0.04, cont/2) for d <= 5 and 0 otherwise, level 0.99 for d < 10
-# and 0.999 otherwise, low.num = 2, LDOF k = max(d, 5). n2 is
+# and 0.999 otherwise, low.num = 2. n2 is
 # round(n*(1-cont)*0.5) in the n = 50 and n = 1000 drivers and one less in
 # the others (--n2adj). The drivers source methods/outlier_detection/SU-MCCDs.R,
 # which defines SUMCCD_outlier; they call it by its earlier name, MFCCD_outlier
