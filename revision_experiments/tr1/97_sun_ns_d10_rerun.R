@@ -11,10 +11,16 @@
 #
 # Everything else is copied from the drivers: generator Uni.Gau_cls, the
 # settings below, set.seed(1234) before generating all 1000 data sets,
-# S_min = 0, descending radius search, low.num = 3, LDOF k = max(d, 5).
-# The drivers source methods/outlier_detection/SUN-MCCD.R, which does not
-# define the MFNNCCD_outlier they call; the definition they ran is in
-# simulations/outlier_detection/SUN-MCCDs/M-FNNCCDs_LDOF.R, sourced here.
+# S_min = 0, descending radius search, low.num = 3.
+# The drivers source methods/outlier_detection/SUN-MCCD.R, which defines
+# SUNMCCD_outlier; they call it by its earlier name, MFNNCCD_outlier (the file
+# was M-FNNCCDs.R on the cluster; commit 389ec3d), so it is aliased here
+# (--impl=sun, the default). Runs with it reproduce the drivers' logs: Matern
+# d = 2 TPR 0.952792 as logged, and the d = 10 cells within 0.004.
+# --impl=ldof uses the earlier, abandoned variant in
+# simulations/outlier_detection/SUN-MCCDs/M-FNNCCDs_LDOF.R, which does not
+# (Matern d = 10 TPR 0.438 against 0.977 logged); it was run on two cells as a
+# check, and those outputs are not kept on main.
 # The radius search is the incremental one (R/ccds/UN_CCD.R), validated
 # bit-identical to the recomputing search (tr1/92, tr1/93).
 #
